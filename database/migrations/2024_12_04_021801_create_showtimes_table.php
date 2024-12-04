@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('showtimes', function (Blueprint $table) {
             $table->id();
-            $table->string('showtime_id')->primary(); 
             $table->string('film_id'); 
             $table->string('room_id'); 
             $table->timestamp('start_time');
-            $table->timestamps();
         });
     }
 
