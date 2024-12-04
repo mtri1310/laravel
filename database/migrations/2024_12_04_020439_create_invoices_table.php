@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('payment_id'); 
             $table->string('invoice_number'); 
             $table->decimal('total_amount', 10, 2);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
