@@ -1,5 +1,4 @@
-
-@extends('products.layouts')
+@extends('layout')
 
 @section('content')
 
