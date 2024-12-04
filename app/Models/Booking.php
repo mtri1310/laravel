@@ -9,7 +9,6 @@ class Booking extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'booking_id',
         'film_id',
         'user_id',
         'room_id',

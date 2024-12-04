@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('films', function (Blueprint $table) {
             $table->id();
-            $table->string('film_id')->primary(); 
             $table->string('film_name'); 
             $table->string('thumbnail')->nullable(); 
             $table->string('duration'); 
@@ -25,6 +24,7 @@ return new class extends Migration
             $table->string('direction');
             $table->string('actor'); 
             $table->boolean('status');
+            $table->boolean('release');
             $table->timestamps();
         });
     }

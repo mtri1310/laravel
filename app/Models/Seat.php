@@ -9,7 +9,6 @@ class Seat extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'seat_id',
         'seat_number',
         'seat_status',
         'start_time'

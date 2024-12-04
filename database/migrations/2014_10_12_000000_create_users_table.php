@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('full_name');
             $table->string('phone');
+            $table->string('picture');
             $table->rememberToken()->nullable();
             $table->timestamps();
         });
