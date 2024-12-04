@@ -12,7 +12,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        // Lấy tất cả các sản phẩm
+        $products = Product::all();
+
+        // Trả về view và truyền dữ liệu sản phẩm
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -36,8 +40,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        // Trả về view chi tiết sản phẩm
+        return view('products.show', compact('product'));
     }
+
 
     /**
      * Show the form for editing the specified resource.

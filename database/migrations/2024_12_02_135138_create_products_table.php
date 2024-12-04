@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
             $table->string('name');
-            $table->text('description');
+            $table->decimal('price', 8, 2);  // Ví dụ cột giá sản phẩm
             $table->timestamps();
         });
     }
