@@ -12,11 +12,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Lấy tất cả các sản phẩm
-        $products = Product::all();
-
-        // Trả về view và truyền dữ liệu sản phẩm
-        return view('products.index', compact('products'));
+        return view('products.index', [
+            'products' => Product::latest()->paginate(3)
+        ]);
     }
 
     /**
@@ -25,6 +23,7 @@ class ProductController extends Controller
     public function create()
     {
         //
+        return view('products.create');
     }
 
     /**

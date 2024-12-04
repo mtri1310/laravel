@@ -18,5 +18,6 @@ class FilmController extends Controller
     public function create()
     {
         //
+        return view('films.create');
     }
 }
