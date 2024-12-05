@@ -4,6 +4,7 @@ use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SeatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,6 @@ Route::get('/movies', [ImdbController::class, 'index']);
 
 Route::resource('products', ProductController::class);
 Route::resource('films', FilmController::class);
+Route::resource('seats', SeatController::class);
+
 
