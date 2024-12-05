@@ -13,7 +13,20 @@ class PaymentController extends Controller
             'message' => 'Payment',
             'data' => [
                 'payment_id' => '123123',
-                'payment_method' => ['Zalo Pay', 'MoMo', 'ATM Card'],
+                'payment_method' => [
+                    [
+                        'id' =>123,
+                        'name' => 'Zalo Pay'
+                    ],
+                    [
+                        'id' =>124,
+                        'name' => 'Shoppe Pay'
+                    ],
+                    [
+                        'id' =>125,
+                        'name' => 'ATM Card'
+                    ],
+                ],
                 'film' => [
                     'film_id' => '001',
                     'film_name' => 'The Marvels',
