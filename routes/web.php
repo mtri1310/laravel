@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
 use App\Http\Controllers\ProductController;
@@ -24,3 +25,5 @@ Route::get('/', function () {
 Route::get('/movies', [ImdbController::class, 'index']);
 
 Route::resource('products', ProductController::class);
+Route::resource('films', FilmController::class);
+
