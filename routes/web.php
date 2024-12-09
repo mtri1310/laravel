@@ -4,6 +4,7 @@ use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SeatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,8 @@ Route::get('/dashboard', function () {
 });
 Route::get('/film', [FilmController::class, 'index'])->name('film');
 Route::get('/film/add', [FilmController::class, 'create'])->name('film.add');
+
+Route::resource('seats', SeatController::class);
 
 // Route::get('/movies', [ImdbController::class, 'index']);
 
