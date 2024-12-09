@@ -16,13 +16,18 @@ use App\Http\Controllers\ProductController;
 |
 */
 
-Route::get('/', [ProductController::class, 'index']);
+// Route::get('/', [ProductController::class, 'index']);
 
-// Route::get('/movies', function () {
-//     return view('welcome');
-// });
-Route::get('/movies', [ImdbController::class, 'index']);
+Route::get('/', function () {
+    return view('admin');
+});
+Route::get('/dashboard', function () {
+    return view('admin');
+});
+Route::get('/film', [FilmController::class, 'index'])->name('film');
+Route::get('/film/add', [FilmController::class, 'create'])->name('film.add');
 
-Route::resource('products', ProductController::class);
-Route::resource('films', FilmController::class);
+// Route::get('/movies', [ImdbController::class, 'index']);
+
+// Route::resource('products', ProductController::class);
 

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function  payment(){
+    public function payment(){
         $payment = [
             'status' => 'success',
             'message' => 'Payment',
