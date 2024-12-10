@@ -166,27 +166,5 @@
         </div>
     </div>    
 </div>
-<script th:inline="javascript">
-    $(document).ready(function() {
-        let messageError = [[${messageError}]];
-        let messageSuccess = [[${messageSuccess}]];
-
-        if(messageSuccess) {
-            Swal.fire({
-                title: '',
-                text: messageSuccess,
-                icon: 'success',
-                confirmButtonColor: '#3085d6'
-            })
-        }
-
-        if(messageError ) {
-            Swal.fire({
-                title: '',
-                text: messageError,
-                icon: 'error'
-            })
-        }
-    })
-</script>
+    
 @endsection

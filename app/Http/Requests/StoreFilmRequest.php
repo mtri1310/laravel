@@ -28,7 +28,7 @@ class StoreFilmRequest extends FormRequest
             'direction' => 'required|string|max:255', // Đạo diễn, bắt buộc
             'actor' => 'required|string|max:500', // Diễn viên, có thể chứa nhiều tên
             'status' => 'required|boolean', // Trạng thái phim (công chiếu hoặc không)
-            'release' => 'required|boolean', // Phim đã được phát hành hay chưa
+            'release' => 'required|string', // Phim đã được phát hành hay chưa
         ];
     }
 
