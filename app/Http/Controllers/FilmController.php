@@ -28,11 +28,20 @@ class FilmController extends Controller
         return view('films.create');
     }
 
-    public function store(StoreFilmRequest $request) : RedirectResponse
+    public function store(StoreFilmRequest $request): RedirectResponse
     {
-        Film::create($request->all());
-        return redirect()->route('films.index')
-                ->withSuccess('New film is added successfully.');
+        try {
+            // Thêm film vào cơ sở dữ liệu
+            Film::create($request->all());
+
+            // Thêm thông báo thành công vào session
+            return redirect()->route('films.index')
+                            ->with('messageSuccess', 'New film is added successfully.');
+        } catch (\Exception $e) {
+            // Nếu có lỗi, thêm thông báo lỗi vào session
+            return redirect()->route('films.index')
+                            ->with('messageError', 'An error occurred while adding the film.');
+        }
     }
 
     // /**

@@ -1,6 +1,4 @@
-@extends('admin')
 
-@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,7 +49,7 @@
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
-            {{-- @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all']) --}}
+            @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content">
@@ -78,7 +76,7 @@
                                             <th class="d-none d-sm-table-cell text-center">Room</th>
                                             <th class="d-none d-sm-table-cell text-center">Date</th>
                                             <th class="d-none d-sm-table-cell text-center">Start Time</th>
-                                            <th class="d-none d-sm-table-cell text-center">Status</th>
+                                            
                                             <th class="text-center" style="width: 100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -91,10 +89,14 @@
                                                     </a>
                                                 </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    <strong>{{ $showtime->film->film_name }}</strong>
+                                                    {{-- <strong>{{ $showtime->film->film_name }}</strong> --}}
+                                                    <strong>{{ $showtime->film ? $showtime->film->film_name : 'No film available' }}</strong>
+
                                                 </td>
                                                 <td class="d-none d-sm-table-cell text-center fs-sm">
-                                                    <div>{{ $showtime->room->room_name }}</div>
+                                                    {{-- <div>{{ $showtime->room->room_name }}</div> --}}
+                                                    <div>{{ $showtime->room ? $showtime->room->room_name : 'No room available' }}</div>
+
                                                 </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
                                                     <div>{{ $showtime->day }}</div>
@@ -102,15 +104,7 @@
                                                 <td class="d-none d-md-table-cell fs-sm">
                                                     <div>{{ $showtime->start_time }}</div>
                                                 </td>
-                                                <td class="d-none d-sm-table-cell text-center fs-sm">
-                                                    @if ($showtime->status == 1)
-                                                        <span class="badge bg-success">Showing</span>
-                                                    @elseif ($showtime->status == 0)
-                                                        <span class="badge bg-danger">Removed</span>
-                                                    @else
-                                                        <span class="badge bg-warning">Status Unknown</span>
-                                                    @endif
-                                                </td>
+
                                                 <td class="text-center fs-sm" style="width: 100px">
                                                     <a class="btn btn-sm btn-alt-secondary" href="" data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
@@ -145,4 +139,4 @@
         </div>
     </div>
 </body>
-@endsection
+

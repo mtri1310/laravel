@@ -30,6 +30,7 @@ class ShowtimeController extends Controller
     public function store(StoreShowtimeRequest $request) : RedirectResponse
     {
         Showtime::create($request->all());
+        
         return redirect()->route('showtimes.index')
                 ->withSuccess('New Showtime is added successfully.');
     }

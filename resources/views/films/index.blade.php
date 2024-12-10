@@ -1,6 +1,3 @@
-@extends('admin')
-
-@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +20,7 @@
 
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
-            {{-- @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all']) --}}
+            @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content">
@@ -177,12 +174,7 @@
                 icon: 'error'
             })
         }
-
-
-
-
     })
 </script>
 
-@endsection
 
