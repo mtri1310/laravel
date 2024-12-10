@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('admin')
+
+@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,16 +20,16 @@
     <link rel="stylesheet" href="{{ asset('assets/css/list.css') }}">
     
 </head>
-<body>
+
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
-            @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
+            {{-- @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all']) --}}
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
                         <h1 class="title">Phim</h1>
-                        <a href="/admin/product/add">
+                        <a href="{{ route('films.create') }}">
                             <button class="btn btn-primary d-flex align-items-center">
                                 <i class="fas fa-plus" style="margin-right: 0.5rem"></i>
                                 <span>Phim mới</span>
@@ -182,7 +183,6 @@
 
     })
 </script>
-</body>
 
+@endsection
 
-</html>

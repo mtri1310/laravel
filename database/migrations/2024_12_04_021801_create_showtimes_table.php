@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('film_id'); 
             $table->string('room_id'); 
             $table->string('day'); 
-            $table->timestamp('start_time');
+            $table->time('start_time');
+            $table->timestamps(); 
         });
+        
     }
 
     /**
