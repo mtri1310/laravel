@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
@@ -50,3 +51,13 @@ Route::resource('showtimes', ShowtimeController::class);
 
 // Route::resource('products', ProductController::class);
 
+//Google
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+
+    return view('dashboard');
+
+})->name('dashboard');
+Route::controller(LoginGoogleController::class)->group(function(){
+    Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('auth/google/callback', 'handleGoogleCallback');
+});
