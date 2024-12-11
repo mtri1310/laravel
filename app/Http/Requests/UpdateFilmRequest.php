@@ -25,10 +25,10 @@ class UpdateFilmRequest extends FormRequest
             'movie_genre' => 'required|string|max:100',
             'censorship' => 'nullable|string|max:50',
             'language' => 'required|string|max:50',
-            'direction' => 'required|string|max:255',
+            'director' => 'required|string|max:255',
             'actor' => 'required|string|max:500',
             'status' => 'required|boolean',
-            'release' => 'required|boolean',
+            'release' => 'required|string',
         ];
     }
 

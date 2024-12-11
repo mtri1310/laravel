@@ -38,6 +38,7 @@ Route::get('/dashboard', function () {
 // });
 Route::get('/movies', [ImdbController::class, 'index']);
 
+Route::get('/films', [FilmController::class, 'index'])->name('films.index');
 
 Route::resource('products', ProductController::class);
 Route::resource('films', FilmController::class);

@@ -25,7 +25,7 @@ class StoreFilmRequest extends FormRequest
             'movie_genre' => 'required|string|max:100', // Thể loại phim bắt buộc
             'censorship' => 'nullable|string|max:50', // Độ tuổi kiểm duyệt có thể bỏ trống
             'language' => 'required|string|max:50', // Ngôn ngữ phim bắt buộc
-            'direction' => 'required|string|max:255', // Đạo diễn, bắt buộc
+            'director' => 'required|string|max:255', // Đạo diễn, bắt buộc
             'actor' => 'required|string|max:500', // Diễn viên, có thể chứa nhiều tên
             'status' => 'required|boolean', // Trạng thái phim (công chiếu hoặc không)
             'release' => 'required|string', // Phim đã được phát hành hay chưa
