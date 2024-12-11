@@ -6,8 +6,9 @@ use App\Http\Controllers\Api\SelectSeatController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Api\ListFilmsController;
-use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\PaymentController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
