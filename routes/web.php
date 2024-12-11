@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FilmController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\ImdbController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
 
 /*
@@ -37,3 +39,23 @@ Route::resource('seats', SeatController::class);
 Route::resource('rooms', RoomController::class);
 Route::resource('showtimes', ShowtimeController::class);
 
+//payment
+Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
+Route::get('/homepayment', [StripeController::class, 'index']);
+Route::get('payment/success', [StripeController::class, 'success'])->name('payment.success');
+Route::get('payment/cancel', [StripeController::class, 'cancel'])->name('payment.cancel');
+
+// Route::get('/movies', [ImdbController::class, 'index']);
+
+// Route::resource('products', ProductController::class);
+
+//Google
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+
+    return view('dashboard');
+
+})->name('dashboard');
+Route::controller(LoginGoogleController::class)->group(function(){
+    Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('auth/google/callback', 'handleGoogleCallback');
+});
