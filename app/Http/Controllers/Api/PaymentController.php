@@ -41,7 +41,6 @@ class PaymentController extends Controller
 
 
 
-        public function payment(){
         $payment = [
             'status' => 'success',
             'message' => 'Payment',
@@ -81,6 +80,5 @@ class PaymentController extends Controller
             ],
         ];
         return response()->json($payment);
-    }
     }
 }

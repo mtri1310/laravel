@@ -7,12 +7,11 @@ use Stripe\Stripe;
 use Stripe\Checkout\Session;
 
 class StripeController extends Controller
-{   
-    public function index()  
-    {   
+{
+    public function index()
+    {
         return view('payment.home');
-        
-    }    
+    }
 
     public function createCheckoutSession(Request $request)
     {
