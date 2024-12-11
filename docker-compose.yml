@@ -12,7 +12,7 @@ services:
         - ./projects:/var/www/projects
         - ./confs/ssl/:/var/www/ssl
 
-    php:
+    php:  
       build:
         dockerfile: ./php.dockerfile
         context: .
@@ -20,7 +20,8 @@ services:
       container_name: webdev-php
       volumes: 
         - ./projects:/var/www/projects
-      ports: 
+      ports: docker-compose build php
+
         - "9000:9000"
       networks: 
         - web-dev
