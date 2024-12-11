@@ -23,11 +23,11 @@
             @include('fragments.sidebar', ['key' => 'dashboard', 'subkey' => ''])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
-                <div class="content">
+                {{-- <div class="content">
                     
                     @yield('content')
                     
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

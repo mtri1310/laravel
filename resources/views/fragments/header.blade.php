@@ -7,7 +7,7 @@
             <div class="topbar-item d-flex align-items-center dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 <span>Hi,</span>
                 <span class="header-name" style="text-transform: capitalize">
-                    first name{{-- {{ Auth::user()->first_name }} --}}
+                    {{ $user()->full_name }}
                 </span>
                 <span style="padding-bottom: 10px">
                     <img alt="avatar" src="{{ asset('assets/images/default.png') }}" class="avatar"/>

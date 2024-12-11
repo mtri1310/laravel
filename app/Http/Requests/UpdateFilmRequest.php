@@ -28,7 +28,7 @@ class UpdateFilmRequest extends FormRequest
             'direction' => 'required|string|max:255',
             'actor' => 'required|string|max:500',
             'status' => 'required|boolean',
-            'release' => 'required|boolean',
+            'release' => 'required|string',
         ];
     }
 

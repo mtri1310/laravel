@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <title>Admin</title>
-    <link th:href="@{/images/icon.png}" rel="icon" type = "image/x-icon">
+    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type = "image/x-icon">
 
     <!-- Bootstrap core -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}"/>
@@ -53,7 +53,7 @@
                                             <th class="d-none d-sm-table-cell text-center">Movie_Genre</th>
                                             <th class="d-none d-sm-table-cell text-center">Censorship</th>
                                             <th class="d-none d-sm-table-cell text-center">Ngôn ngữ</th>
-                                            <th class="d-none d-sm-table-cell text-center">Direction</th>
+                                            <th class="d-none d-sm-table-cell text-center">Director</th>
                                             <th class="d-none d-sm-table-cell text-center">Actor</th>
                                             <th class="d-none d-sm-table-cell text-end">Release</th>
                                             <th>Trạng thái</th>
@@ -93,13 +93,13 @@
                                                     <div>{{ $film->language }}</div>
                                                 </td>
                                                 <td class="text-end d-none d-sm-table-cell fs-sm">
-                                                    <div>{{ $film->direction }}</div>
+                                                    <div>{{ $film->director }}</div>
                                                 </td>
                                                 <td class="text-end d-none d-sm-table-cell fs-sm">
                                                     <div>{{ $film->actor }}</div>
                                                 </td>
                                                 <td class="text-end d-none d-sm-table-cell fs-sm">
-                                                    <div>{{ $film->actor }}</div>
+                                                    <div>{{ $film->release }}</div>
                                                 </td>
                                                 <td>
                                                     @if ($film->status == 1)
@@ -156,11 +156,9 @@
 
 <script>
     $(document).ready(function() {
-        // Lấy thông báo từ session Laravel
-        let messageError = "{{ session('messageError') }}";  // Lấy thông báo lỗi
-        let messageSuccess = "{{ session('messageSuccess') }}";  // Lấy thông báo thành công
+        let messageError = "{{ session('messageError') }}";  
+        let messageSuccess = "{{ session('messageSuccess') }}";  
 
-        // Kiểm tra và hiển thị thông báo thành công nếu có
         if (messageSuccess) {
             Swal.fire({
                 title: '',

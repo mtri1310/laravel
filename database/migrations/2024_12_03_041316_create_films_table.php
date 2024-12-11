@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('director');
             $table->string('actor'); 
             $table->boolean('status');
-            $table->string('release');
+            $table->date('release');
             $table->timestamps();
         });
     }
