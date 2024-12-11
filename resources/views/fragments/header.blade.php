@@ -8,7 +8,8 @@
             <div class="topbar-item d-flex align-items-center dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 <span>Hi,</span>
                 <span class="header-name" style="text-transform: capitalize">
-                    {{ $user()->full_name }}
+                    {{ auth()->user()->full_name }}
+
                 </span>
                 <span style="padding-bottom: 10px">
                     <img alt="avatar" src="{{ asset('assets/images/default.png') }}" class="avatar"/>
@@ -18,7 +19,7 @@
                 <li class="dropdown-item d-flex justify-content-center align-items-center flex-column">
                     <img alt="avatar" src="https://picsum.photos/200/300" class="avatar-thumb"/>
                     <p class="dropdown-item-name mt-2 text-center" style="text-transform: capitalize">
-                        full_name{{-- {{ Auth::user()->full_name }} --}}
+                        {{ auth()->user()->full_name }}
                     </p>
                 </li>
                 <div class="dropdown-divider"></div>

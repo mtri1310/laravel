@@ -138,62 +138,43 @@
                                             @enderror
                                         </div>                                        
 
-                    <!-- Direction -->
-                    <div class="mb-3 row">
-                        <label for="direction" class="col-md-4 col-form-label text-md-end text-start">Direction</label>
-                        <div class="col-md-6">
-                          <input type="text" class="form-control @error('direction') is-invalid @enderror" id="direction" name="direction" value="{{ old('direction') }}">
-                            @if ($errors->has('direction'))
-                                <span class="text-danger">{{ $errors->first('direction') }}</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Actor -->
-                    <div class="mb-3 row">
-                        <label for="actor" class="col-md-4 col-form-label text-md-end text-start">Actor</label>
-                        <div class="col-md-6">
-                          <input type="text" class="form-control @error('actor') is-invalid @enderror" id="actor" name="actor" value="{{ old('actor') }}">
-                            @if ($errors->has('actor'))
-                                <span class="text-danger">{{ $errors->first('actor') }}</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Status -->
-                    <div class="mb-3 row">
-                        <label for="status" class="col-md-4 col-form-label text-md-end text-start">Status</label>
-                        <div class="col-md-6">
-                          <select class="form-control @error('status') is-invalid @enderror" id="status" name="status">
-                              <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Showing</option>
-                              <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Removed</option>
-                          </select>
-                            @if ($errors->has('status'))
-                                <span class="text-danger">{{ $errors->first('status') }}</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Release -->
-                    <div class="mb-3 row">
-                        <label for="release" class="col-md-4 col-form-label text-md-end text-start">Release</label>
-                        <div class="col-md-6">
-                          <select class="form-control @error('release') is-invalid @enderror" id="release" name="release">
-                              <option value="1" {{ old('release') == '1' ? 'selected' : '' }}>Released</option>
-                              <option value="0" {{ old('release') == '0' ? 'selected' : '' }}>Not Released</option>
-                          </select>
-                            @if ($errors->has('release'))
-                                <span class="text-danger">{{ $errors->first('release') }}</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Submit -->
-                    <div class="mb-3 row">
-                        <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Film">
-                    </div>
-                    
-                </form>
+                                        <div class="mb-4" style="padding:0">
+                                            <div class="upload-zone d-flex justify-content-center align-items-center">
+                                                <input type="file" 
+                                                       name="thumbnail" 
+                                                       accept="image/png, image/jpg, image/jpeg" 
+                                                       onchange="loadFile(event)" 
+                                                       class="upload-zone-input" 
+                                                       id="input-image" 
+                                                       @if(isset($film->id)) required @else required @endif />
+                                                <input type="text" id="image" name="thumbnail" value="{{ old('thumbnail', $film->thumbnail ?? '') }}" readonly style="display: none; opacity: 0" />
+                                                <img id="image-output" src="{{ old('image', $film->thumbnail ?? '') ? asset('storage/'.$film->thumbnail) : '' }}" alt="Image preview" />
+                                                <div class="upload-zone-content">
+                                                    <div class="upload-zone-title">Select file</div>
+                                                    <div class="upload-zone-desc">Click browse through your machine</div>
+                                                </div>
+                                            </div>
+                                            @error('thumbnail')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+    
+                                        <div class="mb-4">
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" {{ old('status', $film->status ?? 0) ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="status">Is Published?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+    
+                                        <div class="mb-4 d-flex align-items-center justify-content-end">
+                                            <button type="submit" class="btn btn-danger auth-btn">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
             </div>
         </div>
     </div>
