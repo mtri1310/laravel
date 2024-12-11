@@ -48,10 +48,9 @@ Route::resource('seats', SeatController::class);
 Route::resource('rooms', RoomController::class);
 Route::resource('showtimes', ShowtimeController::class);
 
+//payment
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
 Route::get('/homepayment', [StripeController::class, 'index']);
-// Route::post('/checkout', [StripeController::class, 'session']);
-// Route::get('/success', [StripeController::class, 'success']);
 Route::get('payment/success', [StripeController::class, 'success'])->name('payment.success');
 Route::get('payment/cancel', [StripeController::class, 'cancel'])->name('payment.cancel');
 

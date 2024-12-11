@@ -65,7 +65,7 @@ class PaymentController extends Controller
                     'film_name' => 'The Marvels',
                     'movie_genre' => ['Action', 'Adventure', 'Sci-Fi'],
                     'thumbnail' => 'https://example.com/poster/the-marvels.jpg',
-                ],
+                ],  
                 'showtime' => [
                     'start_time' => '14:15',
                     'day' => '20.2.2021',
