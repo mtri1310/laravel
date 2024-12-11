@@ -9,6 +9,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Route::get('/movies', [ImdbController::class, 'index']);
 
 Route::get('/films', [FilmController::class, 'index'])->name('films.index');
 
+Route::resource('users', UserController::class);
 Route::resource('products', ProductController::class);
 Route::resource('films', FilmController::class);
 Route::resource('seats', SeatController::class);
