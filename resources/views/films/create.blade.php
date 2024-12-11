@@ -106,13 +106,13 @@
                         </div>
                     </div>
 
-                    <!-- Direction -->
+                    <!-- director -->
                     <div class="mb-3 row">
-                        <label for="direction" class="col-md-4 col-form-label text-md-end text-start">Direction</label>
+                        <label for="director" class="col-md-4 col-form-label text-md-end text-start">director</label>
                         <div class="col-md-6">
-                          <input type="text" class="form-control @error('direction') is-invalid @enderror" id="direction" name="direction" value="{{ old('direction') }}">
-                            @if ($errors->has('direction'))
-                                <span class="text-danger">{{ $errors->first('direction') }}</span>
+                          <input type="text" class="form-control @error('director') is-invalid @enderror" id="director" name="director" value="{{ old('director') }}">
+                            @if ($errors->has('director'))
+                                <span class="text-danger">{{ $errors->first('director') }}</span>
                             @endif
                         </div>
                     </div>
@@ -146,14 +146,11 @@
                     <div class="mb-3 row">
                         <label for="release" class="col-md-4 col-form-label text-md-end text-start">Release</label>
                         <div class="col-md-6">
-                          <select class="form-control @error('release') is-invalid @enderror" id="release" name="release">
-                              <option value="1" {{ old('release') == '1' ? 'selected' : '' }}>Released</option>
-                              <option value="0" {{ old('release') == '0' ? 'selected' : '' }}>Not Released</option>
-                          </select>
-                            @if ($errors->has('release'))
-                                <span class="text-danger">{{ $errors->first('release') }}</span>
-                            @endif
-                        </div>
+                            <input type="text" class="form-control @error('release') is-invalid @enderror" id="release" name="release" value="{{ old('release') }}">
+                              @if ($errors->has('release'))
+                                  <span class="text-danger">{{ $errors->first('release') }}</span>
+                              @endif
+                          </div>
                     </div>
 
                     <!-- Submit -->
@@ -166,27 +163,5 @@
         </div>
     </div>    
 </div>
-<script th:inline="javascript">
-    $(document).ready(function() {
-        let messageError = [[${messageError}]];
-        let messageSuccess = [[${messageSuccess}]];
-
-        if(messageSuccess) {
-            Swal.fire({
-                title: '',
-                text: messageSuccess,
-                icon: 'success',
-                confirmButtonColor: '#3085d6'
-            })
-        }
-
-        if(messageError ) {
-            Swal.fire({
-                title: '',
-                text: messageError,
-                icon: 'error'
-            })
-        }
-    })
-</script>
+    
 @endsection

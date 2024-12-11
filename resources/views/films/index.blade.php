@@ -18,6 +18,7 @@
     
 </head>
 
+<body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
             @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
@@ -144,37 +145,41 @@
             </div>
         </div>
     </div>
+</body>
 
 
 
 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/index.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.4/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.4/dist/sweetalert2.all.min.js"></script>
 
-
-<script th:inline="javascript">
+<script>
     $(document).ready(function() {
-        let messageError = [[${messageError}]];
-        let messageSuccess = [[${messageSuccess}]];
+        // Lấy thông báo từ session Laravel
+        let messageError = "{{ session('messageError') }}";  // Lấy thông báo lỗi
+        let messageSuccess = "{{ session('messageSuccess') }}";  // Lấy thông báo thành công
 
-        if(messageSuccess) {
+        // Kiểm tra và hiển thị thông báo thành công nếu có
+        if (messageSuccess) {
             Swal.fire({
                 title: '',
                 text: messageSuccess,
                 icon: 'success',
                 confirmButtonColor: '#3085d6'
-            })
+            });
         }
 
-        if(messageError ) {
+        // Kiểm tra và hiển thị thông báo lỗi nếu có
+        if (messageError) {
             Swal.fire({
                 title: '',
                 text: messageError,
                 icon: 'error'
-            })
+            });
         }
-    })
+    });
 </script>
+    
 
 

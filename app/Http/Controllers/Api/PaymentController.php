@@ -7,13 +7,59 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function payment(){
+    public function  payment(Request $request)
+    {
+        // Các điều kiện kiểm tra
+        $paymentMethod = $request->input('payment_method'); // Phương thức thanh toán
+        $filmId = $request->input('film_id'); // ID phim
+        $seatNumber = $request->input('seat_number'); // Số ghế
+
+        // Kiểm tra điều kiện
+        if (!$paymentMethod || !in_array($paymentMethod, ['Zalo Pay', 'Shoppe Pay', 'ATM Card'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid payment method',
+                'error_code' => 'PAY001',
+            ], 400);
+        }
+
+        if (!$filmId || $filmId !== '001') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid film ID',
+                'error_code' => 'FILM001',
+            ], 400);
+        }
+
+        if (!$seatNumber || empty($seatNumber)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Seat number is required',
+                'error_code' => 'SEAT001',
+            ], 400);
+        }
+
+
+
         $payment = [
             'status' => 'success',
             'message' => 'Payment',
             'data' => [
                 'payment_id' => '123123',
-                'payment_method' => ['Zalo Pay', 'MoMo', 'ATM Card'],
+                'payment_method' => [
+                    [
+                        'id' => 123,
+                        'name' => 'Zalo Pay'
+                    ],
+                    [
+                        'id' => 124,
+                        'name' => 'Shoppe Pay'
+                    ],
+                    [
+                        'id' => 125,
+                        'name' => 'ATM Card'
+                    ],
+                ],
                 'film' => [
                     'film_id' => '001',
                     'film_name' => 'The Marvels',
