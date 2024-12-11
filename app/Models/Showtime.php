@@ -14,4 +14,13 @@ class Showtime extends Model
         'day',
         'start_time'
     ];
+    public function film()
+    {
+        return $this->belongsTo(Film::class); // Liên kết với model Film
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class); // Liên kết với model Room
+    }
 }

@@ -19,10 +19,10 @@ class FilmController extends Controller
     }
 
     
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // /**
+    //  * Show the form for creating a new resource.
+    //  */
+    public function create(): View
     {
         //
         return view('films.create');
@@ -31,13 +31,14 @@ class FilmController extends Controller
     public function store(StoreFilmRequest $request) : RedirectResponse
     {
         Film::create($request->all());
-        return redirect()->route('films.index')
-                ->withSuccess('New film is added successfully.');
+        session()->flash('messageSuccess', 'New film is added successfully.');
+        return redirect()->route('films.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
+
+    // /**
+    //  * Display the specified resource.
+    //  */
     public function show(Film $film) : View
     {
         return view('films.show', [
@@ -52,9 +53,9 @@ class FilmController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(UpdateFilmRequest $request, Film $film) : RedirectResponse
     {
         $film->update($request->all());
@@ -62,9 +63,9 @@ class FilmController extends Controller
                 ->withSuccess('Film is updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
     public function destroy(Film $film) : RedirectResponse
     {
         $film->delete();

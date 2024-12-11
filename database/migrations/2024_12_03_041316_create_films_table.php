@@ -21,10 +21,10 @@ return new class extends Migration
             $table->string('movie_genre'); 
             $table->string('censorship')->nullable(); 
             $table->string('language'); 
-            $table->string('direction');
+            $table->string('director');
             $table->string('actor'); 
             $table->boolean('status');
-            $table->boolean('release');
+            $table->string('release');
             $table->timestamps();
         });
     }

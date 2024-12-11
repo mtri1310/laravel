@@ -17,7 +17,7 @@ class Film extends Model
         'movie_genre',
         'censorship',
         'language',
-        'direction',
+        'director',
         'actor',
         'status',
         'release'

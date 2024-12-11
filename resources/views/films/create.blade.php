@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('admin')
 
 @section('content')
 
@@ -33,7 +33,7 @@
                     <div class="mb-3 row">
                         <label for="thumbnail" class="col-md-4 col-form-label text-md-end text-start">Thumbnail</label>
                         <div class="col-md-6">
-                          <input type="file" class="form-control @error('thumbnail') is-invalid @enderror" id="thumbnail" name="thumbnail">
+                          <input type="file" class="form-control @error('thumbnail') is-invalid @enderror" id="thumbnail" name="thumbnail" value="{{ old('thumbnail') }}">
                             @if ($errors->has('thumbnail'))
                                 <span class="text-danger">{{ $errors->first('thumbnail') }}</span>
                             @endif
@@ -53,9 +53,9 @@
 
                     <!-- Review -->
                     <div class="mb-3 row">
-                        <label for="review" class="col-md-4 col-form-label text-md-end text-start">Review (0-10)</label>
+                        <label for="review" class="col-md-4 col-form-label text-md-end text-start">Review</label>
                         <div class="col-md-6">
-                          <input type="number" class="form-control @error('review') is-invalid @enderror" id="review" name="review" value="{{ old('review') }}" min="0" max="10" step="0.1">
+                          <input type="number" class="form-control @error('review') is-invalid @enderror" id="review" name="review" value="{{ old('review') }}" min="0" max="10">
                             @if ($errors->has('review'))
                                 <span class="text-danger">{{ $errors->first('review') }}</span>
                             @endif
@@ -66,7 +66,7 @@
                     <div class="mb-3 row">
                         <label for="story_line" class="col-md-4 col-form-label text-md-end text-start">Story Line</label>
                         <div class="col-md-6">
-                            <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line">{{ old('story_line') }}</textarea>
+                          <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line">{{ old('story_line') }}</textarea>
                             @if ($errors->has('story_line'))
                                 <span class="text-danger">{{ $errors->first('story_line') }}</span>
                             @endif
@@ -106,13 +106,13 @@
                         </div>
                     </div>
 
-                    <!-- Direction -->
+                    <!-- director -->
                     <div class="mb-3 row">
-                        <label for="direction" class="col-md-4 col-form-label text-md-end text-start">Direction</label>
+                        <label for="director" class="col-md-4 col-form-label text-md-end text-start">director</label>
                         <div class="col-md-6">
-                          <input type="text" class="form-control @error('direction') is-invalid @enderror" id="direction" name="direction" value="{{ old('direction') }}">
-                            @if ($errors->has('direction'))
-                                <span class="text-danger">{{ $errors->first('direction') }}</span>
+                          <input type="text" class="form-control @error('director') is-invalid @enderror" id="director" name="director" value="{{ old('director') }}">
+                            @if ($errors->has('director'))
+                                <span class="text-danger">{{ $errors->first('director') }}</span>
                             @endif
                         </div>
                     </div>
@@ -133,8 +133,8 @@
                         <label for="status" class="col-md-4 col-form-label text-md-end text-start">Status</label>
                         <div class="col-md-6">
                           <select class="form-control @error('status') is-invalid @enderror" id="status" name="status">
-                              <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Active</option>
-                              <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Inactive</option>
+                              <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Showing</option>
+                              <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Removed</option>
                           </select>
                             @if ($errors->has('status'))
                                 <span class="text-danger">{{ $errors->first('status') }}</span>
@@ -146,17 +146,14 @@
                     <div class="mb-3 row">
                         <label for="release" class="col-md-4 col-form-label text-md-end text-start">Release</label>
                         <div class="col-md-6">
-                          <select class="form-control @error('release') is-invalid @enderror" id="release" name="release">
-                              <option value="1" {{ old('release') == 1 ? 'selected' : '' }}>Released</option>
-                              <option value="0" {{ old('release') == 0 ? 'selected' : '' }}>Not Released</option>
-                          </select>
-                            @if ($errors->has('release'))
-                                <span class="text-danger">{{ $errors->first('release') }}</span>
-                            @endif
-                        </div>
+                            <input type="text" class="form-control @error('release') is-invalid @enderror" id="release" name="release" value="{{ old('release') }}">
+                              @if ($errors->has('release'))
+                                  <span class="text-danger">{{ $errors->first('release') }}</span>
+                              @endif
+                          </div>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit -->
                     <div class="mb-3 row">
                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Film">
                     </div>
@@ -166,5 +163,5 @@
         </div>
     </div>    
 </div>
-
+    
 @endsection
