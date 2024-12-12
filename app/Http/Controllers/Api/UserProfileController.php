@@ -18,7 +18,7 @@ class UserProfileController extends Controller
                     "username" => "The Marvels",
                     "email" => "skdfnksj@gmail.com",
                     "thumbnail" => "https://example.com/poster/the-marvels.jpg",
-                    "phone" => "012155152105"
+                    "phone" => "012155152105",
                 ]
             ]
         ];

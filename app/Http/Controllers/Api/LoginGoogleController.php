@@ -5,87 +5,48 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
+use Exception;
+use Illuminate\Support\Facades\Log;
 class LoginGoogleController extends Controller
 {
     public function redirectToGoogle()
-
     {
-
         return Socialite::driver('google')->redirect();
-
     }
 
-          
-
-    /**
-
-     * Create a new controller instance.
-
-     *
-
-     * @return void
-
-     */
-
     public function handleGoogleCallback()
-
     {
-
         try {
-
-        
-
             $user = Socialite::driver('google')->user();
 
-         
+            // Tìm người dùng dựa trên google_id
+            $findUser = User::where('google_id', $user->id)->first();
 
-            $finduser = User::where('google_id', $user->id)->first();
-
-         
-
-            if($finduser){
-
-         
-
-                Auth::login($finduser);
-
-        
-
+            if ($findUser) {
+                // Đăng nhập nếu người dùng đã tồn tại
+                Auth::login($findUser);
                 return redirect()->intended('dashboard');
-
-         
-
-            }else{
-
-                $newUser = User::updateOrCreate(['email' => $user->email],[
+            } else {
+                // Tạo người dùng mới nếu chưa tồn tại
+                $newUser = User::updateOrCreate(
+                    ['email' => $user->email], // Tìm người dùng dựa trên email
+                    [
                         'username' => $user->name,
-                        'google_id'=> $user->id,
+                        'google_id' => $user->id,
                         'full_name' => $user->name,
-                        'password' => encrypt('123456dummy')
-
-                    ]);
-
-         
+                        'role'=>"1",
+                        'password' => bcrypt('123456dummy'), // Sử dụng bcrypt để hash mật khẩu
+                    ]
+                );
 
                 Auth::login($newUser);
-
-        
-
                 return redirect()->intended('dashboard');
-
             }
-
-        
-
-        } catch (Exception $e) {
-
-            dd($e->getMessage());
-
+        } catch (\Exception $e) {
+            Log::error('Google Login Error: '.$e->getMessage());
+            return redirect()->route('login')->with('error', 'Đăng nhập thất bại, vui lòng thử lại.');
         }
-
     }
 }

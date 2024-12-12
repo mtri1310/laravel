@@ -3,7 +3,7 @@
 <body>
 <header id="page-header" class="header header-fixed d-flex">
     <div class="container-fluid d-flex align-items-center justify-content-end header-container">
-        <div><a href="{{ route('auth.google') }}">Đăng nhập bằng google</a></div>
+        <div><a href="{{ route('login-by-google') }}">Đăng nhập bằng google</a></div>
         <div class="dropdown dropdown-profile">
             <div class="topbar-item d-flex align-items-center dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 <span>Hi,</span>
