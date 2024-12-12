@@ -3,7 +3,7 @@
 <header class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
     <div class="brand d-flex justify-content-between align-items-center" id="kt_brand">
         <a href="/" class="d-flex">
-            <img alt="Logo" src="{{ asset('assets/images/logo-white.png') }}" />
+            <img id="logo" alt="Logo" src="{{ asset('assets/images/logo-white.png') }}" />
         </a>
     </div>
     <!--begin::Aside Menu-->

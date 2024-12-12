@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <title>Admin</title>
-    <link th:href="@{/images/icon.png}" rel="icon" type = "image/x-icon">
+    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type = "image/x-icon">
 
     <!-- Bootstrap core -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}"/>
