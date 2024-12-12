@@ -3,7 +3,7 @@
 <header class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
     <div class="brand d-flex justify-content-between align-items-center" id="kt_brand">
         <a href="/" class="d-flex">
-            <img alt="Logo" src="{{ asset('assets/images/logo-white.png') }}" />
+            <img id="logo" alt="Logo" src="{{ asset('assets/images/logo-white.png') }}" />
         </a>
     </div>
     <!--begin::Aside Menu-->
@@ -146,39 +146,65 @@
 
                 </li>
                 <li class="menu-item d-flex flex-column justify-content-center">
-                    <a data-toggle="collapse" href="#menu-item-collapse-4"
-                       th:classappend="${key =='brand' ? 'menu-active' : ''}"
-                       th:attr="aria-expanded=${key == 'brand' ? true : false}"
+                    <a data-toggle="collapse" href="#menu-item-collapse-showtime"
+                       th:classappend="${key =='showtime' ? 'menu-active' : ''}"
+                       th:attr="aria-expanded=${key == 'showtime' ? true : false}"
                        class="menu-link menu-toggle align-items-center"
                        aria-expanded="false"
-                       aria-controls="menu-item-collapse-4"
-                       role="button"
-                    >
+                       aria-controls="menu-item-collapse-showtime"
+                       role="button">
                         <span class="svg-icon menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <rect x="0" y="0" width="24" height="24"></rect>
-                                    <path d="M2.56066017,10.6819805 L4.68198052,8.56066017 C5.26776695,7.97487373 6.21751442,7.97487373 6.80330086,8.56066017 L8.9246212,10.6819805 C9.51040764,11.267767 9.51040764,12.2175144 8.9246212,12.8033009 L6.80330086,14.9246212 C6.21751442,15.5104076 5.26776695,15.5104076 4.68198052,14.9246212 L2.56066017,12.8033009 C1.97487373,12.2175144 1.97487373,11.267767 2.56066017,10.6819805 Z M14.5606602,10.6819805 L16.6819805,8.56066017 C17.267767,7.97487373 18.2175144,7.97487373 18.8033009,8.56066017 L20.9246212,10.6819805 C21.5104076,11.267767 21.5104076,12.2175144 20.9246212,12.8033009 L18.8033009,14.9246212 C18.2175144,15.5104076 17.267767,15.5104076 16.6819805,14.9246212 L14.5606602,12.8033009 C13.9748737,12.2175144 13.9748737,11.267767 14.5606602,10.6819805 Z" fill="#000000" opacity="0.3"></path>
-                                    <path d="M8.56066017,16.6819805 L10.6819805,14.5606602 C11.267767,13.9748737 12.2175144,13.9748737 12.8033009,14.5606602 L14.9246212,16.6819805 C15.5104076,17.267767 15.5104076,18.2175144 14.9246212,18.8033009 L12.8033009,20.9246212 C12.2175144,21.5104076 11.267767,21.5104076 10.6819805,20.9246212 L8.56066017,18.8033009 C7.97487373,18.2175144 7.97487373,17.267767 8.56066017,16.6819805 Z M8.56066017,4.68198052 L10.6819805,2.56066017 C11.267767,1.97487373 12.2175144,1.97487373 12.8033009,2.56066017 L14.9246212,4.68198052 C15.5104076,5.26776695 15.5104076,6.21751442 14.9246212,6.80330086 L12.8033009,8.9246212 C12.2175144,9.51040764 11.267767,9.51040764 10.6819805,8.9246212 L8.56066017,6.80330086 C7.97487373,6.21751442 7.97487373,5.26776695 8.56066017,4.68198052 Z" fill="#000000"></path>
-                                </g>
-                            </svg>
+                            <!-- SVG icon -->
                         </span>
-                        <span class="menu-text" >Showtime Management</span>
+                        <span class="menu-text">Showtime Management</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <ul class="collapse menu-item flex-column justify-content-center"  id="menu-item-collapse-4" th:classappend="${key =='brand' ? 'show' : ''}">
-                        <li class="menu-link menu-item-sub align-items-center" th:classappend="${subkey =='brand_all' ? 'menu-active' : ''}">
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-showtime" 
+                        th:classappend="${key =='showtime' ? 'show' : ''}">
+                        <li class="menu-link menu-item-sub align-items-center" 
+                            th:classappend="${subkey =='showtime_all' ? 'menu-active' : ''}">
                             <a href="{{ route('showtimes.index') }}">
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                        <li class="menu-link menu-item-sub align-items-center" th:classappend="${subkey =='brand_new' ? 'menu-active' : ''}">
-                            <a href="/admin/brand/add">
-                                <span class="menu-text">Create new </span>
+                        <li class="menu-link menu-item-sub align-items-center" 
+                            th:classappend="${subkey =='showtime_new' ? 'menu-active' : ''}">
+                            <a href="/admin/showtime/add">
+                                <span class="menu-text">Create New</span>
                             </a>
                         </li>
                     </ul>
-
+                </li>
+                
+                <li class="menu-item d-flex flex-column justify-content-center">
+                    <a data-toggle="collapse" href="#menu-item-collapse-user"
+                       th:classappend="${key =='user' ? 'menu-active' : ''}"
+                       th:attr="aria-expanded=${key == 'user' ? true : false}"
+                       class="menu-link menu-toggle align-items-center"
+                       aria-expanded="false"
+                       aria-controls="menu-item-collapse-user"
+                       role="button">
+                        <span class="svg-icon menu-icon">
+                            <!-- SVG icon -->
+                        </span>
+                        <span class="menu-text">User Management</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-user" 
+                        th:classappend="${key =='user' ? 'show' : ''}">
+                        <li class="menu-link menu-item-sub align-items-center" 
+                            th:classappend="${subkey =='user_all' ? 'menu-active' : ''}">
+                            <a href="{{ route('users.index') }}">
+                                <span class="menu-text">See All</span>
+                            </a>
+                        </li>
+                        <li class="menu-link menu-item-sub align-items-center" 
+                            th:classappend="${subkey =='user_new' ? 'menu-active' : ''}">
+                            <a href="{{ route('users.create') }}">
+                                <span class="menu-text">Create New</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 
                 

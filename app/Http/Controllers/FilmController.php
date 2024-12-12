@@ -7,15 +7,21 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreFilmRequest;
 use App\Http\Requests\UpdateFilmRequest;
-
+use Carbon\Carbon;
 class FilmController extends Controller
 {
     //
     public function index(): View
-    {
-        return view('films.index', [
-            'films' => Film::latest()->paginate(3)
-        ]);
+    { 
+        $films = Film::all();
+
+        // Định dạng ngày 'release' theo định dạng 'dd/MM/yyyy' trước khi gửi vào view
+        foreach ($films as $film) {
+            $film->release = Carbon::parse($film->release)->format('d/m/Y');
+        }
+    
+        return view('films.index', compact('films'));
+
     }
 
     
@@ -28,27 +34,22 @@ class FilmController extends Controller
         return view('films.create');
     }
 
+    
     public function store(StoreFilmRequest $request) : RedirectResponse
     {
-        Film::create($request->all());
-        session()->flash('messageSuccess', 'New film is added successfully.');
-        return redirect()->route('films.index');
-    }
-
-
-    // /**
-    //  * Display the specified resource.
-    //  */
-    public function show(Film $film) : View
-    {
-        return view('films.show', [
-            'film' => $film
-        ]);
+        try{
+            Film::create($request->all());
+            session()->flash('messageSuccess', 'New film is added successfully.');
+            return redirect()->route('films.index');
+        }
+        catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     public function edit(Film $film) : View
     {
-        return view('films.edit', [
+        return view('films.create', [
             'film' => $film
         ]);
     }

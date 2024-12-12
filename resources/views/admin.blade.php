@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <title>Admin</title>
-    <link th:href="@{/images/icon.png}" rel="icon" type = "image/x-icon">
+    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type = "image/x-icon">
 
     <!-- Bootstrap core -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}"/>
@@ -23,11 +23,11 @@
             @include('fragments.sidebar', ['key' => 'dashboard', 'subkey' => ''])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
-                <div class="content">
+                {{-- <div class="content">
                     
                     @yield('content')
                     
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
