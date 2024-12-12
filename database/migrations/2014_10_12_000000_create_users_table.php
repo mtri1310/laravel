@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('phone');
             $table->string('picture');
+            $table->boolean('role');
             $table->rememberToken()->nullable();
             $table->timestamps();
         });
