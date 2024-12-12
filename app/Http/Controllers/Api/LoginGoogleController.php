@@ -16,18 +16,6 @@ class LoginGoogleController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-
-
-    /**
-
-     * Create a new controller instance.
-
-     *
-
-     * @return void
-
-     */
-
     public function handleGoogleCallback()
     {
         try {
@@ -37,24 +25,6 @@ class LoginGoogleController extends Controller
             // dd($user);
 
             $findUser = User::where('google_id', $user->id)->first();
-
-
-
-            $user = Socialite::driver('google')->user();
-
-
-
-            $finduser = User::where('google_id', $user->id)->first();
-
-
-
-            if ($finduser) {
-
-
-
-                Auth::login($finduser);
-
-
 
             if ($findUser) {
                 Auth::login($findUser);
