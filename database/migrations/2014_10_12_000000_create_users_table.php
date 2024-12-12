@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('phone');
             $table->string('picture');
+            $table->string('token');
             $table->boolean('role');
             $table->string('google_id')->nullable()->unique();
             $table->rememberToken()->nullable();

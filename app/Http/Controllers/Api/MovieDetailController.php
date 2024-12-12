@@ -9,13 +9,13 @@ class MovieDetailController extends Controller
 {
     public function getMovieDetails(): JsonResponse
     {
-        // Dữ liệu phim bạn muốn trả về dưới dạng JSON
+    
         $movieData = [
             "status" => "success",
             "message" => "Movie details",
             "data" => [
                 "film" => [
-                    "film_id" => "12345",
+                    "film_id" => 01,
                     "thumbnail" => "https://example.com/poster/avengers-endgame.jpg",
                     "film_name" => "Avengers: Infinity War",
                     "duration" => "2 hours 29 minutes",

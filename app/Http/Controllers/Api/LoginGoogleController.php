@@ -16,6 +16,18 @@ class LoginGoogleController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
+
+
+    /**
+
+     * Create a new controller instance.
+
+     *
+
+     * @return void
+
+     */
+
     public function handleGoogleCallback()
     {
         try {
@@ -23,6 +35,24 @@ class LoginGoogleController extends Controller
 
             // Tìm người dùng dựa trên google_id
             $findUser = User::where('google_id', $user->id)->first();
+
+
+
+            $user = Socialite::driver('google')->user();
+
+
+
+            $finduser = User::where('google_id', $user->id)->first();
+
+
+
+            if ($finduser) {
+
+
+
+                Auth::login($finduser);
+
+
 
             if ($findUser) {
                 // Đăng nhập nếu người dùng đã tồn tại
@@ -47,6 +77,28 @@ class LoginGoogleController extends Controller
         } catch (\Exception $e) {
             Log::error('Google Login Error: '.$e->getMessage());
             return redirect()->route('login')->with('error', 'Đăng nhập thất bại, vui lòng thử lại.');
+
+                $newUser = User::updateOrCreate(['email' => $user->email], [
+
+                    'name' => $user->name,
+
+                    'google_id' => $user->id,
+
+                    'password' => encrypt('123456dummy')
+
+                ]);
+
+
+
+                Auth::login($newUser);
+
+
+
+                return redirect()->intended('dashboard');
+            }
+        } catch (Exception $e) {
+
+            dd($e->getMessage());
         }
     }
 }
