@@ -10,7 +10,7 @@ class StoreFilmRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'film_name' => 'required|string|max:255',
+            'film_name' => 'required|string|max:255|unique:films,film_name,',
             'thumbnail' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',  // Kiểm tra tệp hình ảnh
             'duration' => 'required|string|max:50', // Giới hạn độ dài cho trường duration
             'review' => 'numeric|min:0|max:5', // Đánh giá, tối thiểu 0 và tối đa 5

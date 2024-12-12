@@ -53,7 +53,7 @@
                                 <div class="col-md-10 col-lg-8">
                                     {{-- Film Form --}}
                                     <form
-                                        action="{{ isset($film->id) ? route('films.edit', $film->id) : route('films.store') }}"
+                                        action="{{ isset($film->id) ? route('films.update', $film->id) : route('films.store') }}"
                                         method="post" id="form-film" enctype="multipart/form-data">
                                         @csrf
                                         @if (isset($film->id))
@@ -182,11 +182,11 @@
                                         <div class="mb-4">
                                             <div class="d-flex flex-column justify-content-center">
                                                 <div class="custom-control custom-switch">
+                                                    <input type="hidden" name="status" value="0">
                                                     <input type="checkbox" class="custom-control-input"
                                                         id="status" name="status" value="1"
-                                                        {{ old('status', $film->status ?? 0) ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="status">Is
-                                                        Published?</label>
+                                                        {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="status">Is Published?</label>
                                                 </div>
                                             </div>
                                         </div>

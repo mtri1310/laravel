@@ -47,20 +47,9 @@ class FilmController extends Controller
         }
     }
 
-
-    // /**
-    //  * Display the specified resource.
-    //  */
-    public function show(Film $film) : View
-    {
-        return view('films.show', [
-            'film' => $film
-        ]);
-    }
-
     public function edit(Film $film) : View
     {
-        return view('films.edit', [
+        return view('films.create', [
             'film' => $film
         ]);
     }

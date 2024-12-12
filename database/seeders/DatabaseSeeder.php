@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'picture' => 'default.png',
             'phone' => '1234567890',
             'role' => 1, // Role là admin
+            'google_id' => '1'
         ]);
 
         // Tạo tài khoản user
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             'picture' => 'default.png',
             'phone' => '0987654321',
             'role' => 0, // Role là user
+            'google_id' => '1'
         ]);
     }
 }

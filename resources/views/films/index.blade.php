@@ -111,10 +111,10 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a class="btn btn-sm btn-alt-secondary" href="" data-toggle="tooltip" data-placement="top" title="Edit">
+                                                    <a class="btn btn-sm btn-alt-secondary" href="{{ route('films.edit', $film->id) }}" data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-alt-danger" href="" data-toggle="tooltip" data-placement="top" title="Delete" onclick="return confirm('Are you sure you want to delete this film?')">
+                                                    <a class="btn btn-sm btn-alt-danger" href="{{ route('films.destroy', $film->id) }}" data-toggle="tooltip" data-placement="top" title="Delete" onclick="return confirm('Are you sure you want to delete this film?')">
                                                         <i class="fa fa-fw fa-times text-danger"></i>
                                                     </a>
                                                 </td>
