@@ -16,10 +16,9 @@ class LoginGoogleController extends Controller
     {
 
         return Socialite::driver('google')->redirect();
-
     }
 
-          
+
 
     /**
 
@@ -37,57 +36,48 @@ class LoginGoogleController extends Controller
 
         try {
 
-        
+
 
             $user = Socialite::driver('google')->user();
 
-         
+
 
             $finduser = User::where('google_id', $user->id)->first();
 
-         
 
-            if($finduser){
 
-         
+            if ($finduser) {
+
+
 
                 Auth::login($finduser);
 
-        
+
 
                 return redirect()->intended('dashboard');
+            } else {
 
-         
+                $newUser = User::updateOrCreate(['email' => $user->email], [
 
-            }else{
+                    'name' => $user->name,
 
-                $newUser = User::updateOrCreate(['email' => $user->email],[
+                    'google_id' => $user->id,
 
-                        'name' => $user->name,
+                    'password' => encrypt('123456dummy')
 
-                        'google_id'=> $user->id,
+                ]);
 
-                        'password' => encrypt('123456dummy')
 
-                    ]);
-
-         
 
                 Auth::login($newUser);
 
-        
+
 
                 return redirect()->intended('dashboard');
-
             }
-
-        
-
         } catch (Exception $e) {
 
             dd($e->getMessage());
-
         }
-
     }
 }
