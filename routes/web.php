@@ -13,6 +13,9 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
 use App\Http\Controllers\UserController;
 
+use Cloudinary\Cloudinary;
+use Cloudinary\Api\Exception\ApiError;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,3 +64,4 @@ Route::controller(LoginGoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
+

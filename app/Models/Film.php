@@ -20,6 +20,9 @@ class Film extends Model
         'director',
         'actor',
         'status',
-        'release'
+        'release',
+    ];
+    protected $casts = [
+        'release' => 'date', 
     ];
 }
