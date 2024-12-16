@@ -69,8 +69,8 @@
                 <li class="menu-item d-flex flex-column justify-content-center">
                     <a   data-toggle="collapse"
                          href="#menu-item-collapse-2"
-                         th:classappend="${key =='category' ? 'menu-active' : ''}"
-                         th:attr="aria-expanded=${key == 'category' ? true : false}"
+                         {{ $key == 'room' ? 'menu-active' : '' }}
+                         aria-expanded="{{ $key == 'room' ? 'true' : 'false' }}"
                          class="menu-link menu-toggle align-items-center"
                          role="button"
                          aria-expanded="false"
@@ -91,7 +91,7 @@
                         <span class="menu-text">Room Management</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-2" th:classappend="${key =='category' ? 'show' : ''}">
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-2" @class(['show' => $key == 'room'])>
                       
                         <li class="menu-link menu-item-sub align-items-center" 
                             @class(['menu-active' => $subkey == 'room_all'])>
@@ -99,25 +99,24 @@
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                        <li class="menu-link menu-item-sub align-items-center" th:classappend="${subkey =='category_new' ? 'menu-active' : ''}">
-
-                        <a href="/admin/category/add">
-                                <span class="menu-text">Create new</span>
+                         <li class="menu-link menu-item-sub align-items-center" 
+                            @class(['menu-active' => $subkey == 'room_new'])>
+                            <a href="{{ route('rooms.create') }}">
+                                <span class="menu-text">Create new </span>
                             </a>
                         </li>
                     </ul>
 
                 </li>
                 <li class="menu-item d-flex flex-column justify-content-center">
-                    <a
-                        data-toggle="collapse"
-                        href="#menu-item-collapse-3"
-                        th:classappend="${key =='user' ? 'menu-active' : ''}"
-                        th:attr="aria-expanded=${key == 'user' ? true : false}"
-                        class="menu-link menu-toggle align-items-center"
-                        role="button"
-                        aria-expanded="false"
-                        aria-controls="menu-item-collapse-3"
+                    <a   data-toggle="collapse"
+                         href="#menu-item-collapse-3"
+                         {{ $key == 'seat' ? 'menu-active' : '' }}
+                         aria-expanded="{{ $key == 'seat' ? 'true' : 'false' }}"
+                         class="menu-link menu-toggle align-items-center"
+                         role="button"
+                         aria-expanded="false"
+                         aria-controls="menu-item-collapse-3"
                     >
                         <span class="svg-icon menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -128,83 +127,107 @@
                                 </g>
                             </svg>
                         </span>
+
                         <span class="menu-text">Seat Management</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-3" th:classappend="${key =='user' ? 'show' : ''}">
-                        <li class="menu-link menu-item-sub align-items-center" th:classappend="${subkey =='user_all' ? 'menu-active' : ''}">
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-3" @class(['show' => $key == 'seat'])>
+                      
+                        <li class="menu-link menu-item-sub align-items-center" 
+                            @class(['menu-active' => $subkey == 'seat_all'])>
                             <a href="{{ route('seats.index') }}">
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                        <li class="menu-link menu-item-sub align-items-center" th:classappend="${subkey =='user_new' ? 'menu-active' : ''}">
-                            <a href="/admin/user/add">
-                                <span class="menu-text">Create new</span>
+                         <li class="menu-link menu-item-sub align-items-center" 
+                            @class(['menu-active' => $subkey == 'seat_new'])>
+                            <a href="{{ route('seats.create') }}">
+                                <span class="menu-text">Create new </span>
                             </a>
                         </li>
                     </ul>
 
                 </li>
                 <li class="menu-item d-flex flex-column justify-content-center">
-                    <a data-toggle="collapse" href="#menu-item-collapse-showtime"
-                       th:classappend="${key =='showtime' ? 'menu-active' : ''}"
-                       th:attr="aria-expanded=${key == 'showtime' ? true : false}"
-                       class="menu-link menu-toggle align-items-center"
-                       aria-expanded="false"
-                       aria-controls="menu-item-collapse-showtime"
-                       role="button">
-                        <span class="svg-icon menu-icon">
-                            <!-- SVG icon -->
+                    <a   data-toggle="collapse"
+                         href="#menu-item-collapse-4"
+                         {{ $key == 'showtime' ? 'menu-active' : '' }}
+                         aria-expanded="{{ $key == 'showtime' ? 'true' : 'false' }}"
+                         class="menu-link menu-toggle align-items-center"
+                         role="button"
+                         aria-expanded="false"
+                         aria-controls="menu-item-collapse-4"
+                    >
+                       <span class="svg-icon menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                    <path d="M2.56066017,10.6819805 L4.68198052,8.56066017 C5.26776695,7.97487373 6.21751442,7.97487373 6.80330086,8.56066017 L8.9246212,10.6819805 C9.51040764,11.267767 9.51040764,12.2175144 8.9246212,12.8033009 L6.80330086,14.9246212 C6.21751442,15.5104076 5.26776695,15.5104076 4.68198052,14.9246212 L2.56066017,12.8033009 C1.97487373,12.2175144 1.97487373,11.267767 2.56066017,10.6819805 Z M14.5606602,10.6819805 L16.6819805,8.56066017 C17.267767,7.97487373 18.2175144,7.97487373 18.8033009,8.56066017 L20.9246212,10.6819805 C21.5104076,11.267767 21.5104076,12.2175144 20.9246212,12.8033009 L18.8033009,14.9246212 C18.2175144,15.5104076 17.267767,15.5104076 16.6819805,14.9246212 L14.5606602,12.8033009 C13.9748737,12.2175144 13.9748737,11.267767 14.5606602,10.6819805 Z" fill="#000000" opacity="0.3"></path>
+                                    <path d="M8.56066017,16.6819805 L10.6819805,14.5606602 C11.267767,13.9748737 12.2175144,13.9748737 12.8033009,14.5606602 L14.9246212,16.6819805 C15.5104076,17.267767 15.5104076,18.2175144 14.9246212,18.8033009 L12.8033009,20.9246212 C12.2175144,21.5104076 11.267767,21.5104076 10.6819805,20.9246212 L8.56066017,18.8033009 C7.97487373,18.2175144 7.97487373,17.267767 8.56066017,16.6819805 Z M8.56066017,4.68198052 L10.6819805,2.56066017 C11.267767,1.97487373 12.2175144,1.97487373 12.8033009,2.56066017 L14.9246212,4.68198052 C15.5104076,5.26776695 15.5104076,6.21751442 14.9246212,6.80330086 L12.8033009,8.9246212 C12.2175144,9.51040764 11.267767,9.51040764 10.6819805,8.9246212 L8.56066017,6.80330086 C7.97487373,6.21751442 7.97487373,5.26776695 8.56066017,4.68198052 Z" fill="#000000"></path>
+                                </g>
+                            </svg>
                         </span>
+
                         <span class="menu-text">Showtime Management</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-showtime" 
-                        th:classappend="${key =='showtime' ? 'show' : ''}">
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-4" @class(['show' => $key == 'showtime'])>
+                      
                         <li class="menu-link menu-item-sub align-items-center" 
-                            th:classappend="${subkey =='showtime_all' ? 'menu-active' : ''}">
+                            @class(['menu-active' => $subkey == 'showtime_all'])>
                             <a href="{{ route('showtimes.index') }}">
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                        <li class="menu-link menu-item-sub align-items-center" 
-                            th:classappend="${subkey =='showtime_new' ? 'menu-active' : ''}">
-                            <a href="/admin/showtime/add">
-                                <span class="menu-text">Create New</span>
+                         <li class="menu-link menu-item-sub align-items-center" 
+                            @class(['menu-active' => $subkey == 'showtime_new'])>
+                            <a href="{{ route('showtimes.create') }}">
+                                <span class="menu-text">Create new </span>
                             </a>
                         </li>
                     </ul>
+
                 </li>
                 
                 <li class="menu-item d-flex flex-column justify-content-center">
-                    <a data-toggle="collapse" href="#menu-item-collapse-user"
-                       th:classappend="${key =='user' ? 'menu-active' : ''}"
-                       th:attr="aria-expanded=${key == 'user' ? true : false}"
-                       class="menu-link menu-toggle align-items-center"
-                       aria-expanded="false"
-                       aria-controls="menu-item-collapse-user"
-                       role="button">
+                    <a   data-toggle="collapse"
+                         href="#menu-item-collapse-5"
+                         {{ $key == 'user' ? 'menu-active' : '' }}
+                         aria-expanded="{{ $key == 'user' ? 'true' : 'false' }}"
+                         class="menu-link menu-toggle align-items-center"
+                         role="button"
+                         aria-expanded="false"
+                         aria-controls="menu-item-collapse-5"
+                    >
                         <span class="svg-icon menu-icon">
-                            <!-- SVG icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                    <path d="M4,9.67471899 L10.880262,13.6470401 C10.9543486,13.689814 11.0320333,13.7207107 11.1111111,13.740321 L11.1111111,21.4444444 L4.49070127,17.526473 C4.18655139,17.3464765 4,17.0193034 4,16.6658832 L4,9.67471899 Z M20,9.56911707 L20,16.6658832 C20,17.0193034 19.8134486,17.3464765 19.5092987,17.526473 L12.8888889,21.4444444 L12.8888889,13.6728275 C12.9050191,13.6647696 12.9210067,13.6561758 12.9368301,13.6470401 L20,9.56911707 Z" fill="#000000"></path>
+                                    <path d="M4.21611835,7.74669402 C4.30015839,7.64056877 4.40623188,7.55087574 4.5299008,7.48500698 L11.5299008,3.75665466 C11.8237589,3.60013944 12.1762411,3.60013944 12.4700992,3.75665466 L19.4700992,7.48500698 C19.5654307,7.53578262 19.6503066,7.60071528 19.7226939,7.67641889 L12.0479413,12.1074394 C11.9974761,12.1365754 11.9509488,12.1699127 11.9085461,12.2067543 C11.8661433,12.1699127 11.819616,12.1365754 11.7691509,12.1074394 L4.21611835,7.74669402 Z" fill="#000000" opacity="0.3"></path>
+                                </g>
+                            </svg>
                         </span>
+
                         <span class="menu-text">User Management</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-user" 
-                        th:classappend="${key =='user' ? 'show' : ''}">
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-5" @class(['show' => $key == 'user'])>
+                      
                         <li class="menu-link menu-item-sub align-items-center" 
-                            th:classappend="${subkey =='user_all' ? 'menu-active' : ''}">
+                            @class(['menu-active' => $subkey == 'user_all'])>
                             <a href="{{ route('users.index') }}">
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                        <li class="menu-link menu-item-sub align-items-center" 
-                            th:classappend="${subkey =='user_new' ? 'menu-active' : ''}">
+                         <li class="menu-link menu-item-sub align-items-center" 
+                            @class(['menu-active' => $subkey == 'user_new'])>
                             <a href="{{ route('users.create') }}">
-                                <span class="menu-text">Create New</span>
+                                <span class="menu-text">Create new </span>
                             </a>
                         </li>
                     </ul>
+
                 </li>
                 
                 

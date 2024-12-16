@@ -33,7 +33,7 @@
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'user'])
+                            @include('fragments.search', ['entityName' => 'users'])
                         </div>
                         <div class="list-table-content">
                             <div class="table-responsive">
