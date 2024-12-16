@@ -36,7 +36,7 @@ Route::resource('users', UserController::class)->except(['show'])->middleware('a
 Route::resource('films', FilmController::class)->except(['show'])->middleware('auth');
 Route::resource('seats', SeatController::class)->middleware('auth');
 Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
-Route::resource('showtimes', ShowtimeController::class)->middleware('auth');
+Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
 
 //payment
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
