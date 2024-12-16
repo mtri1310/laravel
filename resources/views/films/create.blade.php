@@ -149,7 +149,7 @@
                                         <div class="mb-3">
                                             <label for="review" class="form-label">Review (0-5)</label>
                                             <input type="number" class="form-control @error('review') is-invalid @enderror" id="review" name="review"
-                                                min="0" max="5"
+                                                min="0" max="5" step="any"
                                                 value="{{ old('review', $film->review ?? '') }}">
                                             @error('review')
                                                 <div class="invalid-feedback">{{ $message }}</div>

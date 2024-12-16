@@ -13,9 +13,6 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
 use App\Http\Controllers\UserController;
 
-use Cloudinary\Cloudinary;
-use Cloudinary\Api\Exception\ApiError;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,8 +24,6 @@ use Cloudinary\Api\Exception\ApiError;
 |
 */
 
-// Route::get('/', [ProductController::class, 'index']);
-
 Route::get('/', DashboardController::class)->middleware('auth'); 
 
 Route::get('/login', [AuthController::class, 'show'])->name('login');
@@ -37,11 +32,11 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/movies', action: [ImdbController::class, 'index']);
 
-Route::resource('users', UserController::class);
-Route::resource('films', FilmController::class)->except(['show']);
-Route::resource('seats', SeatController::class);
-Route::resource('rooms', RoomController::class);
-Route::resource('showtimes', ShowtimeController::class);
+Route::resource('users', UserController::class)->middleware('auth');
+Route::resource('films', FilmController::class)->except(['show'])->middleware('auth');
+Route::resource('seats', SeatController::class)->middleware('auth');
+Route::resource('rooms', RoomController::class)->middleware('auth');
+Route::resource('showtimes', ShowtimeController::class)->middleware('auth');
 
 //payment
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);

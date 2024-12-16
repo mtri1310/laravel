@@ -112,6 +112,12 @@ class FilmController extends Controller
             $data = $request->validated();
 
             if ($request->hasFile('thumbnail')) {
+                // Xóa hình ảnh cũ trên Cloudinary
+                if ($film->thumbnail) {
+                    $this->cloudinaryService->deleteImageByUrl($film->thumbnail);
+                }
+
+                // Upload hình ảnh mới
                 $data['thumbnail'] = $this->cloudinaryService->uploadImage($request->file('thumbnail'));
             } elseif ($request->input('existing_thumbnail')) {
                 $data['thumbnail'] = $request->input('existing_thumbnail');
@@ -136,6 +142,14 @@ class FilmController extends Controller
     public function destroy(Film $film): RedirectResponse
     {
         try {
+            $imageUrl = $film->thumbnail;
+
+            if ($imageUrl) {
+                $deleted = $this->cloudinaryService->deleteImageByUrl($imageUrl);
+                if (!$deleted) {
+                    Log::error("Failed to delete image from Cloudinary for Film ID: {$film->id}");
+                }
+            }
             $film->delete();
 
             return redirect()->route('films.index')
@@ -145,4 +159,5 @@ class FilmController extends Controller
             return back()->with('messageError', 'Failed to delete the film.');
         }
     }
+
 }

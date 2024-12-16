@@ -20,7 +20,7 @@ class UpdateFilmRequest extends FormRequest
             'film_name' => 'required|string|max:255|unique:films,film_name,' . $this->film->id,
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  // Validate image file
             'duration' => 'required|string|max:50',
-            'review' => 'nullable|numeric|min:0|max:10',
+            'review' => 'nullable|numeric|min:0|max:5',
             'story_line' => 'nullable|string',
             'movie_genre' => 'required|string|max:100',
             'censorship' => 'nullable|string|max:50',
@@ -28,7 +28,7 @@ class UpdateFilmRequest extends FormRequest
             'director' => 'required|string|max:255',
             'actor' => 'required|string|max:500',
             'status' => 'required|boolean',
-            'release' => 'required|date',  // Changed from 'string' to 'date'
+            'release' => 'required|date',  
         ];
     }
 
