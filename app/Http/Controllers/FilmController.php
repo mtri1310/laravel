@@ -2,131 +2,147 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Film;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreFilmRequest;
 use App\Http\Requests\UpdateFilmRequest;
-
-use Cloudinary\Cloudinary;
-use Cloudinary\Configuration\Configuration;
-use Cloudinary\Api\Exception\ApiError;
+use App\Services\CloudinaryService;
+use Illuminate\Support\Facades\Log;
 
 class FilmController extends Controller
 {
-    public function __construct()
+    protected $cloudinaryService;
+
+    /**
+     * Constructor to inject CloudinaryService.
+     *
+     * @param CloudinaryService $cloudinaryService
+     */
+    public function __construct(CloudinaryService $cloudinaryService)
     {
-        Configuration::instance([
-            'cloud' => [
-                'cloud_name' => config('cloudinary.cloud_name'),
-                'api_key'    => config('cloudinary.api_key'),
-                'api_secret' => config('cloudinary.api_secret'),
-            ],
-            'url' => [
-                'secure' => true,
-            ],
-        ]);
+        $this->cloudinaryService = $cloudinaryService;
     }
 
-    //
-    public function index(): View
+    /**
+     * Display a listing of the films.
+     *
+     * @return View
+     */
+    public function index(Request $request): View
     { 
-        $films = Film::all();
-        return view('films.index', compact('films'));
+        $keyword = $request->input('keyword');
 
+        $films = Film::latest()
+                    ->when($keyword, function($query, $keyword) {
+                        return $query->where(function($q) use ($keyword) {
+                            $q->where('film_name', 'like', "%{$keyword}%")
+                              ->orWhere('duration', 'like', "%{$keyword}%")
+                              ->orWhere('review', 'like', "%{$keyword}%")
+                              ->orWhere('movie_genre', 'like', "%{$keyword}%")
+                              ->orWhere('censorship', 'like', "%{$keyword}%")
+                              ->orWhere('language', 'like', "%{$keyword}%")
+                              ->orWhere('director', 'like', "%{$keyword}%")
+                              ->orWhere('actor', 'like', "%{$keyword}%");
+                        });
+                    })
+                    ->paginate(10)
+                    ->appends(['keyword' => $keyword]); // Đảm bảo từ khóa được giữ lại trong các liên kết phân trang
+
+        return view('films.index', compact('films', 'keyword'));
     }
 
-    
-    // /**
-    //  * Show the form for creating a new resource.
-    //  */
+    /**
+     * Show the form for creating a new film.
+     *
+     * @return View
+     */
     public function create(): View
     {
-        //
         return view('films.create');
     }
 
-    
+    /**
+     * Store a newly created film in storage.
+     *
+     * @param StoreFilmRequest $request
+     * @return RedirectResponse
+     */
     public function store(StoreFilmRequest $request): RedirectResponse
     {
         try {
-            $data = $request->all();
+            $data = $request->validated();
 
             if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
-                $cloudinary = new Cloudinary();
-
-                // Upload the image to Cloudinary
-                $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
-                    'folder' => 'films/thumbnails', // Optional: specify a folder
-                    'resource_type' => 'image',
-                ]);
-
-                // Save the secure URL to the database
-                $data['thumbnail'] = $uploadResult['secure_url'];
+                $data['thumbnail'] = $this->cloudinaryService->uploadImage($request->file('thumbnail'));
             }
 
             Film::create($data);
-            session()->flash('messageSuccess', 'New film is added successfully.');
-            return redirect()->route('films.index');
-        } catch (ApiError $e) {
-            // Handle Cloudinary API errors
-            return back()->withErrors(['thumbnail' => 'Image upload failed: ' . $e->getMessage()]);
+
+            return redirect()->route('films.index')
+                ->with('messageSuccess', 'New film has been added successfully.');
         } catch (\Exception $e) {
-            // Handle other exceptions
-            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
+            Log::error('Film Store Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while adding the film.');
         }
     }
 
-
-    public function edit(Film $film) : View
+    /**
+     * Show the form for editing the specified film.
+     *
+     * @param Film $film
+     * @return View
+     */
+    public function edit(Film $film): View
     {
-        return view('films.create', [
-            'film' => $film
-        ]);
+        return view('films.create', compact('film')); // Reusing the create view for editing
     }
 
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
+    /**
+     * Update the specified film in storage.
+     *
+     * @param UpdateFilmRequest $request
+     * @param Film $film
+     * @return RedirectResponse
+     */
     public function update(UpdateFilmRequest $request, Film $film): RedirectResponse
     {
         try {
-            $data = $request->all();
+            $data = $request->validated();
 
             if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
-                $cloudinary = new Cloudinary();
-
-                // Upload the new image to Cloudinary
-                $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
-                    'folder' => 'films/thumbnails', // Optional: specify a folder
-                    'resource_type' => 'image',
-                ]);
-
-                // Save the secure URL to the database
-                $data['thumbnail'] = $uploadResult['secure_url'];
+                $data['thumbnail'] = $this->cloudinaryService->uploadImage($request->file('thumbnail'));
+            } elseif ($request->input('existing_thumbnail')) {
+                $data['thumbnail'] = $request->input('existing_thumbnail');
             }
 
             $film->update($data);
-            return redirect()->back()->withSuccess('Film is updated successfully.');
-        } catch (ApiError $e) {
-            // Handle Cloudinary API errors
-            return back()->withErrors(['thumbnail' => 'Image upload failed: ' . $e->getMessage()]);
+
+            return redirect()->route('films.index')
+                ->with('messageSuccess', 'Film has been updated successfully.');
         } catch (\Exception $e) {
-            // Handle other exceptions
-            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
+            Log::error('Film Update Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while updating the film.');
         }
     }
 
-
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    public function destroy(Film $film) : RedirectResponse
+    /**
+     * Remove the specified film from storage.
+     *
+     * @param Film $film
+     * @return RedirectResponse
+     */
+    public function destroy(Film $film): RedirectResponse
     {
-        $film->delete();
-        return redirect()->route('films.index')
-                ->withSuccess('Film is deleted successfully.');
+        try {
+            $film->delete();
+
+            return redirect()->route('films.index')
+                ->with('messageSuccess', 'Film has been deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Film Deletion Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'Failed to delete the film.');
+        }
     }
 }

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'username' => 'admin',
             'password' => Hash::make('admin'), // Mã hóa mật khẩu
-            'email' => 'admin@example.com',
+            'email' => 'admin@gmail.com',
             'full_name' => 'Admin User',
             'picture' => 'default.png',
             'phone' => '1234567890',
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'username' => 'user',
             'password' => Hash::make('user'), // Mã hóa mật khẩu
-            'email' => 'user@example.com',
+            'email' => 'user@gmail.com',
             'full_name' => 'Normal User',
             'picture' => 'default.png',
             'phone' => '0987654321',

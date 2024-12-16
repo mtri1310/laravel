@@ -2,19 +2,19 @@
 <html lang="en">
 <header>
     <div>
-        <form action="{{ url($entityName . '/page/1') }}" method="GET" class="form-inline m-3">
+        <form action="{{ route('films.index') }}" method="GET" class="form-inline m-3">
             <div class="input-group search-group">
-                <input type="text" class="form-control search-group-input" placeholder="Search {{ $entityName }} name..." value="{{ request()->get('keyword') }}" name="keyword">
-                <div class="input-group-append search-group-append d-flex justify-content-center align-items-center">
+                <input type="text" class="form-control search-group-input" placeholder="Search films..." value="{{ request()->get('keyword') }}" name="keyword">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-search"></i>
-                </div>
-                &nbsp;&nbsp;
-                <a href="{{ url($entityName . '/page/' . request()->get('pageNum')) }}">
-                    <button type="button" class="btn" style="background-color: transparent; border: 0; box-shadow: none !important;">
-                        <i class="fas fa-eraser" style="color: black"></i>
-                    </button>
-                </a>
+                </button>
+                @if(request()->has('keyword') && request()->get('keyword') != '')
+                    <a href="{{ route('films.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-eraser"></i>
+                    </a>
+                @endif
             </div>
         </form>
+        
     </div>
 </header>

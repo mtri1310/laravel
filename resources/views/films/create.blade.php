@@ -3,43 +3,38 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <title>Admin</title>
-    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type = "image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - {{ isset($film->id) ? 'Edit Film' : 'Add New Film' }}</title>
+    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type="image/x-icon">
 
-    <!-- Bootstrap core -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.css" rel="stylesheet"
-        type="text/css" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" type="text/css" />
 
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/add_form.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-    </script>
 </head>
+
 @php
     // Ensure $film is always defined
     if (!isset($film)) {
         $film = new \App\Models\Film();
     }
 @endphp
+
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
             <div>
                 {{-- Sidebar --}}
-                @if (isset($film->id))
-                    @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
-                @else
-                    @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_news'])
-                @endif
+                @include('fragments.sidebar', ['key' => 'film', 'subkey' => isset($film->id) ? 'film_all' : 'film_news'])
             </div>
 
             <div class="d-flex flex-column wrapper">
@@ -48,9 +43,9 @@
 
                 <div class="content">
                     <section class="form-container">
-                        <div class="form-container-header d-flex align-items-center justify-content-between">
-                            <h1 class="title">
-                                {{ isset($film->id) ? 'Sửa Thông Tin Phim' : 'Thêm Phim Mới' }}
+                        <div class="form-container-header d-flex align-items-center justify-content-between mb-4">
+                            <h1 class="h3">
+                                {{ isset($film->id) ? 'Edit Film Information' : 'Add New Film' }}
                             </h1>
                         </div>
                         <div class="form-container-content">
@@ -59,195 +54,222 @@
                                     {{-- Film Form --}}
                                     <form
                                         action="{{ isset($film->id) ? route('films.update', $film->id) : route('films.store') }}"
-                                        method="post" id="form-film" enctype="multipart/form-data">
+                                        method="POST" id="form-film" enctype="multipart/form-data">
                                         @csrf
-                                        @if (isset($film->id))
+                                        @if(isset($film->id))
                                             @method('PUT')
                                         @endif
 
+                                        {{-- Hidden ID Field --}}
                                         <input type="hidden" name="id" value="{{ old('id', $film->id ?? '') }}" />
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="film_name">Film Name</label>
-                                            <input type="text" class="form-control" id="film_name" name="film_name"
-                                                value="{{ old('film_name', $film->film_name ?? '') }}" required />
+                                        {{-- Film Name --}}
+                                        <div class="mb-3">
+                                            <label for="film_name" class="form-label">Film Name</label>
+                                            <input type="text" class="form-control @error('film_name') is-invalid @enderror" id="film_name" name="film_name"
+                                                value="{{ old('film_name', $film->film_name ?? '') }}" required>
                                             @error('film_name')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="story_line">Story Line</label>
-                                            <textarea class="form-control" id="story_line" name="story_line" rows="4">{{ old('story_line', $film->story_line ?? '') }}</textarea>
+                                        {{-- Story Line --}}
+                                        <div class="mb-3">
+                                            <label for="story_line" class="form-label">Story Line</label>
+                                            <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line" rows="4">{{ old('story_line', $film->story_line ?? '') }}</textarea>
                                             @error('story_line')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="movie_genre">Movie Genre</label>
-                                            <input type="text" class="form-control" id="movie_genre"
+                                        {{-- Movie Genre --}}
+                                        <div class="mb-3">
+                                            <label for="movie_genre" class="form-label">Movie Genre</label>
+                                            <input type="text" class="form-control @error('movie_genre') is-invalid @enderror" id="movie_genre"
                                                 name="movie_genre"
-                                                value="{{ old('movie_genre', $film->movie_genre ?? '') }}" required />
+                                                value="{{ old('movie_genre', $film->movie_genre ?? '') }}" required>
                                             @error('movie_genre')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="director">Director</label>
-                                            <input type="text" class="form-control" id="director" name="director"
-                                                value="{{ old('director', $film->director ?? '') }}" required />
+                                        {{-- Director --}}
+                                        <div class="mb-3">
+                                            <label for="director" class="form-label">Director</label>
+                                            <input type="text" class="form-control @error('director') is-invalid @enderror" id="director" name="director"
+                                                value="{{ old('director', $film->director ?? '') }}" required>
                                             @error('director')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="actor">Actor</label>
-                                            <input type="text" class="form-control" id="actor" name="actor"
-                                                value="{{ old('actor', $film->actor ?? '') }}" required />
+                                        {{-- Actor --}}
+                                        <div class="mb-3">
+                                            <label for="actor" class="form-label">Actor</label>
+                                            <input type="text" class="form-control @error('actor') is-invalid @enderror" id="actor" name="actor"
+                                                value="{{ old('actor', $film->actor ?? '') }}" required>
                                             @error('actor')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="duration">Duration</label>
-                                            <input type="text" class="form-control" id="duration" name="duration"
-                                                value="{{ old('duration', $film->duration ?? '') }}" required />
+                                        {{-- Duration --}}
+                                        <div class="mb-3">
+                                            <label for="duration" class="form-label">Duration</label>
+                                            <input type="text" class="form-control @error('duration') is-invalid @enderror" id="duration" name="duration"
+                                                value="{{ old('duration', $film->duration ?? '') }}" required>
                                             @error('duration')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="language">Language</label>
-                                            <input type="text" class="form-control" id="language"
+                                        {{-- Language --}}
+                                        <div class="mb-3">
+                                            <label for="language" class="form-label">Language</label>
+                                            <input type="text" class="form-control @error('language') is-invalid @enderror" id="language"
                                                 name="language" value="{{ old('language', $film->language ?? '') }}"
-                                                required />
+                                                required>
                                             @error('language')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="censorship">Censorship</label>
-                                            <input type="text" class="form-control" id="censorship"
+                                        {{-- Censorship --}}
+                                        <div class="mb-3">
+                                            <label for="censorship" class="form-label">Censorship</label>
+                                            <input type="text" class="form-control @error('censorship') is-invalid @enderror" id="censorship"
                                                 name="censorship"
-                                                value="{{ old('censorship', $film->censorship ?? '') }}" />
+                                                value="{{ old('censorship', $film->censorship ?? '') }}">
                                             @error('censorship')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="review">Review</label>
-                                            <input type="number" class="form-control" id="review" name="review"
-                                                min="0" max="10"
-                                                value="{{ old('review', $film->review ?? '') }}" />
+                                        {{-- Review --}}
+                                        <div class="mb-3">
+                                            <label for="review" class="form-label">Review (0-5)</label>
+                                            <input type="number" class="form-control @error('review') is-invalid @enderror" id="review" name="review"
+                                                min="0" max="5"
+                                                value="{{ old('review', $film->review ?? '') }}">
                                             @error('review')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <label class="form-label" for="release">Release</label>
-                                            <input type="date" class="form-control" id="release" name="release"
-                                                value="{{ old('release', $film->release ? $film->release->format('Y-m-d') : '') }}" />
+                                        {{-- Release Date --}}
+                                        <div class="mb-3">
+                                            <label for="release" class="form-label">Release Date</label>
+                                            <input type="date" class="form-control @error('release') is-invalid @enderror" id="release" name="release"
+                                                value="{{ old('release', isset($film->release) ? $film->release->format('Y-m-d') : '') }}">
                                             @error('release')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4" style="padding:0">
-                                            <div class="upload-zone d-flex justify-content-center align-items-center">
+                                        {{-- Thumbnail Upload --}}
+                                        <div class="mb-3">
+                                            <label class="form-label">Thumbnail</label>
+                                            <div class="upload-zone d-flex justify-content-center align-items-center position-relative border rounded p-3">
+                                                <!-- File Input for Uploading New Thumbnail -->
                                                 <input type="file" name="thumbnail"
                                                     accept="image/png, image/jpg, image/jpeg"
                                                     onchange="loadFile(event)" class="upload-zone-input"
-                                                    id="input-image"
-                                                    @if (isset($film->id)) required @else required @endif />
-                                                <input type="text" id="image" name="thumbnail"
-                                                    value="{{ old('thumbnail', $film->thumbnail ?? '') }}" readonly
-                                                    style="display: none; opacity: 0" />
+                                                    id="input-image" {{ isset($film->id) ? '' : 'required' }} />
+
+                                                <!-- Hidden Input to Store Existing Thumbnail URL (Only in Edit) -->
+                                                @if(isset($film->thumbnail))
+                                                    <input type="hidden" id="existing_thumbnail" name="existing_thumbnail"
+                                                        value="{{ old('existing_thumbnail', $film->thumbnail) }}" />
+                                                @endif
+
+                                                <!-- Image Preview -->
                                                 <img id="image-output"
-                                                    src="{{ old('image', $film->thumbnail ?? '') ? asset('storage/' . $film->thumbnail) : '' }}"
-                                                    alt="Image preview" />
-                                                <div class="upload-zone-content">
-                                                    <div class="upload-zone-title">Select file</div>
-                                                    <div class="upload-zone-desc">Click browse through your machine
-                                                    </div>
+                                                    src="{{ isset($film->thumbnail) ? $film->thumbnail : '' }}"
+                                                    alt="Image preview"
+                                                    class="img-thumbnail" style="width: 100%; height: 100%; object-fit: contain; display: {{ isset($film->thumbnail) ? 'block' : 'none' }}" />
+
+                                                <!-- Upload Zone Content -->
+                                                <div class="upload-zone-content text-center">
+                                                    <i class="fas fa-upload fa-2x mb-2 text-muted"></i>
+                                                    <div class="upload-zone-title text-muted">Select file</div>
+                                                    <div class="upload-zone-desc text-muted">Click to browse your machine</div>
                                                 </div>
                                             </div>
+
+                                            {{-- Error Messages --}}
                                             @error('thumbnail')
-                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                            @error('existing_thumbnail')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="mb-4">
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <div class="custom-control custom-switch">
-                                                    <input type="hidden" name="status" value="0">
-                                                    <input type="checkbox" class="custom-control-input"
-                                                        id="status" name="status" value="1"
-                                                        {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="status">Is Published?</label>
-                                                </div>
-                                            </div>
+                                        {{-- Status Switch --}}
+                                        <div class="mb-3 form-check form-switch">
+                                            <input type="hidden" name="status" value="0">
+                                            <input type="checkbox" class="form-check-input" id="status" name="status" value="1" {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="status">Is Published?</label>
                                         </div>
 
-                                        <div class="mb-4 d-flex align-items-center justify-content-end">
-                                            <button type="submit" class="btn btn-danger auth-btn">Save</button>
+                                        {{-- Submit Button --}}
+                                        <div class="d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-primary">Save</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
+                    </section>
                 </div>
             </div>
-            <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('assets/js/index.js') }}"></script>
-            <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+        </div>
 
-            <script>
-                $(document).ready(function() {
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- jQuery -->
+        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+        <!-- Bootstrap JS -->
+        <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <!-- Custom JS -->
+        <script src="{{ asset('assets/js/index.js') }}"></script>
+        <!-- Summernote JS -->
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 
-                    if ($("#image").val() != '' && $("#image").val() != null) {
-                        let image_output = document.getElementById('image-output');
-                        $('#image-output').css('display', 'block')
-                        image_output.src = $("#image").val();
-                        $('.upload-zone-content').css('display', 'none');
-                    }
+        <script>
 
-                    $('#story_line').summernote({
-                        height: 400,
-                        toolbar: [
-                            ['style', ['bold', 'italic', 'underline', 'clear']],
-                            ['font', ['strikethrough', 'superscript', 'subscript']],
-                            ['fontsize', ['fontsize']],
-                            ['color', ['forecolor']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['table', ['table']],
-                            ['height', ['height']],
-                            ['insert', ['link', 'picture']],
-                            ['view', ['fullscreen']]
-                        ],
-                        tooltip: false,
-                        dialogsInBody: true
+            // Initialize Summernote and handle SweetAlert messages
+            $(document).ready(function() {
+                // Initialize Summernote
+                $('#story_line').summernote({
+                    height: 300,
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['forecolor']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']],
+                        ['view', ['fullscreen', 'codeview']]
+                    ],
+                    tooltip: false,
+                    dialogsInBody: true
+                });
 
-                    });
-                    let buttonClose = $(
-                        '<button type="button" class="close-summernote-dialog" aria-hidden="true" tabindex="-1">&times;</button>'
-                        )
-                    $(".note-modal-content").append(buttonClose);
+                // Close Summernote dialogs with custom button
+                $('body').on('click', '.close-summernote-dialog', function() {
+                    $('.note-modal').removeClass('open');
+                    $('.note-modal-backdrop').hide();
+                });
 
-                    $('button.close-summernote-dialog').click(function() {
-                        $('.note-modal').removeClass('open');
-                        $('.note-modal-backdrop').css('display', 'none');
-                    })
+                // Display existing thumbnail if editing
+                @if(isset($film->thumbnail))
+                    $('#image-output').show();
+                    $('.upload-zone-content').hide();
+                @endif
+            });
+        </script>
+    </body>
 
-                })
-            </script>
-
-</body>
+</html>
