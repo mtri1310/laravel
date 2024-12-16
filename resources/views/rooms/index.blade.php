@@ -52,7 +52,7 @@
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
-            @include('fragments.sidebar', ['key' => 'film', 'subkey' => 'film_all'])
+            @include('fragments.sidebar', ['key' => 'room', 'subkey' => 'room_all'])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content">
@@ -76,6 +76,7 @@
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">ID</th>
                                             <th class="d-none d-sm-table-cell text-center">Room</th>
+                                            <th class="text-center" style="width: 100px">Action</th>
 
                                         </tr>
                                     </thead>
@@ -90,6 +91,14 @@
 
                                                 <td class="d-none d-sm-table-cell text-center fs-sm">
                                                     <div>{{ $room->room_name }}</div>
+                                                </td>
+                                                <td class="text-center fs-sm" style="width: 100px">
+                                                    <a class="btn btn-sm btn-alt-secondary" href="" data-toggle="tooltip" data-placement="top" title="Edit">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-alt-danger" href="" data-toggle="tooltip" data-placement="top" title="Delete" onclick="return confirm('Are you sure you want to delete this film?')">
+                                                        <i class="fa fa-fw fa-times text-danger"></i>
+                                                    </a>
                                                 </td>
                                                 
                                             </tr>

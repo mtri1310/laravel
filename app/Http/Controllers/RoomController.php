@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\UpdateRoomRequest;
 use App\Models\Room;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,9 +27,14 @@ class RoomController extends Controller
 
     public function store(StoreRoomRequest $request) : RedirectResponse
     {
-        Room::create($request->all());
-        return redirect()->route('rooms.index')
-                ->withSuccess('New room is added successfully.');
+        try{
+            Room::create($request->all());
+            session()->flash('messageSuccess', 'New room is added successfully.');
+            return redirect()->route('rooms.index');
+        }
+        catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     public function show(Room $room) : View

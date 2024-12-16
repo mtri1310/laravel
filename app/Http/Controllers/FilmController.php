@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreFilmRequest;
 use App\Http\Requests\UpdateFilmRequest;
 use Carbon\Carbon;
+use Exception;
+
 class FilmController extends Controller
 {
     //

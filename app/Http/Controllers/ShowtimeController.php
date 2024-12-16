@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateShowtimeRequest;
 use App\Models\Film;
 use App\Models\Room;
 use App\Models\Showtime;
+use Exception;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,10 +30,14 @@ class ShowtimeController extends Controller
     
     public function store(StoreShowtimeRequest $request) : RedirectResponse
     {
-        Showtime::create($request->all());
-        
-        return redirect()->route('showtimes.index')
-                ->withSuccess('New Showtime is added successfully.');
+        try{
+            Showtime::create($request->all());
+            session()->flash('messageSuccess', 'New showtime is added successfully.');
+            return redirect()->route('showtimes.index');
+        }
+        catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     public function show(Showtime $showtime) : View

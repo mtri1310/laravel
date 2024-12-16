@@ -184,7 +184,7 @@
                                                 <div class="custom-control custom-switch">
                                                     <input type="checkbox" class="custom-control-input"
                                                         id="status" name="status" value="1"
-                                                        {{ old('status', $film->status ?? 0) ? 'checked' : '' }}>
+                                                        {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
                                                     <label class="custom-control-label" for="status">Is
                                                         Published?</label>
                                                 </div>

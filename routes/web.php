@@ -35,7 +35,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/movies', action: [ImdbController::class, 'index']);
 
 Route::resource('users', UserController::class);
-Route::resource('products', ProductController::class);
+
 Route::resource('films', FilmController::class);
 Route::resource('seats', SeatController::class);
 Route::resource('rooms', RoomController::class);

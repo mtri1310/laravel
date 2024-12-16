@@ -23,30 +23,30 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.4/dist/sweetalert2.all.min.js"></script>
 
 <script>
-    // $(document).ready(function() {
-    //     // Lấy thông báo từ session Laravel
-    //     let messageError = "{{ session('messageError') }}";  // Lấy thông báo lỗi
-    //     let messageSuccess = "{{ session('messageSuccess') }}";  // Lấy thông báo thành công
+    $(document).ready(function() {
+        // Lấy thông báo từ session Laravel
+        let messageError = "{{ session('messageError') }}";  // Lấy thông báo lỗi
+        let messageSuccess = "{{ session('messageSuccess') }}";  // Lấy thông báo thành công
 
-    //     // Kiểm tra và hiển thị thông báo thành công nếu có
-    //     if (messageSuccess) {
-    //         Swal.fire({
-    //             title: '',
-    //             text: messageSuccess,
-    //             icon: 'success',
-    //             confirmButtonColor: '#3085d6'
-    //         });
-    //     }
+        // Kiểm tra và hiển thị thông báo thành công nếu có
+        if (messageSuccess) {
+            Swal.fire({
+                title: '',
+                text: messageSuccess,
+                icon: 'success',
+                confirmButtonColor: '#3085d6'
+            });
+        }
 
-    //     // Kiểm tra và hiển thị thông báo lỗi nếu có
-    //     if (messageError) {
-    //         Swal.fire({
-    //             title: '',
-    //             text: messageError,
-    //             icon: 'error'
-    //         });
-    //     }
-    // });
+        // Kiểm tra và hiển thị thông báo lỗi nếu có
+        if (messageError) {
+            Swal.fire({
+                title: '',
+                text: messageError,
+                icon: 'error'
+            });
+        }
+    });
 </script>
 
 <body>
@@ -78,6 +78,8 @@
                                             <th class="d-none d-sm-table-cell text-center">Film Name</th>
                                             <th class="d-none d-sm-table-cell text-center">Room</th>
                                             <th class="d-none d-sm-table-cell text-center">Date</th>
+                                            <th class="d-none d-sm-table-cell text-center">Date 1</th>
+
                                             <th class="d-none d-sm-table-cell text-center">Start Time</th>
                                             
                                             <th class="text-center" style="width: 100px">Actions</th>
