@@ -25,4 +25,8 @@ class Film extends Model
     protected $casts = [
         'release' => 'date', 
     ];
+    public function showtimes()
+    {
+        return $this->hasMany(Showtime::class);
+    }
 }

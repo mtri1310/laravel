@@ -6,10 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Film;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\StoreFilmRequest;
-use App\Http\Requests\UpdateFilmRequest;
-use Carbon\Carbon;
-use Exception;
+use App\Http\Requests\FilmRequest;
+use App\Services\CloudinaryService;
+use Illuminate\Support\Facades\Log;
 
 class FilmController extends Controller
 {
@@ -66,10 +65,10 @@ class FilmController extends Controller
     /**
      * Store a newly created film in storage.
      *
-     * @param StoreFilmRequest $request
+     * @param FilmRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreFilmRequest $request): RedirectResponse
+    public function store(FilmRequest $request): RedirectResponse
     {
         try {
             $data = $request->validated();
@@ -102,16 +101,22 @@ class FilmController extends Controller
     /**
      * Update the specified film in storage.
      *
-     * @param UpdateFilmRequest $request
+     * @param FilmRequest $request
      * @param Film $film
      * @return RedirectResponse
      */
-    public function update(UpdateFilmRequest $request, Film $film): RedirectResponse
+    public function update(FilmRequest $request, Film $film): RedirectResponse
     {
         try {
             $data = $request->validated();
 
             if ($request->hasFile('thumbnail')) {
+                // Xóa hình ảnh cũ trên Cloudinary
+                if ($film->thumbnail) {
+                    $this->cloudinaryService->deleteImageByUrl($film->thumbnail);
+                }
+
+                // Upload hình ảnh mới
                 $data['thumbnail'] = $this->cloudinaryService->uploadImage($request->file('thumbnail'));
             } elseif ($request->input('existing_thumbnail')) {
                 $data['thumbnail'] = $request->input('existing_thumbnail');
@@ -136,6 +141,14 @@ class FilmController extends Controller
     public function destroy(Film $film): RedirectResponse
     {
         try {
+            $imageUrl = $film->thumbnail;
+
+            if ($imageUrl) {
+                $deleted = $this->cloudinaryService->deleteImageByUrl($imageUrl);
+                if (!$deleted) {
+                    Log::error("Failed to delete image from Cloudinary for Film ID: {$film->id}");
+                }
+            }
             $film->delete();
 
             return redirect()->route('films.index')
@@ -145,4 +158,5 @@ class FilmController extends Controller
             return back()->with('messageError', 'Failed to delete the film.');
         }
     }
+
 }

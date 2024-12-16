@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('director');
             $table->string('actor'); 
             $table->boolean('status');
-            $table->date('release');
+            $table->date('release')->default(DB::raw('CURRENT_DATE'));
             $table->timestamps();
         });
     }

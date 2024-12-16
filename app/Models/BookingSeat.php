@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payment extends Model
+class BookingSeat extends Model
 {
     use HasFactory;
 
+    protected $table = 'booking_seat';
+
     protected $fillable = [
         'booking_id',
-        'transaction_id',
-        'amount',
-        'payment_method',
-        'payment_status',
-        'created_at',
+        'seat_id',
     ];
 
     /**
-     * Một payment thuộc về một booking.
+     * Một booking seat thuộc về một booking.
      */
     public function booking()
     {
@@ -27,10 +25,10 @@ class Payment extends Model
     }
 
     /**
-     * Một payment có một invoice.
+     * Một booking seat thuộc về một seat.
      */
-    public function invoice()
+    public function seat()
     {
-        return $this->hasOne(Invoice::class);
+        return $this->belongsTo(Seat::class);
     }
 }

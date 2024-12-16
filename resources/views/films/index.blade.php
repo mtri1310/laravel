@@ -31,7 +31,7 @@
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'film'])
+                            @include('fragments.search', ['entityName' => 'films'])
                         </div>
                         <div class="list-table-content">
                             <div class="table-responsive">
@@ -40,7 +40,7 @@
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">ID</th>
                                             <th class="d-none d-sm-table-cell text-center">Film Name</th>
-                                            <th class="d-none d-sm-table-cell text-center">Thumbnail</th>
+                                            <th>Thumbnail</th>
                                             <th class="d-none d-sm-table-cell text-center">Duration</th>
                                             <th class="d-none d-sm-table-cell text-center">Review</th>
                                             <th class="d-none d-sm-table-cell text-center">Movie Genre</th>
@@ -83,12 +83,12 @@
                                                 
                                                     <span class="ms-2">({{ number_format($film->review, 1) }})</span>
                                                 </td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">{{ $film->movie_genre }}</td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">{{ $film->censorship }}</td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">{{ $film->language }}</td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">{{ $film->director }}</td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">{{ $film->actor }}</td>
-                                                <td class="text-end d-none d-sm-table-cell fs-sm">
+                                                <td class="d-none d-sm-table-cell fs-sm">{{ $film->movie_genre }}</td>
+                                                <td class="d-none d-md-table-cell fs-sm">{{ $film->censorship }}</td>
+                                                <td class="d-none d-md-table-cell fs-sm">{{ $film->language }}</td>
+                                                <td class="d-none d-md-table-cell fs-sm">{{ $film->director }}</td>
+                                                <td class="d-none d-md-table-cell fs-sm">{{ $film->actor }}</td>
+                                                <td class="text-end d-none d-sm-table-cell fs-sm format-date">
                                                     {{ $film->release ? $film->release->format('d/m/Y') : 'N/A' }}
                                                 </td>
                                                 <td>
