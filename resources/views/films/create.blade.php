@@ -69,7 +69,7 @@
                                             <input type="text" class="form-control @error('film_name') is-invalid @enderror" id="film_name" name="film_name"
                                                 value="{{ old('film_name', $film->film_name ?? '') }}" required>
                                             @error('film_name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -78,7 +78,7 @@
                                             <label for="story_line" class="form-label">Story Line</label>
                                             <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line" rows="4">{{ old('story_line', $film->story_line ?? '') }}</textarea>
                                             @error('story_line')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -89,7 +89,7 @@
                                                 name="movie_genre"
                                                 value="{{ old('movie_genre', $film->movie_genre ?? '') }}" required>
                                             @error('movie_genre')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -99,7 +99,7 @@
                                             <input type="text" class="form-control @error('director') is-invalid @enderror" id="director" name="director"
                                                 value="{{ old('director', $film->director ?? '') }}" required>
                                             @error('director')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -109,7 +109,7 @@
                                             <input type="text" class="form-control @error('actor') is-invalid @enderror" id="actor" name="actor"
                                                 value="{{ old('actor', $film->actor ?? '') }}" required>
                                             @error('actor')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -119,7 +119,7 @@
                                             <input type="text" class="form-control @error('duration') is-invalid @enderror" id="duration" name="duration"
                                                 value="{{ old('duration', $film->duration ?? '') }}" required>
                                             @error('duration')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -130,7 +130,7 @@
                                                 name="language" value="{{ old('language', $film->language ?? '') }}"
                                                 required>
                                             @error('language')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -141,7 +141,7 @@
                                                 name="censorship"
                                                 value="{{ old('censorship', $film->censorship ?? '') }}">
                                             @error('censorship')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -152,7 +152,7 @@
                                                 min="0" max="5" step="any"
                                                 value="{{ old('review', $film->review ?? '') }}">
                                             @error('review')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -162,7 +162,7 @@
                                             <input type="date" class="form-control @error('release') is-invalid @enderror" id="release" name="release"
                                                 value="{{ old('release', isset($film->release) ? $film->release->format('Y-m-d') : '') }}">
                                             @error('release')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
 

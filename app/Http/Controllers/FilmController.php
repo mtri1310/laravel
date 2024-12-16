@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Film;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\StoreFilmRequest;
-use App\Http\Requests\UpdateFilmRequest;
+use App\Http\Requests\FilmRequest;
 use App\Services\CloudinaryService;
 use Illuminate\Support\Facades\Log;
 
@@ -66,10 +65,10 @@ class FilmController extends Controller
     /**
      * Store a newly created film in storage.
      *
-     * @param StoreFilmRequest $request
+     * @param FilmRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreFilmRequest $request): RedirectResponse
+    public function store(FilmRequest $request): RedirectResponse
     {
         try {
             $data = $request->validated();
@@ -102,11 +101,11 @@ class FilmController extends Controller
     /**
      * Update the specified film in storage.
      *
-     * @param UpdateFilmRequest $request
+     * @param FilmRequest $request
      * @param Film $film
      * @return RedirectResponse
      */
-    public function update(UpdateFilmRequest $request, Film $film): RedirectResponse
+    public function update(FilmRequest $request, Film $film): RedirectResponse
     {
         try {
             $data = $request->validated();

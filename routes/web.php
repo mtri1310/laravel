@@ -32,10 +32,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/movies', action: [ImdbController::class, 'index']);
 
-Route::resource('users', UserController::class)->middleware('auth');
+Route::resource('users', UserController::class)->except(['show'])->middleware('auth');
 Route::resource('films', FilmController::class)->except(['show'])->middleware('auth');
 Route::resource('seats', SeatController::class)->middleware('auth');
-Route::resource('rooms', RoomController::class)->middleware('auth');
+Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
 Route::resource('showtimes', ShowtimeController::class)->middleware('auth');
 
 //payment
