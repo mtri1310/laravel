@@ -24,7 +24,12 @@
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
     </script>
 </head>
-
+@php
+    // Ensure $film is always defined
+    if (!isset($film)) {
+        $film = new \App\Models\Film();
+    }
+@endphp
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
@@ -149,7 +154,7 @@
                                         <div class="mb-4">
                                             <label class="form-label" for="release">Release</label>
                                             <input type="date" class="form-control" id="release" name="release"
-                                                value="{{ old('release', $film->release ?? '') }}" />
+                                                value="{{ old('release', $film->release ? $film->release->format('Y-m-d') : '') }}" />
                                             @error('release')
                                                 <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
@@ -215,10 +220,6 @@
                         $('.upload-zone-content').css('display', 'none');
                     }
 
-                    if ($('#release').val() != '' && $('#release').val() != null) {
-                        $('#release').val(formatDate($('#release').val()));
-                    }
-
                     $('#story_line').summernote({
                         height: 400,
                         toolbar: [
@@ -246,11 +247,6 @@
                         $('.note-modal-backdrop').css('display', 'none');
                     })
 
-                })
-            </script>
-            <script>
-                $('#release').keyup(function(event) {
-                    formatDate(event, $(this))
                 })
             </script>
 

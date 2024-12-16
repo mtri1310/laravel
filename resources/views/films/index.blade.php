@@ -99,7 +99,7 @@
                                                     <div>{{ $film->actor }}</div>
                                                 </td>
                                                 <td class="text-end d-none d-sm-table-cell fs-sm">
-                                                    <div>{{ $film->release }}</div>
+                                                    <div>{{ $film->release ? $film->release->format('d/m/Y') : '' }}</div>
                                                 </td>
                                                 <td>
                                                     @if ($film->status == 1)
@@ -114,9 +114,13 @@
                                                     <a class="btn btn-sm btn-alt-secondary" href="{{ route('films.edit', $film->id) }}" data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-alt-danger" href="{{ route('films.destroy', $film->id) }}" data-toggle="tooltip" data-placement="top" title="Delete" onclick="return confirm('Are you sure you want to delete this film?')">
-                                                        <i class="fa fa-fw fa-times text-danger"></i>
-                                                    </a>
+                                                    <form action="{{ route('films.destroy', $film->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this film?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" data-toggle="tooltip" data-placement="top" title="Delete" style="border: none; background: none; padding: 0;">
+                                                            <i class="fa fa-fw fa-times text-danger"></i>
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @empty
@@ -126,7 +130,7 @@
                                                         <div class="empty-image d-flex justify-content-center align-items-center" style="margin-bottom: 10px">
                                                             <img src="{{ asset('assets/images/empty-icon.svg') }}" style="height: 200px"/>
                                                         </div>
-                                                        {{-- <a href="{{ route('film.create') }}"> --}}
+                                                        <a href="{{ route('films.create') }}">
                                                             <button class="btn btn-primary d-flex align-items-center">
                                                                 <span>Create Now</span>
                                                             </button>
