@@ -30,6 +30,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Một user có nhiều bookings.
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+    
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
