@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class PaymentController extends Controller
 {
@@ -38,7 +40,8 @@ class PaymentController extends Controller
                 'error_code' => 'SEAT001',
             ], 400);
         }
-
+        // Stripe Payment
+        Stripe::setApiKey(config('stripe.sk')); // Lấy API Key từ config
 
 
         $payment = [
@@ -65,7 +68,7 @@ class PaymentController extends Controller
                     'film_name' => 'The Marvels',
                     'movie_genre' => ['Action', 'Adventure', 'Sci-Fi'],
                     'thumbnail' => 'https://example.com/poster/the-marvels.jpg',
-                ],  
+                ],
                 'showtime' => [
                     'start_time' => '14:15',
                     'day' => '20.2.2021',

@@ -4,47 +4,55 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite; 
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api'); // Đảm bảo người dùng đã đăng nhập
+    // }
+
+    // Đăng nhập bằng Google và tạo JWT Token
+    public function loginWithGoogle(Request $request)
     {
-        // Lấy thông tin đầu vào từ yêu cầu
-        $username = $request->input('username'); 
-        $password = $request->input('password'); 
+        try {
+            $googleToken = $request->input('token');    
+            // Lấy thông tin người dùng từ Google
+            $googleUser = Socialite::driver('google')->user();
+            dd($googleUser);
 
-        // Kiểm tra điều kiện đầu vào
-        if (!$username || !$password) {
+            // Tìm hoặc tạo người dùng trong hệ thống
+            $user = User::firstOrCreate(
+                ['google_id' => $googleUser->getId()],
+                [
+                    'email' => $googleUser->getEmail(),
+                    'full_name' => $googleUser->getName(),
+                    'picture' => $googleUser->getAvatar(),
+                    'role' => 0, // Role mặc định, có thể thay đổi theo yêu cầu
+                ]
+            );
+
+            // Tạo JWT token cho người dùng
+            $token = JWTAuth::fromUser($user);
+
+            // Trả về thông tin người dùng cùng với token
             return response()->json([
-                'status' => 'error',
-                'message' => 'Username and password are required',
-                'error_code' => 'LOGIN001',
-            ], 400); // HTTP status 400 (Bad Request)
-        }
-
-        if ($username !== 'The Marvels' || $password !== 'zxczczcz') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid username or password',
-                'error_code' => 'LOGIN002',
-            ], 401); // HTTP status 401 (Unauthorized)
-        }
-
-
-        $login = [
-            'status' => 'success',
-            'message' => 'Login Successful',
-            'data' => [
-                'user' => [
-                    "user_id" => "001",
-                    "username" => "The Marvels",
-                    "email" => "skdfnksj@gmail.com",
-                    "thumbnail" => "https://example.com/poster/the-marvels.jpg",
-                    "phone" => "012155152105",
-                    "password" => "zxczczcz"
+                'status' => 'success',
+                'message' => 'Login successful',
+                'data' => [
+                    'name' => $user->full_name, 
+                    'email' => $user->email,
+                    'google_id' => $user->google_id,
+                    'token' => $token,
                 ],
-            ],
-        ];
-        return response()->json($login);
+            ], 200);
+        } catch (\Exception $e) {
+            // Nếu có lỗi trong quá trình xác thực
+            return response()->json(['error' => 'Unable to login with Google', 'message' => $e->getMessage()], 400);
+        }
     }
 }

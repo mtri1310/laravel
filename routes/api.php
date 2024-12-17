@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Api\ListFilmsController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\Api\PaymentController;
 
 use Illuminate\Http\Request;
@@ -34,8 +35,15 @@ Route::get('/student', [StudentController::class, 'index']);
 Route::get('/movies', [ImdbController::class, 'index']);
 Route::get('/listfilms', [ListFilmsController::class, 'listfilms']);
 Route::get('/payment', [PaymentController::class, 'payment']);
-Route::get('/login', [LoginController::class, 'login']);
+// Route::middleware('auth:api')->get('/login', [LoginController::class, 'getUserInfo']);
+// Route::post('auth/google',  [LoginController::class, 'loginWithGoogle']);
+// Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
 Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
-Route::get('/user_profile', [UserProfileController::class, 'getUserProfile']);
+Route::middleware('auth:sanctum')->get('/user-profile', [UserProfileController::class, 'getUserProfile']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+
+Route::controller(LoginGoogleController::class)->group(function(){
+    Route::post('auth/google', 'loginWithGoogle');
+    Route::post('auth/google/callback', 'handleGoogleCallback');
+});
