@@ -37,8 +37,6 @@ class FilmController extends Controller
                     ->when($keyword, function($query, $keyword) {
                         return $query->where(function($q) use ($keyword) {
                             $q->where('film_name', 'like', "%{$keyword}%")
-                              ->orWhere('duration', 'like', "%{$keyword}%")
-                              ->orWhere('review', 'like', "%{$keyword}%")
                               ->orWhere('movie_genre', 'like', "%{$keyword}%")
                               ->orWhere('censorship', 'like', "%{$keyword}%")
                               ->orWhere('language', 'like', "%{$keyword}%")
