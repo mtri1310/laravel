@@ -41,10 +41,12 @@
                                     <thead>
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">ID</th>
-                                            <th class="d-none d-sm-table-cell text-center">Tên</th>
+                                            <th class="d-none d-sm-table-cell text-center">Name</th>
+                                            <th class="d-none d-sm-table-cell text-center">User Name</th>
+                                            <th class="d-none d-sm-table-cell text-center">Profile</th>
                                             <th class="d-none d-sm-table-cell text-center">Email</th>
-                                            <th class="d-none d-sm-table-cell text-center">SĐT</th>
-                                            <th class="text-center" style="width: 100px">Hành động</th>
+                                            <th class="d-none d-sm-table-cell text-center">Phone</th>
+                                            <th class="text-center" style="width: 100px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -55,6 +57,12 @@
                                                 </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
                                                     <strong>{{ $user->full_name }}</strong>
+                                                </td>
+                                                <td class="d-none d-md-table-cell fs-sm">
+                                                    <strong>{{ $user->username }}</strong>
+                                                </td>
+                                                <td class="d-none d-md-table-cell fs-sm">
+                                                    <img src="{{ $user->picture }}" alt="{{ $user->username }} Thumbnail" style="width: 200px;">
                                                 </td>
                                                 <td class="d-none d-sm-table-cell text-center fs-sm">
                                                     <div>{{ $user->email }}</div>
