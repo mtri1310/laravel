@@ -24,8 +24,6 @@ use App\Http\Controllers\UserController;
 |
 */
 
-// Route::get('/', [ProductController::class, 'index']);
-
 Route::get('/', DashboardController::class)->middleware('auth'); 
 
 Route::get('/login', [AuthController::class, 'show'])->name('login');
@@ -34,11 +32,11 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/movies', action: [ImdbController::class, 'index']);
 
-Route::resource('users', UserController::class);
-Route::resource('films', FilmController::class);
-Route::resource('seats', SeatController::class);
-Route::resource('rooms', RoomController::class);
-Route::resource('showtimes', ShowtimeController::class);
+Route::resource('users', UserController::class)->except(['show'])->middleware('auth');
+Route::resource('films', FilmController::class)->except(['show'])->middleware('auth');
+Route::resource('seats', SeatController::class)->middleware('auth');
+Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
+Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
 
 //payment
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
@@ -60,3 +58,4 @@ Route::controller(LoginGoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('login-by-google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
+

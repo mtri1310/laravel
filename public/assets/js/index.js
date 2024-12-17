@@ -43,17 +43,20 @@ function formatDate(inputDate) {
 }
 
 
-let loadFile = function(event) {
+let loadFile = function(event) { 
     let output = document.getElementById('image-output');
-    let url = URL.createObjectURL(event.target.files[0]);
-    output.src = url;
+    let file = event.target.files[0];
 
-    output.onload = function(){
-        URL.revokeObjectURL(output.src) // free memory
-        $('#image-output').css('display', 'block')
-        $('#image').val(url);
-        $('.upload-zone-content').css('display', 'none');
-    };
+    if (file) {
+        let url = URL.createObjectURL(file);
+        output.src = url;
+
+        output.onload = function(){
+            URL.revokeObjectURL(output.src); // Free memory
+            $('#image-output').css('display', 'block');
+            $('.upload-zone-content').css('display', 'none');
+        };
+    }
 };
 
 

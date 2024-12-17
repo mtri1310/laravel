@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->string('film_id'); 
-            $table->string('user_id');
-            $table->string('room_id');
-            $table->string('seat_id');
+        Schema::create('booking_seat', function (Blueprint $table) {
+            $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
+            $table->foreignId('seat_id')->constrained('seats')->onDelete('cascade');
             $table->timestamps();
+
+            // Composite Primary Key
+            $table->primary(['booking_id', 'seat_id']);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('booking_seat');
     }
 };

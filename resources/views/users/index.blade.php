@@ -33,7 +33,7 @@
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'user'])
+                            @include('fragments.search', ['entityName' => 'users'])
                         </div>
                         <div class="list-table-content">
                             <div class="table-responsive">
@@ -44,7 +44,6 @@
                                             <th class="d-none d-sm-table-cell text-center">Tên</th>
                                             <th class="d-none d-sm-table-cell text-center">Email</th>
                                             <th class="d-none d-sm-table-cell text-center">SĐT</th>
-                                            <th>Trạng thái</th>
                                             <th class="text-center" style="width: 100px">Hành động</th>
                                         </tr>
                                     </thead>
@@ -63,13 +62,7 @@
                                                 <td class="d-none d-sm-table-cell text-center fs-sm">
                                                     <div>{{ $user->phone }}</div>
                                                 </td>
-                                                <td>
-                                                    @if ($user->isActive)
-                                                        <span class="badge bg-success">Đang hoạt động</span>
-                                                    @else
-                                                        <span class="badge bg-danger">Bị cấm</span>
-                                                    @endif
-                                                </td>
+                                                
                                                 <td class="text-center fs-sm">
                                                     <a class="btn btn-sm btn-alt-secondary" href="{{ route('users.edit', $user->id) }}" data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>

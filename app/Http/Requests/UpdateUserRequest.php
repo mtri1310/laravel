@@ -24,6 +24,7 @@ class UpdateUserRequest extends FormRequest
             'phone' => 'nullable|string|max:20',  // Số điện thoại, có thể để trống
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  // Hình ảnh người dùng
             'remember_token' => 'nullable|string',  // Token nhớ người dùng
+            'role' => 'required|in:1,0',  // Quyền người dùng
         ];
     }
 

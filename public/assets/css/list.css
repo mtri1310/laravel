@@ -74,7 +74,7 @@
     border-color: #a5a9b3;
 }
 
-.btn-alt-danger {
+.btn-alt-danger,button.btn-alt-danger {
     color: #841717;
     background-color: #f6c9c9;
     border-color: #f6c9c9;
