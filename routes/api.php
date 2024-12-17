@@ -27,9 +27,9 @@ use Illuminate\Console\View\Components\Secret;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 // Route::middleware('auth:sanctum')->get('/student', [StudentController::class, 'index']);
 Route::get('/student', [StudentController::class, 'index']);
 Route::get('/movies', [ImdbController::class, 'index']);
@@ -39,11 +39,18 @@ Route::get('/payment', [PaymentController::class, 'payment']);
 // Route::post('auth/google',  [LoginController::class, 'loginWithGoogle']);
 // Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
 Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
-Route::middleware('auth:sanctum')->get('/user-profile', [UserProfileController::class, 'getUserProfile']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
 
 Route::controller(LoginGoogleController::class)->group(function(){
     Route::post('auth/google', 'loginWithGoogle');
     Route::post('auth/google/callback', 'handleGoogleCallback');
+});
+Route::post('/login', [LoginController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('/userprofile', [UserProfileController::class, 'getUserProfile']);
 });
