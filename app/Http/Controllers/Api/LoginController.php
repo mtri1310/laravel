@@ -83,8 +83,8 @@ class LoginController extends Controller
             "status"  => "success",
             "message" => "Đăng nhập thành công",
             "data"    => [
-                // "access_token" => $token,
-                // "token_type"   => "Bearer",
+                "access_token" => $token,
+                "token_type"   => "Bearer",
                 "user_id"  => $user->id,
                 "username" => $user->username,
                 "full_name" => $user->full_name,
