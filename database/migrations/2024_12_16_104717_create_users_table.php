@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('role');
             $table->string('google_id')->nullable();
             $table->rememberToken()->nullable();
+            $table->string('token')->nullable();
             $table->timestamps();
         });
     }

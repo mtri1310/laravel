@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 })->name('dashboard');
 Route::controller(LoginGoogleController::class)->group(function(){
-    Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('auth/google', 'redirectToGoogle')->name('login-by-google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
 
