@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,8 @@ Route::resource('films', FilmController::class)->except(['show'])->middleware('a
 Route::resource('seats', SeatController::class)->middleware('auth');
 Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
 Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
+Route::resource('bookings', BookingController::class)->except(['show'])->middleware('auth');
+
 
 //payment
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);

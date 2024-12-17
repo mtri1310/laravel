@@ -37,5 +37,14 @@ class DatabaseSeeder extends Seeder
             'role' => 0, // Role là user
             'google_id' => '1'
         ]);
+        $this->call([
+            FilmsTableSeeder::class,
+            RoomsTableSeeder::class,
+            SeatsTableSeeder::class,
+            ShowtimesTableSeeder::class,
+            BookingsTableSeeder::class,
+            BookingSeatTableSeeder::class,
+        ]);
+
     }
 }
