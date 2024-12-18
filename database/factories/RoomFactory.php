@@ -12,8 +12,8 @@ class RoomFactory extends Factory
     public function definition()
     {
         return [
-            'room_name'  => 'Room ' . $this->faker->unique()->numberBetween(1, 20),
-            'capacity'   => $this->faker->numberBetween(50, 300),
+            'room_name'  => 'Room ' . $this->faker->unique()->numberBetween(1, 10),
+            'capacity'   => $this->faker->randomElement([50, 100]),
             'room_type'  => $this->faker->randomElement(['IMAX', '3D', 'Standard']),
         ];
     }

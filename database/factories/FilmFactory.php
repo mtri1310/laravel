@@ -22,7 +22,7 @@ class FilmFactory extends Factory
             'language'     => $this->faker->languageCode,
             'director'    => $this->faker->name,
             'actor'        => $this->faker->name . ', ' . $this->faker->name . ', ' . $this->faker->name,
-            'release'      => $this->faker->dateTimeBetween('-2 years', 'now'),
+            'release'      => $this->faker->dateTimeBetween('-1 years', 'now'),
             'status'       => $this->faker->boolean,
         ];
     }

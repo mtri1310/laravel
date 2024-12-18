@@ -25,7 +25,7 @@
 @php
     // Ensure $film is always defined
     if (!isset($film)) {
-        $film = new \App\Models\Film();
+        $film = new Film();
     }
 @endphp
 
