@@ -1,29 +1,49 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserProfileController extends Controller
 {
+    /**
+     * Lấy thông tin người dùng đã đăng nhập.
+     *
+     * @return JsonResponse
+     */
     public function getUserProfile(): JsonResponse
     {
-        $movieData = [
-            "status" => "success",
-            "message" => "User Profile",
-            "data" => [
-                "user" => [
-                    "user_id" => "001",
-                    "username" => "The Marvels",
-                    "email" => "skdfnksj@gmail.com",
-                    "thumbnail" => "https://example.com/poster/the-marvels.jpg",
-                    "phone" => "012155152105"
-                ]
-            ]
+        // Lấy người dùng đã xác thực
+        $user = Auth::user();
+
+        // Kiểm tra xem người dùng đã xác thực hay chưa
+        if (!$user) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthenticated"
+            ], 401);
+        }
+
+     
+        $userData = [
+            "user_id"  => $user->id,
+            "username" => $user->username,
+            "email"    => $user->email,
+            "phone"    => $user->phone,
+            "picture"    => $user->picture,
         ];
 
-        // Trả về JSON response
-        return response()->json($movieData);
+        
+        return response()->json([
+            "status"  => "success",
+            "message" => "User Profile",
+            "data"    => [
+                "user" => $userData
+            ]
+        ]);
     }
 }
