@@ -60,7 +60,13 @@
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
 
-                                                    
+                                                    <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this room?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                            <i class="fa fa-fw fa-times text-danger"></i>
+                                                        </button>
+                                                    </form>
                                                     
                                                 </td>
                                             </tr>

@@ -56,34 +56,31 @@
                     <!-- Sơ đồ ghế -->
                     <div class="seat-layout mb-5">
                         @php
-                            $capacity = $room->capacity;
-                            $seatsPerRow = 10;
-                            $rows = ceil($capacity / $seatsPerRow);
-                            $seatNumber = 1;
-                            $currentRowLetter = 'A';
+                            $capacity = $room->capacity; // Sức chứa phòng
+                            $seatsPerRow = 10; // Số ghế mỗi hàng
+                            $rows = ceil($capacity / $seatsPerRow); // Tính số hàng
+                            $seatNumber = 1; // Số ghế bắt đầu
+                            $currentRowLetter = 'A'; // Bắt đầu từ hàng A
                         @endphp
-
-                        @for ($i = 0; $i < $rows; $i++)
+                    
+                        @for ($i = 0; $i < $rows; $i++) <!-- Vòng lặp theo hàng -->
                             <div class="seat-row">
-                                @for ($j = 1; $j <= $seatsPerRow; $j++)
+                                @for ($j = 1; $j <= $seatsPerRow; $j++) <!-- Vòng lặp theo ghế trong hàng -->
                                     @if ($seatNumber <= $capacity)
                                         @php
-                                            $seatLabel = $currentRowLetter . $j;
-                                            // Kiểm tra xem ghế này có bị chiếm không
-                                            $isOccupied = $seats->contains('seat_number', $seatLabel);
+                                            $seatLabel = $currentRowLetter . $j; // Định dạng số ghế (A1, A2,...)
                                         @endphp
-                                        @if (!$isOccupied) <!-- Chỉ hiển thị nếu ghế chưa bị chiếm -->
-                                            <div class="seat" title="Seat {{ $seatLabel }}">
-                                                {{ $seatLabel }}
-                                            </div>
-                                        @endif
+                                        <div class="seat" title="Seat {{ $seatLabel }}">
+                                            {{ $seatLabel }}
+                                        </div>
                                         @php $seatNumber++; @endphp
                                     @endif
                                 @endfor
                             </div>
-                            @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp
+                            @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp <!-- Chuyển sang hàng tiếp theo -->
                         @endfor
                     </div>
+                    
 
                 </div>
             </div>

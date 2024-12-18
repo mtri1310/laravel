@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomRequest;
 use App\Models\Room;
+use App\Models\Seat;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,14 +43,47 @@ class RoomController extends Controller
         try {
             $data = $request->validated();
 
-            Room::create($data);
+            // Tạo phòng mới
+            $room = Room::create($data);
+
+            // Tự động tạo ghế dựa trên capacity
+            $this->createSeatsForRoom($room);
 
             return redirect()->route('rooms.index')
-                ->with('messageSuccess', 'New room has been added successfully.');
+                ->with('messageSuccess', 'New room has been added successfully with seats.');
         } catch (\Exception $e) {
             Log::error('Room Store Failed: ' . $e->getMessage());
             return back()->with('messageError', 'An unexpected error occurred while adding the room.');
         }
+    }
+    /**
+     * Tạo ghế tự động cho một phòng
+     */
+    private function createSeatsForRoom(Room $room)
+    {
+        $capacity = $room->capacity;
+        $rows = ceil($capacity / 10); // Số hàng (ví dụ: 50 ghế => 5 hàng)
+        $seats = [];
+
+        for ($row = 0; $row < $rows; $row++) {
+            $rowLetter = chr(65 + $row); // Chuyển số hàng thành chữ cái (A, B, C,...)
+            for ($col = 1; $col <= 10; $col++) {
+                $seatNumber = $rowLetter . $col;
+                $seats[] = [
+                    'room_id' => $room->id,
+                    'seat_number' => $seatNumber,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                // Dừng tạo nếu đã đủ số ghế
+                if (count($seats) >= $capacity) {
+                    break 2;
+                }
+            }
+        }
+
+        // Lưu tất cả ghế vào database
+        Seat::insert($seats);
     }
 
     public function edit(Room $room) : View
