@@ -1,3 +1,5 @@
+<!-- resources/views/seats/index.blade.php -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +34,6 @@
             background-color: #007bff;
             color: #fff;
         }
-        .seat.occupied {
-            background-color: #dc3545;
-            color: #fff;
-            cursor: not-allowed;
-        }
         .seat-row {
             display: flex;
             justify-content: center;
@@ -57,7 +54,6 @@
                     </a> --}}
 
                     <!-- Sơ đồ ghế -->
-                    <!-- Seat Layout -->
                     <div class="seat-layout mb-5">
                         @php
                             $capacity = $room->capacity;
@@ -73,11 +69,14 @@
                                     @if ($seatNumber <= $capacity)
                                         @php
                                             $seatLabel = $currentRowLetter . $j;
+                                            // Kiểm tra xem ghế này có bị chiếm không
                                             $isOccupied = $seats->contains('seat_number', $seatLabel);
                                         @endphp
-                                        <div class="seat {{ $isOccupied ? 'occupied' : '' }}" title="Seat {{ $seatLabel }}">
-                                            {{ $seatLabel }}
-                                        </div>
+                                        @if (!$isOccupied) <!-- Chỉ hiển thị nếu ghế chưa bị chiếm -->
+                                            <div class="seat" title="Seat {{ $seatLabel }}">
+                                                {{ $seatLabel }}
+                                            </div>
+                                        @endif
                                         @php $seatNumber++; @endphp
                                     @endif
                                 @endfor
@@ -86,46 +85,6 @@
                         @endfor
                     </div>
 
-
-                    <!-- Danh sách ghế hiện tại -->
-                    <div class="table-responsive">
-                        <table class="table table-borderless table-striped table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Seat Number</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($seats as $seat)
-                                    <tr>
-                                        <td class="text-center">{{ $seat->seat_number }}</td>
-                                        <td class="text-center">
-                                            <a href="#" class="btn btn-sm btn-alt-secondary" title="Edit">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <form action="#" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this seat?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" class="text-center">No seats found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Laravel Pagination Links (Nếu cần) -->
-                    <div class="d-flex justify-content-center mt-4">
-                        {{ $seats->links() }}
-                    </div>
                 </div>
             </div>
         </div>

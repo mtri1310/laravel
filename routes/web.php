@@ -46,6 +46,7 @@ Route::resource('rooms', RoomController::class)->except(['show'])->middleware('a
 Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
 Route::resource('bookings', BookingController::class)->except(['show'])->middleware('auth');
 Route::get('/trash', [SeatController::class, 'index'])->name('seats.index');
+Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 
 
 
