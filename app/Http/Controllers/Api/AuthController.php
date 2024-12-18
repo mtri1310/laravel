@@ -50,7 +50,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Đăng nhập thành công.',
             'token' => $token,
-            'token_type' => 'bearer',
+            'token_type' => 'bearer', //JWT
             'expires_in' => auth('api')->factory()->getTTL() * 60, // Thời gian hết hạn tính bằng giây
             'user' => $user
         ]);
