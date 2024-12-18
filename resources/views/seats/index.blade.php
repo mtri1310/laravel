@@ -101,10 +101,10 @@
                                     <tr>
                                         <td class="text-center">{{ $seat->seat_number }}</td>
                                         <td class="text-center">
-                                            <a href="{{ route('seats.edit', $seat->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                            <a href="#" class="btn btn-sm btn-alt-secondary" title="Edit">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
-                                            <form action="{{ route('seats.destroy', $seat->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this seat?')">
+                                            <form action="#" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this seat?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">

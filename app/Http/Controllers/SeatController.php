@@ -15,7 +15,7 @@ class SeatController extends Controller
     //
     public function index(Room $room) : View
     {
-        $seats = Seat::where('room_id', $room->id)
+        $seats = Seat::where('room_id', 1)
                     ->orderBy('seat_number')
                     ->paginate(10); // Adjust the number as needed
 
