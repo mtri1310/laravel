@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Showtime;
 use App\Models\Film;
 use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ShowtimeFactory extends Factory
@@ -17,7 +18,7 @@ class ShowtimeFactory extends Factory
             'film_id'     => Film::factory(),
             'room_id'     => Room::factory(),
             'start_time'  => $this->faker->time('H:i:s'), // Generates a time string like '14:30:00'
-            'day'         => $this->faker->date('Y-m-d'), // Generates a date string like '2024-12-17'
+            'day'         => Carbon::now()->addDays(rand(1, 7))->toDateString(),
         ];
     }
 }

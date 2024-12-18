@@ -14,7 +14,7 @@ class SeatFactory extends Factory
     {
         // Assuming each room has seats labeled from A1 to J20
         $rows = range('A', 'J');
-        $number = $this->faker->numberBetween(1, 20);
+        $number = $this->faker->numberBetween(1, 10);
         return [
             'room_id'      => Room::factory(),
             'seat_number'  => $this->faker->randomElement($rows) . $number,

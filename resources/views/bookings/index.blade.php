@@ -40,7 +40,6 @@
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">Booking ID</th>
                                             <th class="d-none d-sm-table-cell text-center">Showtime ID</th>
-
                                             <th class="d-none d-sm-table-cell text-center">Film Name</th>
                                             <th class="d-none d-sm-table-cell text-center">Room Name</th>
                                             <th class="d-none d-sm-table-cell text-center">Start Time</th>
@@ -131,9 +130,9 @@
                                     
                                 </table>
                                 <!-- Phân trang -->
-                                <div class="mt-3">
+                                {{-- <div class="mt-3">
                                     {{ $bookings->links() }}
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </section>
