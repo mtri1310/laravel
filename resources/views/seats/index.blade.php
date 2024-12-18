@@ -52,11 +52,12 @@
                 @include('fragments.header')
                 <div class="content container mt-4">
                     <h1 class="title mb-4">Manage Seats for Room: {{ $room->room_name }}</h1>
-                    <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
+                    {{-- <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
                         <i class="fas fa-plus"></i> Add New Seat
-                    </a>
+                    </a> --}}
 
                     <!-- Sơ đồ ghế -->
+                    <!-- Seat Layout -->
                     <div class="seat-layout mb-5">
                         @php
                             $capacity = $room->capacity;
@@ -84,6 +85,7 @@
                             @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp
                         @endfor
                     </div>
+
 
                     <!-- Danh sách ghế hiện tại -->
                     <div class="table-responsive">

@@ -13,16 +13,16 @@ use Illuminate\Http\RedirectResponse;
 class SeatController extends Controller
 {
     //
-    public function index(Room $room)
+    public function index(Room $room) : View
     {
-        // Lấy thông tin phòng
-        $room = Room::findOrFail($room->id);
-        
-        // Lấy tất cả ghế trong phòng
-        $seats = Seat::where('room_id', $room)->orderBy('seat_number')->get();
+        $seats = Seat::where('room_id', $room->id)
+                    ->orderBy('seat_number')
+                    ->paginate(10); // Adjust the number as needed
 
         return view('seats.index', compact('room', 'seats'));
     }
+
+
 
 
     public function create() : View
