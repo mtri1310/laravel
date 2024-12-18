@@ -3,179 +3,208 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <title>Admin</title>
-    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type = "image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - {{ isset($film->id) ? 'Edit Film' : 'Add New Film' }}</title>
+    <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type="image/x-icon">
 
-    <!-- Bootstrap core -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.css" rel="stylesheet"
-        type="text/css" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" type="text/css" />
 
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/add_form.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-    </script>
 </head>
+
+@php
+    // Ensure $film is always defined
+    if (!isset($film)) {
+        $film = new \App\Models\Film();
+    }
+@endphp
+
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
             <div>
                 {{-- Sidebar --}}
-                @if (isset($room->id))
-                    @include('fragments.sidebar', ['key' => 'room', 'subkey' => 'room_all'])
-                @else
-                    @include('fragments.sidebar', ['key' => 'room', 'subkey' => 'room_news'])
-                @endif
+                @include('fragments.sidebar', ['key' => 'film', 'subkey' => isset($film->id) ? 'film_all' : 'film_news'])
             </div>
 
             <div class="d-flex flex-column wrapper">
+                {{-- Header --}}
                 @include('fragments.header')
-    
-                <div class="row justify-content-center">
-                    <div class="col-md-10 col-lg-8">
-                        <form action="{{ isset($user->id) ? route('users.edit', $user->id) : route('users.store') }}" method="post" id="form-user" enctype="multipart/form-data">
-                            @csrf
-                            @if (isset($user->id))
-                                @method('PUT')
-                            @endif
-                        
-                            <input type="hidden" name="id" value="{{ old('id', $user->id ?? '') }}" />
-                        
-                            <!-- Tên đăng nhập -->
-                            <div class="mb-4">
-                                <label class="form-label" for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" value="{{ old('username', $user->username ?? '') }}" required />
-                                @error('username')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        
-                            <!-- Mật khẩu -->
-                            <div class="mb-4">
-                                <label class="form-label" for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" value="{{ old('password', $user->password ?? '') }}" required />
-                                @error('password')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        
-                            <!-- Email -->
-                            <div class="mb-4">
-                                <label class="form-label" for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" required />
-                                @error('email')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        
-                            <!-- Họ và tên -->
-                            <div class="mb-4">
-                                <label class="form-label" for="full_name">Full Name</label>
-                                <input type="text" class="form-control" id="full_name" name="full_name" value="{{ old('full_name', $user->full_name ?? '') }}" required />
-                                @error('full_name')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        
-                            <!-- Số điện thoại -->
-                            <div class="mb-4">
-                                <label class="form-label" for="phone">Phone</label>
-                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone', $user->phone ?? '') }}" />
-                                @error('phone')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        
-                            <!-- Ảnh đại diện -->
-                            <div class="mb-4" style="padding: 0;">
-                                <div class="upload-zone d-flex justify-content-center align-items-center">
-                                    <!-- Input file ảnh -->
-                                    <input type="file" name="picture"
-                                        accept="image/png, image/jpg, image/jpeg"
-                                        onchange="loadFile(event)" class="upload-zone-input"
-                                        id="input-image" required />
-                            
-                                    <!-- Input ẩn để lưu tên file ảnh -->
-                                    <input type="text" id="image" name="picture"
-                                        value="{{ old('picture') }}" readonly style="display: none; opacity: 0" />
-                            
-                                    <!-- Hiển thị ảnh (nếu có) -->
-                                    <img id="image-output"
-                                        src="{{ old('picture') ? asset('storage/' . old('picture')) : '' }}"
-                                        alt="Image preview" />
-                            
-                                    <div class="upload-zone-content">
-                                        <div class="upload-zone-title">Select file</div>
-                                        <div class="upload-zone-desc">Click browse through your machine</div>
-                                    </div>
+
+                <div class="content">
+                    <section class="form-container"> 
+                        <div class="form-container-header d-flex align-items-center justify-content-between mb-4">
+                            <h1 class="h3">
+                                {{ isset($user->id) ? 'Edit User Information' : 'Add New User' }}
+                            </h1>
+                        </div>
+                        <div class="form-container-content">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 col-lg-8">
+                                    {{-- User Form --}}
+                                    <form
+                                        action="{{ isset($user->id) ? route('users.update', $user->id) : route('users.store') }}"
+                                        method="POST" id="form-user" enctype="multipart/form-data">
+                                        @csrf
+                                        @if(isset($user->id))
+                                            @method('PUT')
+                                        @endif
+                    
+                                        {{-- Hidden ID Field --}}
+                                        <input type="hidden" name="id" value="{{ old('id', $user->id ?? '') }}" />
+                    
+                                        {{-- Username --}}
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Username</label>
+                                            <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username"
+                                                value="{{ old('username', $user->username ?? '') }}" required>
+                                            @error('username')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Password --}}
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password"
+                                                value="{{ old('password', $user->password ?? '') }}" required>
+                                            @error('password')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Email --}}
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
+                                                value="{{ old('email', $user->email ?? '') }}" required>
+                                            @error('email')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Full Name --}}
+                                        <div class="mb-3">
+                                            <label for="full_name" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
+                                                value="{{ old('full_name', $user->full_name ?? '') }}" required>
+                                            @error('full_name')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Phone --}}
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Phone</label>
+                                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone"
+                                                value="{{ old('phone', $user->phone ?? '') }}" required>
+                                            @error('phone')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Picture --}}
+                                        <div class="mb-3">
+                                            <label class="form-label">Picture</label>
+                                            <div class="upload-zone d-flex justify-content-center align-items-center position-relative border rounded p-3">
+                                                <!-- File Input for Uploading New Picture -->
+                                                <input type="file" name="picture"
+                                                    accept="image/png, image/jpg, image/jpeg"
+                                                    onchange="loadFile(event)" class="upload-zone-input"
+                                                    id="input-image" {{ isset($user->id) ? '' : 'required' }} />
+                                        
+                                                <!-- Hidden Input to Store Existing Picture URL (Only in Edit) -->
+                                                @if(isset($user->picture))
+                                                    <input type="hidden" id="existing_picture" name="existing_picture"
+                                                        value="{{ old('existing_picture', $user->picture) }}" />
+                                                @endif
+                                        
+                                                <!-- Image Preview -->
+                                                <img id="image-output"
+                                                    src="{{ isset($user->picture) ? $user->picture : '' }}"
+                                                    alt="Image preview"
+                                                    class="img-thumbnail" style="width: 100%; height: 100%; object-fit: contain; display: {{ isset($user->picture) ? 'block' : 'none' }}" />
+                                        
+                                                <!-- Upload Zone Content -->
+                                                <div class="upload-zone-content text-center">
+                                                    <i class="fas fa-upload fa-2x mb-2 text-muted"></i>
+                                                    <div class="upload-zone-title text-muted">Select file</div>
+                                                    <div class="upload-zone-desc text-muted">Click to browse your machine</div>
+                                                </div>
+                                            </div>
+                                        
+                                            {{-- Error Messages --}}
+                                            @error('picture')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                            @error('existing_picture')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        
+                    
+                                        <!-- Vai trò người dùng -->
+                                        <div class="mb-4">
+                                            <label class="form-label" for="role">Role</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="role" id="role_admin" value="1" {{ old('role', $user->role ?? 0) == 1 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="role_admin">
+                                                    Admin
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="role" id="role_user" value="0" {{ old('role', $user->role ?? 0) == 0 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="role_user">
+                                                    User
+                                                </label>
+                                            </div>
+                                            @error('role')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                    
+                                        {{-- Submit Button --}}
+                                        <div class="d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </form>
                                 </div>
-                            
-                                @error('picture')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
                             </div>
-                                                                          
-                            <!-- Vai trò người dùng -->
-                            <div class="mb-4">
-                                <label class="form-label" for="role">Role</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="role" id="role_admin" value="1" {{ old('role', $user->role ?? 0) == 1 ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="role_admin">
-                                        Admin
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="role" id="role_user" value="0" {{ old('role', $user->role ?? 0) == 0 ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="role_user">
-                                        User
-                                    </label>
-                                </div>
-                                @error('role')
-                                    <span class="form-valid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            
-                            
-                        
-                            <div class="mb-4 d-flex align-items-center justify-content-end">
-                                <button type="submit" class="btn btn-danger auth-btn">Save</button>
-                            </div>
-                        </form>
-                        
-                    </div>
+                        </div>
+                    </section>
+                    
                 </div>
             </div>
         </div>
-        
+
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- jQuery -->
         <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+        <!-- Bootstrap JS -->
+        <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <!-- Custom JS -->
         <script src="{{ asset('assets/js/index.js') }}"></script>
+        <!-- Summernote JS -->
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 
         <script>
+
+            // Initialize Summernote and handle SweetAlert messages
             $(document).ready(function() {
-
-                if ($("#image").val() != '' && $("#image").val() != null) {
-                    let image_output = document.getElementById('image-output');
-                    $('#image-output').css('display', 'block')
-                    image_output.src = $("#image").val();
-                    $('.upload-zone-content').css('display', 'none');
-                }
-
-                if ($('#release').val() != '' && $('#release').val() != null) {
-                    $('#release').val(formatDate($('#release').val()));
-                }
-
+                // Initialize Summernote
                 $('#story_line').summernote({
-                    height: 400,
+                    height: 300,
                     toolbar: [
                         ['style', ['bold', 'italic', 'underline', 'clear']],
                         ['font', ['strikethrough', 'superscript', 'subscript']],
@@ -183,30 +212,26 @@
                         ['color', ['forecolor']],
                         ['para', ['ul', 'ol', 'paragraph']],
                         ['table', ['table']],
-                        ['height', ['height']],
                         ['insert', ['link', 'picture']],
-                        ['view', ['fullscreen']]
+                        ['view', ['fullscreen', 'codeview']]
                     ],
                     tooltip: false,
                     dialogsInBody: true
-
                 });
-                let buttonClose = $(
-                    '<button type="button" class="close-summernote-dialog" aria-hidden="true" tabindex="-1">&times;</button>'
-                    )
-                $(".note-modal-content").append(buttonClose);
 
-                $('button.close-summernote-dialog').click(function() {
+                // Close Summernote dialogs with custom button
+                $('body').on('click', '.close-summernote-dialog', function() {
                     $('.note-modal').removeClass('open');
-                    $('.note-modal-backdrop').css('display', 'none');
-                })
+                    $('.note-modal-backdrop').hide();
+                });
 
-            })
+                // Display existing thumbnail if editing
+                @if(isset($film->thumbnail))
+                    $('#image-output').show();
+                    $('.upload-zone-content').hide();
+                @endif
+            });
         </script>
-        <script>
-            $('#release').keyup(function(event) {
-                formatDate(event, $(this))
-            })
-        </script>
-    </div>
-</body>
+    </body>
+
+</html>

@@ -2,15 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+
 use Illuminate\View\View;
+use App\Services\CloudinaryService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
+    protected $cloudinaryService;
+
+    /**
+     * Constructor to inject CloudinaryService.
+     *
+     * @param CloudinaryService $cloudinaryService
+     */
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
+
+    /**
+     * Display a listing of the films.
+     *
+     * @return View
+     */
     //
     public function index(): View
     {
@@ -25,35 +43,49 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    public function store(StoreUserRequest $request) : RedirectResponse
+    public function store(UserRequest $request): RedirectResponse
     {
-        if ($request->hasFile('picture')) {
-            $path = $request->file('picture')->store('profiles', 'public');
+        try {
+            $data = $request->validated();
+
+            if ($request->hasFile('picture')) {
+                $data['picture'] = $this->cloudinaryService->uploadImage($request->file('picture'));
+            }
+
+            User::create($data);
+
+            return redirect()->route('users.index')
+                ->with('messageSuccess', 'New picture has been added successfully.');
+        } catch (\Exception $e) {
+            Log::error('Picture Store Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while adding the picture.');
         }
-        User::create($request->all());
-        session()->flash('messageSuccess', 'New user is added successfully.');
-        return redirect()->route('users.index');
     }
 
-    public function show(User $user) : View
-    {
-        return view('users.show', [
-            'user' => $user
-        ]);
-    }
+    
 
     public function edit(User $user) : View
     {
-        return view('users.edit', [
-            'user' => $user
-        ]);
+        return view('users.create', compact('user'));
     }
 
-    public function update(UpdateUserRequest $request, User $user) : RedirectResponse
+    public function update(UserRequest $request, User $user) : RedirectResponse
     {
-        $user->update($request->all());
-        return redirect()->back()
-                ->withSuccess('User is updated successfully.');
+        try {
+            $data = $request->validated();
+
+            if ($request->hasFile('picture')) {
+                $data['picture'] = $this->cloudinaryService->uploadImage($request->file('picture'));
+            }
+
+            User::create($data);
+
+            return redirect()->route('user.index')
+                ->with('messageSuccess', 'New picture has been updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Picture Store Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while updating the picture.');
+        }
     }
 
     // /**
@@ -61,8 +93,23 @@ class UserController extends Controller
     //  */
     public function destroy(User $user) : RedirectResponse
     {
-        $user->delete();
-        return redirect()->route('users.index')
-                ->withSuccess('User is deleted successfully.');
+        try {
+            $imageUrl = $user->picture;
+
+            if ($imageUrl) {
+                $deleted = $this->cloudinaryService->deleteImageByUrl($imageUrl);
+                if (!$deleted) {
+                    Log::error("Failed to delete image from Cloudinary for User ID: {$user->id}");
+                }
+            }
+            $user->delete();
+
+            return redirect()->route('users.index')
+                ->with('messageSuccess', 'User has been deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('User Deletion Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'Failed to delete the user.');
+        }
+        
     }
 }
