@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - {{ isset($film->id) ? 'Edit Film' : 'Add New Film' }}</title>
+    <title>Admin - {{ isset($user->id) ? 'Edit User' : 'Add New User' }}</title>
     <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
@@ -23,9 +23,9 @@
 </head>
 
 @php
-    // Ensure $film is always defined
-    if (!isset($film)) {
-        $film = new \App\Models\Film();
+    // Ensure $user is always defined
+    if (!isset($user)) {
+        $user = new \App\Models\User();
     }
 @endphp
 
@@ -34,7 +34,7 @@
         <div class="d-flex flex-row flex-column-fluid page">
             <div>
                 {{-- Sidebar --}}
-                @include('fragments.sidebar', ['key' => 'film', 'subkey' => isset($film->id) ? 'film_all' : 'film_news'])
+                @include('fragments.sidebar', ['key' => 'user', 'subkey' => isset($user->id) ? 'user_all' : 'user_news'])
             </div>
 
             <div class="d-flex flex-column wrapper">
@@ -76,12 +76,15 @@
                                         {{-- Password --}}
                                         <div class="mb-3">
                                             <label for="password" class="form-label">Password</label>
-                                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password"
-                                                value="{{ old('password', $user->password ?? '') }}" required>
+                                            <input type="password" 
+                                                   class="form-control @error('password') is-invalid @enderror" 
+                                                   id="password" name="password" 
+                                                   placeholder="Leave blank to keep current password">
                                             @error('password')
                                                 <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        
                     
                                         {{-- Email --}}
                                         <div class="mb-3">
@@ -133,8 +136,9 @@
                                                 <img id="image-output"
                                                     src="{{ isset($user->picture) ? $user->picture : '' }}"
                                                     alt="Image preview"
-                                                    class="img-thumbnail" style="width: 100%; height: 100%; object-fit: contain; display: {{ isset($user->picture) ? 'block' : 'none' }}" />
-                                        
+                                                    class="img-thumbnail"
+                                                    style="width: 100%; height: 100%; object-fit: contain; display: {{ isset($user->picture) ? 'block' : 'none' }}" />
+
                                                 <!-- Upload Zone Content -->
                                                 <div class="upload-zone-content text-center">
                                                     <i class="fas fa-upload fa-2x mb-2 text-muted"></i>
@@ -226,11 +230,13 @@
                 });
 
                 // Display existing thumbnail if editing
-                @if(isset($film->thumbnail))
+                @if(isset($user->picture))
                     $('#image-output').show();
                     $('.upload-zone-content').hide();
                 @endif
             });
+
+            
         </script>
     </body>
 

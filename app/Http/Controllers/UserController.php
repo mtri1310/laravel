@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use App\Services\CloudinaryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -48,6 +49,10 @@ class UserController extends Controller
         try {
             $data = $request->validated();
 
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password); // Hash mật khẩu
+            }
+
             if ($request->hasFile('picture')) {
                 $data['picture'] = $this->cloudinaryService->uploadImage($request->file('picture'));
             }
@@ -55,10 +60,10 @@ class UserController extends Controller
             User::create($data);
 
             return redirect()->route('users.index')
-                ->with('messageSuccess', 'New picture has been added successfully.');
+                ->with('messageSuccess', 'New user has been added successfully.');
         } catch (\Exception $e) {
-            Log::error('Picture Store Failed: ' . $e->getMessage());
-            return back()->with('messageError', 'An unexpected error occurred while adding the picture.');
+            Log::error('User Store Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while adding the user.');
         }
     }
 
@@ -69,22 +74,28 @@ class UserController extends Controller
         return view('users.create', compact('user'));
     }
 
-    public function update(UserRequest $request, User $user) : RedirectResponse
+    public function update(UserRequest $request, User $user): RedirectResponse
     {
         try {
             $data = $request->validated();
+
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password); // Hash mật khẩu
+            } else {
+                unset($data['password']); // Giữ nguyên mật khẩu nếu không thay đổi
+            }
 
             if ($request->hasFile('picture')) {
                 $data['picture'] = $this->cloudinaryService->uploadImage($request->file('picture'));
             }
 
-            User::create($data);
+            $user->update($data);
 
-            return redirect()->route('user.index')
-                ->with('messageSuccess', 'New picture has been updated successfully.');
+            return redirect()->route('users.index')
+                ->with('messageSuccess', 'User has been updated successfully.');
         } catch (\Exception $e) {
-            Log::error('Picture Store Failed: ' . $e->getMessage());
-            return back()->with('messageError', 'An unexpected error occurred while updating the picture.');
+            Log::error('User Update Failed: ' . $e->getMessage());
+            return back()->with('messageError', 'An unexpected error occurred while updating the user.');
         }
     }
 

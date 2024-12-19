@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -19,9 +20,9 @@ class UserRequest extends FormRequest
         $userId = $this->route('user') ? $this->route('user')->id : null;
 
         return [
-            'username' => 'required|string|max:255|unique:users' . $userId,  // Tên đăng nhập, không trùng lặp
-            'password' => 'required|string|min:8',  // Mật khẩu yêu cầu tối thiểu 8 ký tự
-            'email' => 'required|email|unique:users',  // Email phải hợp lệ và không trùng lặp
+            'username' => ['required', 'string', Rule::unique('users')->ignore($userId)],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($userId)],
+            'password' => $userId ? 'nullable|min:6' : 'required|min:6',
             'full_name' => 'required|string|max:255',  // Họ tên đầy đủ
             'phone' => 'nullable|string|max:20',  // Số điện thoại, có thể để trống
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  // Hình ảnh người dùng
