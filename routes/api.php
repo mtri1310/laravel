@@ -38,7 +38,7 @@ Route::get('/payment', [PaymentController::class, 'payment']);
 // Route::middleware('auth:api')->get('/login', [LoginController::class, 'getUserInfo']);
 // Route::post('auth/google',  [LoginController::class, 'loginWithGoogle']);
 // Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
-Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
+Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
 
