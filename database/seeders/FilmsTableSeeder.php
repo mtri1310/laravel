@@ -171,7 +171,7 @@ class FilmsTableSeeder extends Seeder
             [
                 'id' => 10,
                 'film_name' => '404 – CHẠY NGAY ĐI',
-                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x495-404.jpg',
+                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/4/7/470x700px.jpg',
                 'duration' => '120 phút',
                 'review' => 4.70,
                 'story_line' => 'Một kế hoạch phông bạt nhanh chóng bị phá hủy bởi các thế lực tâm linh...',
