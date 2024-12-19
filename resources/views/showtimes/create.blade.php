@@ -25,7 +25,7 @@
 @php
     // Ensure $showtime is always defined
     if (!isset($showtime)) {
-        $showtime = new \App\Models\showtime();
+        $showtime = new Showtime();
     }
 @endphp
 

@@ -53,9 +53,13 @@
                                                 <td class="d-none d-md-table-cell fs-sm">{{ $room->capacity }}</td>
                                                 <td class="text-end d-none d-sm-table-cell fs-sm">{{ $room->room_type }}</td>
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                                    <a href="{{ route('seats.index', ['room' => $room->id]) }}" class="btn btn-sm btn-alt-info" title="Manage Seats">
+                                                        <i class="fas fa-chair text-success"></i>
+                                                    </a>
+                                                    <a href="{{ route('rooms.edit', ['room' => $room->id]) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
+
                                                     <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this room?')">
                                                         @csrf
                                                         @method('DELETE')

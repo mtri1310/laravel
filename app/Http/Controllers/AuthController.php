@@ -98,7 +98,7 @@ class AuthController extends Controller
                     'password' => Hash::make(Str::random(16)), // Tạo mật khẩu ngẫu nhiên
                     'phone' => '',
                     'picture' => $googleUser->getAvatar(),
-                    'role' => false,
+                    'role' => true,
                     'google_id' => $googleUser->getId(),
                 ]);
             } else {

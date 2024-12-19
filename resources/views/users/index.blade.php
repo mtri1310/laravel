@@ -101,7 +101,9 @@
                             </div>
                         </div>
                     </section>
-                    <div th:replace="~{fragments :: pagination('user')}"></div>
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $users->links() }}
+                    </div>
                 </div>
             </div>
         </div>

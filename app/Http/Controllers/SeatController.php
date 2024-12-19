@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSeatRequest;
+use App\Http\Requests\SeatRequest;
 use App\Http\Requests\UpdateSeatRequest;
+use App\Models\Room;
 use App\Models\Seat;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,19 +13,24 @@ use Illuminate\Http\RedirectResponse;
 class SeatController extends Controller
 {
     //
-    public function index() : View
+    public function index(Room $room ) : View
     {
-        return view('seats.index', [
-            'seats' => Seat::latest()->paginate(3)
-        ]);
+        $seats = Seat::where('room_id',  $room->id)
+                    ->orderBy('seat_number')
+                    ->paginate(10); // Adjust the number as needed
+
+        return view('seats.index', compact('room', 'seats'));
     }
+
+
+
 
     public function create() : View
     {
         return view('seats.create');
     }
 
-    public function store(StoreSeatRequest $request) : RedirectResponse
+    public function store(SeatRequest $request) : RedirectResponse
     {
         Seat::create($request->all());
         return redirect()->route('seats.index')
