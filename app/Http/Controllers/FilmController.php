@@ -45,12 +45,12 @@ class FilmController extends Controller
         $films = Film::latest()
                     ->when($keyword, function($query, $keyword) {
                         return $query->where(function($q) use ($keyword) {
-                            $q->where('film_name', 'ilike', "%{$keyword}%")
-                              ->orWhere('movie_genre', 'ilike', "%{$keyword}%")
-                              ->orWhere('censorship', 'ilike', "%{$keyword}%")
-                              ->orWhere('language', 'ilike', "%{$keyword}%")
-                              ->orWhere('director', 'ilike', "%{$keyword}%")
-                              ->orWhere('actor', 'ilike', "%{$keyword}%");
+                            $q->where('film_name', 'like', "%{$keyword}%")
+                              ->orWhere('movie_genre', 'like', "%{$keyword}%")
+                              ->orWhere('censorship', 'like', "%{$keyword}%")
+                              ->orWhere('language', 'like', "%{$keyword}%")
+                              ->orWhere('director', 'like', "%{$keyword}%")
+                              ->orWhere('actor', 'like', "%{$keyword}%");
                         });
                     })
                     ->paginate(10)
