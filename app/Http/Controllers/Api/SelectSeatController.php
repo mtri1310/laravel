@@ -57,9 +57,8 @@ class SelectSeatController extends Controller
             ], 400);
         }
 
-        // Kiểm tra xem ghế đã được đặt bởi người dùng hiện tại hay chưa
+        // Kiểm tra xem ghế đã được đặt bởi bất kỳ người dùng nào trong cùng suất chiếu chưa
         $existingBooking = Booking::where('showtime_id', $showtimeId)
-            ->where('user_id', $user->id)
             ->whereHas('seats', function ($query) use ($seatId) {
                 $query->where('id', $seatId);
             })
@@ -77,7 +76,7 @@ class SelectSeatController extends Controller
             'showtime_id' => $showtimeId,
             'user_id' => $user->id,
         ]);
-        
+
         $booking->seats()->attach($seatId);
 
         // Trả về kết quả
