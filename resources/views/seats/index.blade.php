@@ -1,3 +1,5 @@
+<!-- resources/views/seats/index.blade.php -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +34,6 @@
             background-color: #007bff;
             color: #fff;
         }
-        .seat.occupied {
-            background-color: #dc3545;
-            color: #fff;
-            cursor: not-allowed;
-        }
         .seat-row {
             display: flex;
             justify-content: center;
@@ -52,78 +49,39 @@
                 @include('fragments.header')
                 <div class="content container mt-4">
                     <h1 class="title mb-4">Manage Seats for Room: {{ $room->room_name }}</h1>
-                    <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
+                    {{-- <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
                         <i class="fas fa-plus"></i> Add New Seat
-                    </a>
+                    </a> --}}
 
                     <!-- Sơ đồ ghế -->
                     <div class="seat-layout mb-5">
                         @php
-                            $capacity = $room->capacity;
-                            $seatsPerRow = 10;
-                            $rows = ceil($capacity / $seatsPerRow);
-                            $seatNumber = 1;
-                            $currentRowLetter = 'A';
+                            $capacity = $room->capacity; // Sức chứa phòng
+                            $seatsPerRow = 10; // Số ghế mỗi hàng
+                            $rows = ceil($capacity / $seatsPerRow); // Tính số hàng
+                            $seatNumber = 1; // Số ghế bắt đầu
+                            $currentRowLetter = 'A'; // Bắt đầu từ hàng A
                         @endphp
-
-                        @for ($i = 0; $i < $rows; $i++)
+                    
+                        @for ($i = 0; $i < $rows; $i++) <!-- Vòng lặp theo hàng -->
                             <div class="seat-row">
-                                @for ($j = 1; $j <= $seatsPerRow; $j++)
+                                @for ($j = 1; $j <= $seatsPerRow; $j++) <!-- Vòng lặp theo ghế trong hàng -->
                                     @if ($seatNumber <= $capacity)
                                         @php
-                                            $seatLabel = $currentRowLetter . $j;
-                                            $isOccupied = $seats->contains('seat_number', $seatLabel);
+                                            $seatLabel = $currentRowLetter . $j; // Định dạng số ghế (A1, A2,...)
                                         @endphp
-                                        <div class="seat {{ $isOccupied ? 'occupied' : '' }}" title="Seat {{ $seatLabel }}">
+                                        <div class="seat" title="Seat {{ $seatLabel }}">
                                             {{ $seatLabel }}
                                         </div>
                                         @php $seatNumber++; @endphp
                                     @endif
                                 @endfor
                             </div>
-                            @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp
+                            @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp <!-- Chuyển sang hàng tiếp theo -->
                         @endfor
                     </div>
+                    
 
-                    <!-- Danh sách ghế hiện tại -->
-                    <div class="table-responsive">
-                        <table class="table table-borderless table-striped table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Seat Number</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($seats as $seat)
-                                    <tr>
-                                        <td class="text-center">{{ $seat->seat_number }}</td>
-                                        <td class="text-center">
-                                            <a href="{{ route('seats.edit', $seat->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <form action="{{ route('seats.destroy', $seat->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this seat?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" class="text-center">No seats found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Laravel Pagination Links (Nếu cần) -->
-                    <div class="d-flex justify-content-center mt-4">
-                        {{ $seats->links() }}
-                    </div>
                 </div>
             </div>
         </div>

@@ -15,13 +15,14 @@ class SeatsTableSeeder extends Seeder
     {
         // For each room, create seats
         Room::all()->each(function ($room) {
-            $rows = range('A', 'J'); // 10 rows
-            $columns = 10; // 10 seats per row
+            $columns = 10; // Số ghế mỗi hàng
+            $rows = $room->capacity == 50 ? range('A', 'E') : range('A', 'J'); // Chọn số hàng theo capacity
+        
             foreach ($rows as $row) {
                 for ($i = 1; $i <= $columns; $i++) {
                     Seat::create([
                         'room_id'     => $room->id,
-                        'seat_number' => $row . $i,
+                        'seat_number' => $row . $i, // Ghép hàng và số ghế
                     ]);
                 }
             }

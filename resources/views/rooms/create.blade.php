@@ -25,7 +25,7 @@
 @php
     // Ensure $room is always defined
     if (!isset($room)) {
-        $room = new Room();
+        $room = new \App\Models\Room();
     }
 @endphp
 
