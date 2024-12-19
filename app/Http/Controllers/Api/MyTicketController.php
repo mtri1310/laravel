@@ -50,7 +50,7 @@ class MyTicketController extends Controller
                     'room_name' => $booking->showtime->room->room_name
                 ],
                 'invoice' => [
-                    'total_amount' => $booking->invoice->total_amount
+                    'total_amount' => $booking->payment->invoice->total_amount
                 ]
             ]
         ];
