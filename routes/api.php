@@ -28,10 +28,7 @@ use Illuminate\Console\View\Components\Secret;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-// Route::middleware('auth:sanctum')->get('/student', [StudentController::class, 'index']);
+
 Route::get('/movies', [ImdbController::class, 'index']);
 Route::get('/listfilms', [ListFilmsController::class, 'listfilms']);
 Route::get('/payment', [PaymentController::class, 'payment']);
@@ -47,7 +44,14 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+// Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
 // Lấy thông tin người dùng hiện tại (yêu cầu xác thực)
-Route::get('/userprofile', [AuthController::class, 'getUser'])->middleware('auth:api');
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/payment', [PaymentController::class, 'payment']);
+    Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
+    Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
+    Route::get('/userprofile', [AuthController::class, 'getUser']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});

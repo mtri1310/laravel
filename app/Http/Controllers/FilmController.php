@@ -30,16 +30,7 @@ class FilmController extends Controller
      * @return View
      */
     public function index(Request $request): View
-
-
     { 
-
-        
-
-
-
-
-
         $keyword = $request->input('keyword');
 
         $films = Film::latest()
