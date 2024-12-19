@@ -29,17 +29,16 @@ class ListFilmsController extends Controller
                 'duration' => $film->duration,
                 'review' => $film->review,
                 'story_line' => $film->story_line,
+                'trailer_link' => $film->link_trailer,
                 'movie_genre' => $film->movie_genre,
                 'censorship' => $film->censorship,
                 'language' => $film->language,
                 'director' => $film->director,
                 'actor' => $film->actor,
                 'status' => $film->status,
+                'release' => $film->release->format('d-m-Y')
             ];
         
-            if ($type == 1) {
-                $data['release'] = $film->release->format('d-m-Y');
-            }
             return $data;
         });
 

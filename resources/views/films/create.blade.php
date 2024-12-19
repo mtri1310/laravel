@@ -19,13 +19,12 @@
     <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/add_form.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
 </head>
 
 @php
     // Ensure $film is always defined
     if (!isset($film)) {
-        $film = new Film();
+        $film = new \App\Models\Film();
     }
 @endphp
 
@@ -76,11 +75,22 @@
                                         {{-- Story Line --}}
                                         <div class="mb-3">
                                             <label for="story_line" class="form-label">Story Line</label>
-                                            <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line" rows="4">{{ old('story_line', $film->story_line ?? '') }}</textarea>
+                                            <textarea class="form-control @error('story_line') is-invalid @enderror" id="story_line" name="story_line" rows="6">{{ old('story_line', $film->story_line ?? '') }}</textarea>
                                             @error('story_line')
                                                 <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        {{-- Link Trailer --}}
+                                        <div class="mb-3">
+                                            <label for="link_trailer" class="form-label">Trailer Link</label>
+                                            <input type="url" class="form-control @error('link_trailer') is-invalid @enderror" id="link_trailer" name="link_trailer"
+                                                value="{{ old('link_trailer', $film->link_trailer ?? '') }}" placeholder="https://example.com/trailer" />
+                                            @error('link_trailer')
+                                                <span class="form-valid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+
 
                                         {{-- Movie Genre --}}
                                         <div class="mb-3">
@@ -208,11 +218,13 @@
                                         <div class="mb-4">
                                             <div class="d-flex flex-column justify-content-center">
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input"
-                                                        id="status" name="status" value="1"
-                                                        {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="status">Is
-                                                        Published?</label>
+                                                    <input type="hidden" name="status" value="0">       
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="status" name="status" value="1"
+                                                            {{ old('status', $film->status ?? 1) ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="status">Is Published?</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,41 +250,23 @@
         <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <!-- Custom JS -->
         <script src="{{ asset('assets/js/index.js') }}"></script>
-        <!-- Summernote JS -->
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 
         <script>
 
             // Initialize Summernote and handle SweetAlert messages
-            $(document).ready(function() {
-                // Initialize Summernote
-                $('#story_line').summernote({
-                    height: 300,
-                    toolbar: [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        ['fontsize', ['fontsize']],
-                        ['color', ['forecolor']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture']],
-                        ['view', ['fullscreen', 'codeview']]
-                    ],
-                    tooltip: false,
-                    dialogsInBody: true
-                });
+            $(document).ready(function() {               
 
                 // Close Summernote dialogs with custom button
                 $('body').on('click', '.close-summernote-dialog', function() {
                     $('.note-modal').removeClass('open');
                     $('.note-modal-backdrop').hide();
                 });
-
-                // Display existing thumbnail if editing
+                $(document).ready(function() {
                 @if(isset($film->thumbnail))
                     $('#image-output').show();
                     $('.upload-zone-content').hide();
                 @endif
+            });
             });
         </script>
     </body>

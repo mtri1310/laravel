@@ -22,6 +22,7 @@ class FilmRequest extends FormRequest
             'duration'     => 'required|string|max:50',
             'review'       => 'nullable|numeric|min:0|max:10',
             'story_line'   => 'nullable|string',
+            'link_trailer' => 'nullable|string|max:255',
             'movie_genre'  => 'required|string|max:255',
             'censorship'   => 'nullable|string|max:255',
             'language'     => 'required|string|max:255',

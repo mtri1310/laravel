@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('admin'), // Mã hóa mật khẩu
             'email' => 'admin@gmail.com',
             'full_name' => 'Admin User',
-            'picture' => 'default.png',
+            'picture' => 'https://lh3.googleusercontent.com/a/ACg8ocI4NfD37fP6quKobIVhdKT16Tn8PYwv2SSO0jcSIrRvO4S5ZTU=s96-c',
             'phone' => '1234567890',
             'role' => 1, // Role là admin
             'google_id' => '18062325687999322158'
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('user'), // Mã hóa mật khẩu
             'email' => 'user@gmail.com',
             'full_name' => 'Normal User',
-            'picture' => 'default.png',
+            'picture' => 'https://lh3.googleusercontent.com/a/ACg8ocI4NfD37fP6quKobIVhdKT16Tn8PYwv2SSO0jcSIrRvO4S5ZTU=s96-c',
             'phone' => '0987654321',
             'role' => 0, // Role là user
             'google_id' => '18062325687999322159'

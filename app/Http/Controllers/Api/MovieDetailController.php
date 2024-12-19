@@ -43,8 +43,10 @@ class MovieDetailController extends Controller
         'censorship' => $film->censorship,
         'Language' => $film->language,
         'Story_line' => $film->story_line,
+        'trailer_link' => $film->link_trailer,
         'Direction' => $film->director,
-        'Actor' => $film->actor
+        'Actor' => $film->actor,
+        'Release' => $film->release ? $film->release->format('Y-m-d') : null
     ];
 
     // Trả về kết quả JSON

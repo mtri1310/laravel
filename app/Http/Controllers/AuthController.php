@@ -95,10 +95,10 @@ class AuthController extends Controller
                     'username' => Str::slug($googleUser->getName() . '_' . Str::random(5), '_'),
                     'email' => $googleUser->getEmail(),
                     'full_name' => $googleUser->getName(),
-                    'password' => Hash::make(Str::random(16)), // Tạo mật khẩu ngẫu nhiên
+                    'password' => Hash::make('tringu123'), // Tạo mật khẩu ngẫu nhiên
                     'phone' => '',
                     'picture' => $googleUser->getAvatar(),
-                    'role' => true,
+                    'role' => 1,
                     'google_id' => $googleUser->getId(),
                 ]);
             } else {

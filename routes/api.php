@@ -39,19 +39,19 @@ Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails'
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
 
+Route::post('/register', [AuthController::class, 'register']);
+
 // Đăng nhập bằng email và password
 Route::post('/login', [AuthController::class, 'login']);
 
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
-// Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
-
-// Lấy thông tin người dùng hiện tại (yêu cầu xác thực)
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
     Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
     Route::get('/userprofile', [AuthController::class, 'getUser']);
+    Route::put('/userprofile', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });

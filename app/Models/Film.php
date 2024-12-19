@@ -21,6 +21,7 @@ class Film extends Model
         'actor',
         'status',
         'release',
+        'link_trailer',
     ];
     protected $casts = [
         'release' => 'date', 

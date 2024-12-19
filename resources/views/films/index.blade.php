@@ -43,6 +43,7 @@
                                             <th>Thumbnail</th>
                                             <th class="d-none d-sm-table-cell text-center">Duration</th>
                                             <th class="d-none d-sm-table-cell text-center">Review</th>
+                                            <th class="d-none d-sm-table-cell text-center">Trailer link</th>
                                             <th class="d-none d-sm-table-cell text-center">Movie Genre</th>
                                             <th class="d-none d-sm-table-cell text-center">Censorship</th>
                                             <th class="d-none d-sm-table-cell text-center">Language</th>
@@ -83,6 +84,7 @@
                                                 
                                                     <span class="ms-2">({{ number_format($film->review, 1) }})</span>
                                                 </td>
+                                                <td class="d-none d-sm-table-cell fs-sm">{{ $film->link_trailer }}</td>
                                                 <td class="d-none d-sm-table-cell fs-sm">{{ $film->movie_genre }}</td>
                                                 <td class="d-none d-md-table-cell fs-sm">{{ $film->censorship }}</td>
                                                 <td class="d-none d-md-table-cell fs-sm">{{ $film->language }}</td>

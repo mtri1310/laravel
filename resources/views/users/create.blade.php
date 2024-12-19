@@ -124,7 +124,7 @@
                                                 <input type="file" name="picture"
                                                     accept="image/png, image/jpg, image/jpeg"
                                                     onchange="loadFile(event)" class="upload-zone-input"
-                                                    id="input-image" {{ isset($user->id) ? '' : 'required' }} />
+                                                    id="input-image"/>
                                         
                                                 <!-- Hidden Input to Store Existing Picture URL (Only in Edit) -->
                                                 @if(isset($user->picture))

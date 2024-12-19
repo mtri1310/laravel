@@ -120,7 +120,7 @@ class FilmsTableSeeder extends Seeder
             [
                 'id' => 7,
                 'film_name' => 'NHÍM SONIC 3',
-                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/sth3_poster_470x700.jpg',
+                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/s/t/sth3_poster_470x700.jpg',
                 'duration' => '109 phút',
                 'review' => 4.50,
                 'story_line' => 'Sonic, Knuckles và Tails đối mặt với kẻ thù mới cực mạnh là Shadow...',
@@ -137,7 +137,7 @@ class FilmsTableSeeder extends Seeder
             [
                 'id' => 8,
                 'film_name' => 'KÍNH VẠN HOA',
-                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/350x490.jpg',
+                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x490.jpg',
                 'duration' => '110 phút',
                 'review' => 4.50,
                 'story_line' => 'Chuyển thể từ tác phẩm nổi tiếng của nhà văn Nguyễn Nhật Ánh...',
@@ -154,7 +154,7 @@ class FilmsTableSeeder extends Seeder
             [
                 'id' => 9,
                 'film_name' => 'YÊU EM KHÔNG CẦN LỜI NÓI',
-                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/470x700px.jpg',
+                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/4/7/470x700px.jpg',
                 'duration' => '120 phút',
                 'review' => 4.70,
                 'story_line' => 'Bộ phim thanh xuân ngập tràn cảm xúc, được remake từ Hear Me...',
@@ -171,7 +171,7 @@ class FilmsTableSeeder extends Seeder
             [
                 'id' => 10,
                 'film_name' => '404 – CHẠY NGAY ĐI',
-                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/350x495-404.jpg',
+                'thumbnail' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x495-404.jpg',
                 'duration' => '120 phút',
                 'review' => 4.70,
                 'story_line' => 'Một kế hoạch phông bạt nhanh chóng bị phá hủy bởi các thế lực tâm linh...',
