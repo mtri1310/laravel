@@ -15,6 +15,10 @@ class Showtime extends Model
         'start_time',
         'day',
     ];
+    protected $casts = [
+        'day' => 'date',
+        'start_time' => 'string', // Remains a string
+    ];
 
     /**
      * Một showtime thuộc về một film.

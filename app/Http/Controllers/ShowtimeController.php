@@ -16,27 +16,25 @@ class ShowtimeController extends Controller
 {
     public function index(Request $request): View
     {
-        // Lấy các tham số từ request
-        $keyword = $request->input('keyword'); // Từ khóa tìm kiếm
-
+        $keyword = $request->input('keyword');
     
-        // Truy vấn và lọc dữ liệu
-        $showtimes = Showtime::latest() // Sắp xếp theo thời gian mới nhất
-                        ->when($keyword, function($query, $keyword) {
-                            return $query->whereHas('film', function($q) use ($keyword) {
-                                $q->where('film_name', 'like', "%{$keyword}%");
-                            })->orWhereHas('room', function($q) use ($keyword) {
-                                $q->where('room_name', 'like', "%{$keyword}%");
-                            });
-                        })
-                        
-                        
-                        ->paginate(10) 
-                        ->appends(['keyword' => $keyword]);
+        $showtimes = Showtime::with(['film', 'room']) // Eager load relationships
+                            ->when($keyword, function($query, $keyword) {
+                                return $query->whereHas('film', function($q) use ($keyword) {
+                                    $q->where('film_name', 'like', "%{$keyword}%");
+                                })->orWhereHas('room', function($q) use ($keyword) {
+                                    $q->where('room_name', 'like', "%{$keyword}%");
+                                });
+                            })
+                            ->orderBy('day', 'desc') // Sắp xếp theo ngày giảm dần
+                            ->orderBy('start_time', 'desc') // Sắp xếp theo giờ bắt đầu giảm dần
+                            ->orderBy('id', 'desc') // Sắp xếp theo ID giảm dần để đảm bảo duy nhất
+                            ->paginate(10)
+                            ->appends(['keyword' => $keyword]);
     
-        // Trả về view với các dữ liệu cần thiết
         return view('showtimes.index', compact('showtimes', 'keyword'));
     }
+    
     
 
     public function create() : View
@@ -63,23 +61,26 @@ class ShowtimeController extends Controller
 
     public function edit(Showtime $showtime) : View
     {
-        return view('showtimes.create', compact('showtime'));
+        $rooms = Room::all(); 
+        $films = Film::all(); 
+        return view('showtimes.create', compact('showtime', 'films', 'rooms'));
     }
 
-    public function update(ShowtimeRequest $request) : RedirectResponse
+    public function update(ShowtimeRequest $request, Showtime $showtime) : RedirectResponse
     {
         try {
             $data = $request->validated();
 
-            Showtime::create($data);
+            $showtime->update($data);
 
             return redirect()->route('showtimes.index')
-                ->with('messageSuccess', 'New showtime has been updated successfully.');
+                ->with('messageSuccess', 'Showtime has been updated successfully.');
         } catch (\Exception $e) {
-            Log::error('Showtime Store Failed: ' . $e->getMessage());
+            Log::error('Showtime Update Failed: ' . $e->getMessage());
             return back()->with('messageError', 'An unexpected error occurred while updating the showtime.');
         }
     }
+
 
     public function destroy(Showtime $showtime) : RedirectResponse
     {

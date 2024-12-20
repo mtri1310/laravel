@@ -6,25 +6,33 @@ use Illuminate\Database\Seeder;
 use App\Models\Booking;
 use App\Models\Showtime;
 use App\Models\User;
+use Carbon\Carbon;
 
 class BookingsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        // Ensure there are users and showtimes before creating bookings
-        if (User::count() == 0) {
-            $this->call(DatabaseSeeder::class);
+        $showtimes = Showtime::all();
+        $users = User::all();
+
+        $bookings = [];
+
+        foreach ($showtimes as $showtime) {
+            foreach ($users as $user) {
+                // Tạo một booking cho mỗi user và showtime
+                $bookings[] = [
+                    'showtime_id'  => $showtime->id,
+                    'user_id'      => $user->id,
+                    'booking_time' => Carbon::now(),
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ];
+            }
         }
 
-        Showtime::all()->each(function ($showtime) {
-            // Create between 0 to 10 bookings per showtime
-            Booking::factory()->count(rand(0, 10))->create([
-                'showtime_id' => $showtime->id,
-                'user_id'     => User::inRandomOrder()->first()->id,
-            ]);
-        });
+        Booking::insert($bookings);
     }
 }

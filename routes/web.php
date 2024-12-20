@@ -28,21 +28,20 @@ use App\Http\Controllers\UserController;
 
 Route::get('/', DashboardController::class)->middleware('auth'); 
 
-// Đăng nhập bằng email và password
+// Authentication Routes
 Route::get('/login', [AuthController::class, 'show'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-// Đăng nhập bằng Google
+// Google OAuth Routes
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
-// Đăng xuất
+// Logout Route
 Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-// Xử lý Controller
+// Resource Routes with Authentication Middleware
 Route::resource('users', UserController::class)->except(['show'])->middleware('auth');
 Route::resource('films', FilmController::class)->except(['show'])->middleware('auth');
-// Route::resource('seats', controller: SeatController::class)->middleware( 'auth');
 Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
 Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
 Route::resource('bookings', BookingController::class)->except(['show'])->middleware('auth');
@@ -52,11 +51,13 @@ Route::resource('invoices', InvoiceController::class)->except(['show'])->middlew
 Route::get('/trash', [SeatController::class, 'index'])->name('seats.index');
 Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 
+// Updated Seats Route to Include Showtime
+Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index')->middleware('auth');
 
+// External Routes
+Route::get('/movies', [ImdbController::class, 'index']);
 
-Route::get('/movies', action: [ImdbController::class, 'index']);
-
-//payment
+// Payment Routes
 Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
 Route::get('/homepayment', [StripeController::class, 'index']);
 Route::get('payment/success', [StripeController::class, 'success'])->name('payment.success');

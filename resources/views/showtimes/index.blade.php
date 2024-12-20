@@ -53,7 +53,7 @@
                                                 <td class="d-none d-md-table-cell fs-sm"><strong>{{ $showtime->film->film_name }}</strong></td>
                                                 <td class="d-none d-md-table-cell fs-sm">{{ $showtime->room->room_name }}</td>
                                                 <td class="d-none d-md-table-cell fs-sm">{{ $showtime->start_time }}</td>
-                                                <td class="d-none d-md-table-cell fs-sm">{{ $showtime->day }}</td>
+                                                <td class="d-none d-md-table-cell fs-sm">{{ $showtime->day ? $showtime->day->format('d/m/Y') : 'N/A' }}</td>
                                                 <td class="text-center fs-sm" style="width: 100px">
                                                     <a href="{{ route('showtimes.edit', $showtime->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>

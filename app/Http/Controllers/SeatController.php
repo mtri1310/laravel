@@ -2,66 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SeatRequest;
-use App\Http\Requests\UpdateSeatRequest;
 use App\Models\Room;
 use App\Models\Seat;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
 
 class SeatController extends Controller
 {
-    //
-    public function index(Room $room ) : View
+    /**
+     * Display a listing of the seats for a specific room.
+     */
+    public function index(Room $room): View
     {
-        $seats = Seat::where('room_id',  $room->id)
-                    ->orderBy('seat_number')
-                    ->paginate(10); // Adjust the number as needed
+        $now = Carbon::now();
+
+        // Bước 1: Lấy tất cả các đặt chỗ hợp lệ (active bookings) cho phòng này
+        $activeBookings = Booking::whereHas('showtime', function($q) use ($now, $room) {
+            $q->where('room_id', $room->id)
+              ->join('films', 'showtimes.film_id', '=', 'films.id')
+              ->whereRaw("TIMESTAMP(CONCAT(showtimes.day, ' ', showtimes.start_time)) + INTERVAL films.duration MINUTE > ?", [$now]);
+        })
+        ->with(['seats']) // Eager load seats liên quan
+        ->get();
+
+        // Bước 2: Thu thập tất cả các seat_id đã được đặt từ các đặt chỗ hợp lệ
+        $bookedSeatIds = $activeBookings->flatMap(function($booking) {
+            return $booking->seats->pluck('id');
+        })->unique()->toArray();
+
+        // Bước 3: Lấy tất cả các ghế trong phòng và đánh dấu nếu ghế đã được đặt
+        $seats = Seat::where('room_id', $room->id)
+            ->get()
+            ->map(function($seat) use ($bookedSeatIds) {
+                $seat->is_booked = in_array($seat->id, $bookedSeatIds);
+                return $seat;
+            })
+            ->groupBy(function($seat) {
+                // Nhóm ghế theo hàng (ví dụ: 'A', 'B', ...)
+                return strtoupper(substr($seat->seat_number, 0, 1));
+            });
 
         return view('seats.index', compact('room', 'seats'));
-    }
-
-
-
-
-    public function create() : View
-    {
-        return view('seats.create');
-    }
-
-    public function store(SeatRequest $request) : RedirectResponse
-    {
-        Seat::create($request->all());
-        return redirect()->route('seats.index')
-                ->withSuccess('New seat is added successfully.');
-    }
-
-    public function show(Seat $seat) : View
-    {
-        return view('seats.show', [
-            'seat' => $seat
-        ]);
-    }
-
-    public function edit(Seat $seat) : View
-    {
-        return view('seats.edit', [
-            'seat' => $seat
-        ]);
-    }
-
-    public function update(UpdateSeatRequest $request, Seat $seat) : RedirectResponse
-    {
-        $seat->update($request->all());
-        return redirect()->back()
-                ->withSuccess('Seat is updated successfully.');
-    }
-
-    public function destroy(Seat $seat) : RedirectResponse
-    {
-        $seat->delete();
-        return redirect()->route('seats.index')
-                ->withSuccess('Seat is deleted successfully.');
     }
 }
