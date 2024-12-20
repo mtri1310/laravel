@@ -14,16 +14,43 @@ use Illuminate\Support\Facades\Log;
 class BookingController extends Controller
 {
     //
-    public function index() : View 
+    public function index(Request $request): View 
     {
-        $bookings = Booking::with([
-            'showtime.film',
-            'showtime.room',
-            'user',
-            'seats' // Tải sẵn quan hệ seats
-        ])->latest()->paginate(10); // Điều chỉnh số lượng bản ghi phân trang nếu cần
+        $keyword = $request->input('keyword');
 
-        return view('bookings.index', compact('bookings'));
+        $bookings = Booking::with([
+                'showtime.film',
+                'showtime.room',
+                'user',
+            ])
+            ->select('bookings.*')
+            ->selectSub(function($query) {
+                $query->from('booking_seat')
+                      ->join('seats', 'booking_seat.seat_id', '=', 'seats.id')
+                      ->whereColumn('booking_seat.booking_id', 'bookings.id')
+                      ->selectRaw('GROUP_CONCAT(seats.seat_number ORDER BY seats.seat_number SEPARATOR ", ")');
+            }, 'seat_ids')
+            ->when($keyword, function($query, $keyword) {
+                return $query->where(function($q) use ($keyword) {
+                    $q->where('bookings.id', 'like', "%{$keyword}%") // Tìm theo booking ID
+                      ->orWhereHas('showtime.film', function($q2) use ($keyword) {
+                          $q2->where('film_name', 'like', "%{$keyword}%");
+                      })
+                      ->orWhereHas('showtime.room', function($q2) use ($keyword) {
+                          $q2->where('room_name', 'like', "%{$keyword}%");
+                      })
+                      ->orWhereHas('user', function($q2) use ($keyword) {
+                          $q2->where('full_name', 'like', "%{$keyword}%");
+                      })
+                      ->orWhere('seat_ids', 'like', "%{$keyword}%"); // Tìm kiếm trong seat_ids
+                });
+            })
+            ->orderBy('bookings.created_at', 'desc') 
+            ->orderBy('bookings.id', 'desc')
+            ->paginate(10)
+            ->appends(['keyword' => $keyword]);
+
+        return view('bookings.index', compact('bookings', 'keyword'));
     }
 
     public function create() : View
