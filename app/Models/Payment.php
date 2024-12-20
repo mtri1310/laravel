@@ -33,4 +33,25 @@ class Payment extends Model
     {
         return $this->hasOne(Invoice::class);
     }
+    /**
+     * Truy xuất thông tin người dùng (User) qua Booking.
+     */
+    public function user()
+    {
+        return $this->belongsToThrough(User::class, Booking::class);
+    }
+    /**
+     * Truy xuất thông tin film qua Showtime (thông qua Booking).
+     */
+    public function film()
+    {
+        return $this->hasOneThrough(Film::class, Showtime::class, 'id', 'id', 'booking_id', 'film_id');
+    }
+    /**
+     * Truy xuất thông tin phòng (Room) qua Showtime (thông qua Booking).
+     */
+    public function room()
+    {
+        return $this->hasOneThrough(Room::class, Showtime::class, 'id', 'id', 'booking_id', 'room_id');
+    }
 }

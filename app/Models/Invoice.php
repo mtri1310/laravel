@@ -27,4 +27,5 @@ class Invoice extends Model
     {
         return $this->belongsTo(Booking::class, 'payment_id', 'id');
     }
+    
 }

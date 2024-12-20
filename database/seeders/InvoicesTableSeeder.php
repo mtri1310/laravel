@@ -9,8 +9,7 @@ class InvoicesTableSeeder extends Seeder
 {
     public function run()
     {
-        // Lấy 50 payment đầu tiên
-        $payments = Payment::take(50)->get();
+        $payments = Payment::all();
 
         $payments->each(function ($payment) {
             // Tạo số hóa đơn
