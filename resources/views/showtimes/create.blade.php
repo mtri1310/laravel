@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - {{ isset($room->id) ? 'Edit room' : 'Add New room' }}</title>
+    <title>Admin - {{ isset($showtime->id) ? 'Edit Showtime' : 'Add New Showtime' }}</title>
     <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
@@ -34,7 +34,7 @@
         <div class="d-flex flex-row flex-column-fluid page">
             <div>
                 {{-- Sidebar --}}
-                @include('fragments.sidebar', ['key' => 'showtime', 'subkey' => isset($showtime->id) ? 'showtime_all' : 'showtime_news'])
+                @include('fragments.sidebar', ['key' => 'showtime', 'subkey' => isset($showtime->id) ? 'showtime_all' : 'showtime_new'])
             </div>
 
             <div class="d-flex flex-column wrapper">
@@ -60,15 +60,15 @@
                                         @if(isset($showtime->id))
                                             @method('PUT')
                                         @endif
-                
+
                                         {{-- Hidden ID Field --}}
                                         <input type="hidden" name="id" value="{{ old('id', $showtime->id ?? '') }}" />
-                
+
                                         {{-- Film --}}
                                         <div class="mb-3">
                                             <label for="film_id" class="form-label">Film</label>
                                             <select class="form-control @error('film_id') is-invalid @enderror" id="film_id" name="film_id" required>
-                                                <option value="" disabled selected>Select a Film</option>
+                                                <option value="" disabled {{ !isset($showtime->id) ? 'selected' : '' }}>Select a Film</option>
                                                 @foreach($films as $film)
                                                     <option value="{{ $film->id }}" {{ old('film_id', $showtime->film_id ?? '') == $film->id ? 'selected' : '' }}>
                                                         {{ $film->film_name }}
@@ -79,12 +79,12 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                
+
                                         {{-- Room --}}
                                         <div class="mb-3">
                                             <label for="room_id" class="form-label">Room</label>
                                             <select class="form-control @error('room_id') is-invalid @enderror" id="room_id" name="room_id" required>
-                                                <option value="" disabled selected>Select a Room</option>
+                                                <option value="" disabled {{ !isset($showtime->id) ? 'selected' : '' }}>Select a Room</option>
                                                 @foreach($rooms as $room)
                                                     <option value="{{ $room->id }}" {{ old('room_id', $showtime->room_id ?? '') == $room->id ? 'selected' : '' }}>
                                                         {{ $room->room_name }}
@@ -95,27 +95,27 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                
+
                                         {{-- Start Time --}}
                                         <div class="mb-3">
                                             <label for="start_time" class="form-label">Start Time</label>
                                             <input type="time" class="form-control @error('start_time') is-invalid @enderror" id="start_time" name="start_time"
-                                                value="{{ old('start_time', $showtime->start_time ?? '') }}" required>
+                                                value="{{ old('start_time', isset($showtime->start_time) ? \Carbon\Carbon::parse($showtime->start_time)->format('H:i') : '') }}" required>
                                             @error('start_time')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                
+
                                         {{-- Day --}}
                                         <div class="mb-3">
                                             <label for="day" class="form-label">Day</label>
                                             <input type="date" class="form-control @error('day') is-invalid @enderror" id="day" name="day"
-                                                value="{{ old('day', $showtime->day ?? '') }}" required>
+                                                value="{{ old('day', isset($showtime->day) ? $showtime->day->format('Y-m-d') : '') }}" required>
                                             @error('day')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                
+
                                         {{-- Submit Button --}}
                                         <div class="d-flex justify-content-end">
                                             <button type="submit" class="btn btn-primary">Save</button>
@@ -151,6 +151,27 @@
                     $('.note-modal').removeClass('open');
                     $('.note-modal-backdrop').hide();
                 });
+
+                // Handle SweetAlert messages
+                let messageError = "{{ session('messageError') }}";
+                let messageSuccess = "{{ session('messageSuccess') }}";
+
+                if (messageSuccess) {
+                    Swal.fire({
+                        title: '',
+                        text: messageSuccess,
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+
+                if (messageError) {
+                    Swal.fire({
+                        title: '',
+                        text: messageError,
+                        icon: 'error'
+                    });
+                }
             });
         </script>
     </body>

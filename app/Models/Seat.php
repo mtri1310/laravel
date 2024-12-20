@@ -13,6 +13,7 @@ class Seat extends Model
         'room_id',
         'seat_number',
     ];
+    
 
     /**
      * Một seat thuộc về một room.

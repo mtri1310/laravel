@@ -1,5 +1,3 @@
-<!-- resources/views/seats/index.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +20,7 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            cursor: pointer;
+            cursor: default; /* Changed to default since seats are not selectable here */
             width: 50px;
             height: 50px;
             border: 1px solid #ccc;
@@ -30,9 +28,10 @@
             margin: 5px;
             transition: background-color 0.3s, color 0.3s;
         }
-        .seat:hover {
-            background-color: #007bff;
+        .seat.booked {
+            background-color: #dc3545; /* Red for booked seats */
             color: #fff;
+            cursor: not-allowed;
         }
         .seat-row {
             display: flex;
@@ -48,40 +47,29 @@
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content container mt-4">
-                    <h1 class="title mb-4">Manage Seats for Room: {{ $room->room_name }}</h1>
-                    {{-- <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
-                        <i class="fas fa-plus"></i> Add New Seat
-                    </a> --}}
-
-                    <!-- Sơ đồ ghế -->
-                    <div class="seat-layout mb-5">
-                        @php
-                            $capacity = $room->capacity; // Sức chứa phòng
-                            $seatsPerRow = 10; // Số ghế mỗi hàng
-                            $rows = ceil($capacity / $seatsPerRow); // Tính số hàng
-                            $seatNumber = 1; // Số ghế bắt đầu
-                            $currentRowLetter = 'A'; // Bắt đầu từ hàng A
-                        @endphp
-                    
-                        @for ($i = 0; $i < $rows; $i++) <!-- Vòng lặp theo hàng -->
-                            <div class="seat-row">
-                                @for ($j = 1; $j <= $seatsPerRow; $j++) <!-- Vòng lặp theo ghế trong hàng -->
-                                    @if ($seatNumber <= $capacity)
-                                        @php
-                                            $seatLabel = $currentRowLetter . $j; // Định dạng số ghế (A1, A2,...)
-                                        @endphp
-                                        <div class="seat" title="Seat {{ $seatLabel }}">
-                                            {{ $seatLabel }}
-                                        </div>
-                                        @php $seatNumber++; @endphp
-                                    @endif
-                                @endfor
-                            </div>
-                            @php $currentRowLetter = chr(ord($currentRowLetter) + 1); @endphp <!-- Chuyển sang hàng tiếp theo -->
-                        @endfor
+                    <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
+                        <h1 class="title">Manage Seats for Room: {{ $room->room_name }}</h1>
+                        {{-- <a href="{{ route('seats.create', $room->id) }}" class="btn btn-primary mb-4">
+                            <i class="fas fa-plus"></i> Add New Seat
+                        </a> --}}
                     </div>
-                    
 
+                    <!-- Seat Layout -->
+                    <div class="seat-layout mb-5">
+                        @forelse ($seats as $rowLetter => $rowSeats)
+                            <div class="seat-row">
+                                @foreach ($rowSeats as $seat)
+                                    <div class="seat {{ $seat->is_booked ? 'booked' : '' }}" title="Seat {{ $seat->seat_number }}">
+                                        {{ $seat->seat_number }}
+                                    </div>
+                                @endforeach
+                            </div>
+                        @empty
+                            <div class="text-center">
+                                <p>No seats available for this room.</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>

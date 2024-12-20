@@ -26,8 +26,8 @@ class ShowtimeRequest extends FormRequest
         $showtimeId = $this->route('showtime') ? $this->route('showtime')->id : null;
 
         return [
-            'film_id' => 'required|integer|exists:films,id'.$showtimeId,  
-            'room_id' => 'required|integer|exists:rooms,id'.$showtimeId, 
+            'film_id' => 'required|integer|exists:films,id',  
+            'room_id' => 'required|integer|exists:rooms,id', 
             'start_time' => 'required|date_format:H:i', // Đảm bảo start_time có định dạng giờ hợp lệ
             'day' => 'required|date|after_or_equal:today',  // Đảm bảo 'day' có định dạng ngày hợp lệ và không sớm hơn ngày hiện tại
 

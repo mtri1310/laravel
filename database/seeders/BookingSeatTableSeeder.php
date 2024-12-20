@@ -12,21 +12,41 @@ class BookingSeatTableSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        Booking::all()->each(function ($booking) {
-            // Each booking can have 1 to 5 seats
-            $numberOfSeats = rand(1, 5);
-            $availableSeats = Seat::whereNotIn('id', function ($query) use ($booking) {
-                $query->select('seat_id')->from('booking_seat')->where('booking_id', '!=', $booking->id);
-            })->inRandomOrder()->limit($numberOfSeats)->pluck('id');
 
-            foreach ($availableSeats as $seatId) {
-                BookingSeat::create([
+        $bookings = Booking::with('showtime.room.seats')->get();
+        $bookingSeats = [];
+
+        foreach ($bookings as $booking) {
+            $showtime = $booking->showtime;
+            $room = $showtime->room;
+            $seats = $room->seats->pluck('id')->toArray();
+
+            if (count($seats) == 0) {
+                continue; 
+            }
+
+            // Chọn ngẫu nhiên 2 ghế để đặt, ví dụ
+            // Đảm bảo không trùng lặp ghế trong cùng một booking
+            $selectedSeatIds = array_rand(array_flip($seats), 2);
+
+            // Nếu chỉ có 1 ghế, array_rand sẽ trả về một giá trị đơn
+            if (!is_array($selectedSeatIds)) {
+                $selectedSeatIds = [$selectedSeatIds];
+            }
+
+            foreach ($selectedSeatIds as $seatId) {
+                $bookingSeats[] = [
                     'booking_id' => $booking->id,
                     'seat_id'    => $seatId,
-                ]);
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
-        });
+        }
+
+        // Lưu tất cả booking_seat vào database
+        \DB::table('booking_seat')->insert($bookingSeats);
     }
 }
