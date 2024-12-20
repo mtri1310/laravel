@@ -231,6 +231,30 @@
                     </ul>
 
                 </li>
+
+                <li class="menu-item d-flex flex-column justify-content-center">
+                    <a data-toggle="collapse"
+                       href="#menu-item-collapse-invoice"
+                       {{ $key == 'invoice' ? 'menu-active' : '' }}
+                       aria-expanded="{{ $key == 'invoice' ? 'true' : 'false' }}"
+                       class="menu-link menu-toggle align-items-center"
+                       role="button"
+                       aria-expanded="false"
+                       aria-controls="menu-item-collapse-invoice">
+                        <span class="svg-icon menu-icon">
+                            <!-- SVG ICON -->
+                        </span>
+                        <span class="menu-text">Invoice Management</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <ul class="collapse menu-item flex-column justify-content-center" id="menu-item-collapse-invoice" @class(['show' => $key == 'invoice'])>
+                        <li class="menu-link menu-item-sub align-items-center" @class(['menu-active' => $subkey == 'invoice_all'])>
+                            <a href="{{ route('invoices.index') }}">
+                                <span class="menu-text">See All</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
                 
             </ul>

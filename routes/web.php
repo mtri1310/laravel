@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
@@ -44,6 +45,11 @@ Route::resource('films', FilmController::class)->except(['show'])->middleware('a
 Route::resource('rooms', RoomController::class)->except(['show'])->middleware('auth');
 Route::resource('showtimes', ShowtimeController::class)->except(['show'])->middleware('auth');
 Route::resource('bookings', BookingController::class)->except(['show'])->middleware('auth');
+Route::resource('invoices', InvoiceController::class)->except(['show'])->middleware('auth');
+
+
+Route::get('/trash', [SeatController::class, 'index'])->name('seats.index');
+Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 
 // Updated Seats Route to Include Showtime
 Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index')->middleware('auth');
