@@ -75,9 +75,13 @@
                                                     <a class="btn btn-sm btn-alt-secondary" href="{{ route('users.edit', $user->id) }}" data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-alt-danger" href="{{ route('users.destroy', $user->id) }}" data-toggle="tooltip" data-placement="top" title="Delete" onclick="return confirm('Are you sure you want to delete this user?')">
-                                                        <i class="fa fa-fw fa-times text-danger"></i>
-                                                    </a>
+                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                            <i class="fa fa-fw fa-times text-danger"></i>
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @empty

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('film_name'); 
             $table->string('thumbnail')->nullable(); 
-            $table->string('duration'); 
+            $table->integer('duration'); 
             $table->float('review', 8, 2)->nullable(); 
             $table->text('story_line')->nullable();
             $table->string('movie_genre'); 

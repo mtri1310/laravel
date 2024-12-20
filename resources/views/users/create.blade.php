@@ -100,7 +100,7 @@
                                         <div class="mb-3">
                                             <label for="full_name" class="form-label">Full Name</label>
                                             <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
-                                                value="{{ old('full_name', $user->full_name ?? '') }}" required>
+                                                value="{{ old('full_name', $user->full_name ?? '') }}">
                                             @error('full_name')
                                                 <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror
@@ -110,7 +110,7 @@
                                         <div class="mb-3">
                                             <label for="phone" class="form-label">Phone</label>
                                             <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone"
-                                                value="{{ old('phone', $user->phone ?? '') }}" required>
+                                                value="{{ old('phone', $user->phone ?? '') }}">
                                             @error('phone')
                                                 <span class="form-valid-feedback">{{ $message }}</span>
                                             @enderror

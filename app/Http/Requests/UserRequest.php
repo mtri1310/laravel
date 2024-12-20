@@ -20,10 +20,10 @@ class UserRequest extends FormRequest
         $userId = $this->route('user') ? $this->route('user')->id : null;
 
         return [
-            'username' => ['required', 'string', Rule::unique('users')->ignore($userId)],
+            'username' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($userId)],
-            'password' => $userId ? 'nullable|min:6' : 'required|min:6',
-            'full_name' => 'required|string|max:255',  // Họ tên đầy đủ
+            'password' => $userId ? 'nullable|min:8' : 'required|min:8',
+            'full_name' => 'nullable|string|max:255',  // Họ tên đầy đủ
             'phone' => 'nullable|string|max:20',  // Số điện thoại, có thể để trống
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  // Hình ảnh người dùng
             'remember_token' => 'nullable|string',  // Token nhớ người dùng
