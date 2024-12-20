@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
-
+use App\Http\Controllers\api\ShowtimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
@@ -55,3 +55,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+Route::get('/showtimes', [ShowtimeController::class, 'getShowtimes']);
