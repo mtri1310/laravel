@@ -55,4 +55,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
-Route::get('/showtimes', [ShowtimeController::class, 'getShowtimes']);
+Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);

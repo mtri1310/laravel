@@ -8,59 +8,43 @@ use App\Models\Showtime;
 
 class ShowtimeController extends Controller
 {
-    public function getShowtimes(Request $request)
+    public function getShowtimesByFilm(Request $request)
     {
-        // Validate the request input
+      
         $request->validate([
-            'date' => 'required|date',
-            'time' => 'nullable|date_format:H:i:s', // Giờ không bắt buộc
+            'film_id' => 'required|exists:films,id',
         ]);
 
-        
-        $date = $request->input('date');
-        $time = $request->input('time');
+       
+        $filmId = $request->input('film_id');
 
-    
-        $query = Showtime::where('day', $date);
+        // Truy vấn danh sách suất chiếu của phim
+        $showtimes = Showtime::where('film_id', $filmId)
+            ->orderBy('day')
+            ->orderBy('start_time')
+            ->get(['day', 'start_time']);
 
-        if ($time) {
-            $query->where('start_time', $time);
-        }
-
-        $showtimes = $query->with(['film' => function ($query) {
-            $query->select('id', 'film_name', 'thumbnail', 'duration', 'movie_genre', 'censorship', 'language', 'director', 'actor');
-        }])->orderBy('start_time')->get();
-
+        // Kiểm tra nếu không có suất chiếu
         if ($showtimes->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Không có phim trong khung giờ bạn tìm.',
+                'message' => 'Không có suất chiếu nào cho phim này.',
             ], 404);
         }
 
+        // Chuyển đổi dữ liệu sang định dạng mong muốn
         $data = $showtimes->map(function ($showtime) {
             return [
+                'date' => $showtime->day,
                 'time' => $showtime->start_time,
-                'film_name' => $showtime->film->film_name,
-                'thumbnail' => $showtime->film->thumbnail,
-                'duration' => $showtime->film->duration,
-                'movie_genre' => $showtime->film->movie_genre,
-                'censorship' => $showtime->film->censorship,
-                'language' => $showtime->film->language,
-                'director' => $showtime->film->director,
-                'actor' => $showtime->film->actor,
             ];
         });
 
-        
+        // Trả về phản hồi
         return response()->json([
             'status' => 'success',
-            'message' => 'Danh sách phim được tìm thấy.',
-            'data' => [
-                'date' => $date,
-                'time' => $time,
-                'showtimes' => $data,
-            ],
+            'message' => 'Danh sách suất chiếu được tìm thấy.',
+            'data' => $data,
         ]);
     }
 }
