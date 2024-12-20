@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
             $table->string('payment_status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
