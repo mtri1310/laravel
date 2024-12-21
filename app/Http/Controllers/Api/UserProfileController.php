@@ -19,15 +19,6 @@ class UserProfileController extends Controller
     {
         // Lấy người dùng đã xác thực
         $user = Auth::user();
-
-        // Kiểm tra xem người dùng đã xác thực hay chưa
-        if (!$user) {
-            return response()->json([
-                "status" => "error",
-                "message" => "Unauthenticated"
-            ], 401);
-        }
-
      
         $userData = [
             "user_id"  => $user->id,

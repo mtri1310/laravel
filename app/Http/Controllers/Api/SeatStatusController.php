@@ -10,15 +10,10 @@ use App\Models\Showtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon; // Thêm sử dụng Carbon
 
 class SeatStatusController extends Controller
 {
-       /**
-     * Lấy danh sách ghế đã được đặt hoặc chưa trong một suất chiếu dựa trên thời gian và ngày.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getSeatsByTimeAndDay(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -30,20 +25,31 @@ class SeatStatusController extends Controller
                 "message" => "Unauthenticated"
             ], 401);
         }
+
         // Lấy dữ liệu từ request
-        $day = $request->input('day'); // Ngày suất chiếu (định dạng: YYYY-MM-DD)
+        $dayInput = $request->input('day'); // Ngày suất chiếu (định dạng: DD-MM-YYYY)
         $startTime = $request->input('start_time'); // Giờ bắt đầu (định dạng: HH:MM:SS)
 
-        // Xác thực dữ liệu đầu vào
+        // Xác thực dữ liệu đầu vào với định dạng d-m-Y
         $request->validate([
-            'day' => 'required|date_format:Y-m-d',
+            'day' => 'required|date_format:d-m-Y',
             'start_time' => 'required|date_format:H:i:s',
         ], [
             'day.required' => 'Ngày suất chiếu là bắt buộc.',
-            'day.date_format' => 'Ngày phải đúng định dạng YYYY-MM-DD.',
+            'day.date_format' => 'Ngày phải đúng định dạng DD-MM-YYYY.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
             'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',
         ]);
+
+        // Chuyển đổi ngày từ d-m-Y sang Y-m-d
+        try {
+            $day = Carbon::createFromFormat('d-m-Y', $dayInput)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ngày không hợp lệ.',
+            ], 400);
+        }
 
         // Tìm suất chiếu dựa trên ngày và giờ
         $showtime = Showtime::with('room.seats')
