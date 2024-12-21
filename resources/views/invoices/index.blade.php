@@ -21,7 +21,13 @@
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                        <h1 class="title">Invoices</h1>
+                        <h1 class="title">Invoice </h1>
+                        <a href="{{ route('invoices.create') }}">
+                            <button class="btn btn-primary d-flex align-items-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                <span>Add New Invoice</span>
+                            </button>
+                        </a>
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
@@ -33,6 +39,8 @@
                                 <table class="table table-borderless table-striped table-vcenter">
                                     <thead>
                                         <tr>
+                                            <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
+
                                             <th class="d-none d-sm-table-cell text-center">Username</th>
                                             <th class="d-none d-sm-table-cell text-center">Film</th>
                                             <th class="d-none d-sm-table-cell text-center">Start time</th>
@@ -50,6 +58,10 @@
                                     <tbody>
                                         @forelse ($invoices as $invoice)
                                             <tr>
+                                                <td class="d-none d-md-table-cell fs-sm text-center">
+                                                    {{ $invoice->invoice_number }}
+                                                </td>
+                                                
                                                 <td class="d-none d-md-table-cell fs-sm">
                                                     {{ $invoice->payment->booking->user->username }}
                                                 </td>
@@ -97,9 +109,17 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a href="#" class="btn btn-sm btn-alt-secondary" title="View Details">
-                                                        <i class="fas fa-eye text-primary"></i>
+                                                    <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                                        <i class="fas fa-pencil-alt"></i>
                                                     </a>
+                                                    <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this film?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                            <i class="fa fa-fw fa-times text-danger"></i>
+                                                        </button>
+                                                    </form>
+                                                    
                                                 </td>
                                             </tr>
                                         @empty

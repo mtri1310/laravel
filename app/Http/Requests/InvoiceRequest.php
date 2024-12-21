@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class InvoiceRequest extends FormRequest
 {
@@ -21,25 +22,36 @@ class InvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
-        $roomId = $this->route('room') ? $this->route('room')->id : null;
-    
+        $invoiceId = $this->route('invoice') ? $this->route('invoice')->id : null;
+
         return [
-            
+            'username' => ['required', Rule::exists('users', 'id')],
+            'film' => ['required', Rule::exists('films', 'id')],
+            'start_time' => ['required'],
+            'day' => ['required', 'date', 'after_or_equal:today'],
+            'room' => ['required', Rule::exists('rooms', 'id')],
+            'seat_count' => ['required', 'integer', 'min:1', 'max:3'],
+            'total_amount' => ['required', 'numeric', 'min:0'],
+            'transaction_id' => [
+                'required',
+                Rule::unique('payments', 'transaction_id')->ignore($this->input('payment_id'), 'id'),
+            ],
+            'payment_method' => ['required', 'string', Rule::in(['Credit Card', 'PayPal', 'Cash'])],
+            'payment_status' => ['required', 'string', Rule::in(['Completed', 'Pending', 'Failed'])],
+            'payment_id' => ['required', Rule::exists('payments', 'id')],
         ];
     }
     
-    public function messages()
+    public function messages(): array
     {
         return [
-            'room_name.required' => 'Room name is required.',
-            'room_name.string'   => 'Room name must be a string.',
-            'room_name.unique'   => 'Room name has already been taken.',
-            'capacity.required'  => 'Capacity is required.',
-            'capacity.integer'   => 'Capacity must be an integer.',
-            'capacity.min'       => 'Capacity must be at least 1.',
-            'room_type.string'   => 'Room type must be a string.',
-            'room_type.max'      => 'Room type must not exceed 50 characters.',
+            'payment_id.required' => 'Payment ID is required.',
+            'payment_id.exists' => 'Payment ID must exist in the payment table.',
+            'invoice_number.unique' => 'Invoice Number must be unique.',
+            'total_amount.required' => 'Total Amount is required.',
+            'total_amount.numeric' => 'Total Amount must be a numeric value.',
         ];
     }
+
     
 }
