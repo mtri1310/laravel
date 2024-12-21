@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ListFilmsController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\TicketHistoryController;
 use App\Http\Controllers\Api\AuthController;
 
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ Route::get('/payment', [PaymentController::class, 'payment']);
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+Route::get('/ticket_history/{userId}', [TicketHistoryController::class, 'getTicketHistory']);
 
 // Đăng nhập bằng email và password
 Route::post('/login', [AuthController::class, 'login']);

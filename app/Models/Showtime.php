@@ -21,7 +21,7 @@ class Showtime extends Model
      */
     public function film()
     {
-        return $this->belongsTo(Film::class);
+        return $this->belongsTo(Film::class, 'film_id');
     }
 
     /**
