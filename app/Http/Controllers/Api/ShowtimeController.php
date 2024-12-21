@@ -35,7 +35,7 @@ class ShowtimeController extends Controller
         // Chuyển đổi dữ liệu sang định dạng mong muốn
         $data = $showtimes->map(function ($showtime) {
             return [
-                'date' => $showtime->day,
+                'date' => $showtime->day->format('d-m-Y'),
                 'time' => $showtime->start_time,
             ];
         });
