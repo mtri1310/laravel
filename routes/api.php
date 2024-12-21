@@ -1,15 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\MovieDetailController;
-use App\Http\Controllers\Api\MyTicketController;
-use App\Http\Controllers\Api\SelectSeatController;
-use App\Http\Controllers\Api\UserProfileController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\Api\ListFilmsController;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LoginGoogleController;
-use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\api\MovieDetailController;
+use App\Http\Controllers\api\MyTicketController;
+use App\Http\Controllers\api\SelectSeatController;
+use App\Http\Controllers\api\UserProfileController;
+use App\Http\Controllers\api\ListFilmsController;
+use App\Http\Controllers\api\LoginController;
+use App\Http\Controllers\api\LoginGoogleController;
+use App\Http\Controllers\api\PaymentController;
+use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\SeatStatusController;
 use App\Http\Controllers\api\ShowtimeController;
 use Illuminate\Http\Request;
