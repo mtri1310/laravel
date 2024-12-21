@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\api\SeatStatusController;
 use App\Http\Controllers\api\ShowtimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,5 +55,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::put('/userprofile', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
