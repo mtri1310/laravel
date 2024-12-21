@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SeatStatusController extends Controller
 {
-       /**
+    /**
      * Lấy danh sách ghế đã được đặt hoặc chưa trong một suất chiếu dựa trên thời gian và ngày.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -31,8 +31,8 @@ class SeatStatusController extends Controller
             ], 401);
         }
         // Lấy dữ liệu từ request
-        $day = $request->input('day'); // Ngày suất chiếu (định dạng: YYYY-MM-DD)
-        $startTime = $request->input('start_time'); // Giờ bắt đầu (định dạng: HH:MM:SS)
+        $day = $request->input('day'); 
+        $startTime = $request->input('start_time'); 
 
         // Xác thực dữ liệu đầu vào
         $request->validate([
@@ -87,7 +87,7 @@ class SeatStatusController extends Controller
                 'film_name' => $showtime->film->film_name,
                 'room_name' => $showtime->room->room_name,
                 'start_time' => $showtime->start_time,
-                'day' => $showtime->day,
+                'day' => $showtime->day->format('Y-m-d'),
                 'seats' => $seatsStatus,
             ],
         ]);
