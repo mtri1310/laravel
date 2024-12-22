@@ -84,7 +84,7 @@
                                             <!-- Username -->
                                             <div class="mb-3">
                                                 <label for="username" class="form-label"><i class="fas fa-user"></i> Username</label>
-                                                <select class="form-control @error('username') is-invalid @enderror" id="username" name="username" required>
+                                                <select class="form-control @error('username') is-invalid @enderror" id="username" name="username" disabled>
                                                     <option value="" disabled {{ old('username', $invoice->payment->booking->user->id ?? '') == '' ? 'selected' : '' }}>Select a Username</option>
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" 
@@ -101,7 +101,7 @@
                                             <!-- Film -->
                                             <div class="mb-3">
                                                 <label for="film" class="form-label"><i class="fas fa-film"></i> Film</label>
-                                                <select class="form-control @error('film') is-invalid @enderror" id="film" name="film" required>
+                                                <select class="form-control @error('film') is-invalid @enderror" id="film" name="film" disabled>
                                                     <option value="" disabled {{ old('film', $invoice->payment->booking->showtime->film->id ?? '') == '' ? 'selected' : '' }}>Select a Film</option>
                                                     @foreach ($films as $film)
                                                         <option value="{{ $film->id }}" 
@@ -131,7 +131,7 @@
                                                     id="start_time" 
                                                     name="start_time" 
                                                     value="{{ old('start_time', $invoice->payment->booking->showtime->start_time ?? '') }}" 
-                                                    required>
+                                                    disabled>
                                                 @error('start_time')
                                                     <span class="invalid-feedback">{{ $message }}</span>
                                                 @enderror
@@ -145,7 +145,7 @@
                                                     id="day" 
                                                     name="day" 
                                                     value="{{ old('day', isset($invoice->payment->booking->showtime->day) ? \Carbon\Carbon::parse($invoice->payment->booking->showtime->day)->format('Y-m-d') : '') }}" 
-                                                    required>
+                                                    disabled>
                                                 @error('day')
                                                     <span class="invalid-feedback">{{ $message }}</span>
                                                 @enderror
@@ -154,7 +154,7 @@
                                             <!-- Room -->
                                             <div class="col-md-6 mb-4">
                                                 <label for="room" class="form-label"><i class="fas fa-door-open"></i> Room</label>
-                                                <select class="form-control @error('room') is-invalid @enderror" id="room" name="room" required>
+                                                <select class="form-control @error('room') is-invalid @enderror" id="room" name="room" disabled>
                                                     <option value="" disabled {{ old('room', $invoice->payment->booking->showtime->room->id ?? '') == '' ? 'selected' : '' }}>
                                                         Select a Room
                                                     </option>

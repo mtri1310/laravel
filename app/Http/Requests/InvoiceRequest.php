@@ -25,12 +25,12 @@ class InvoiceRequest extends FormRequest
         $invoiceId = $this->route('invoice') ? $this->route('invoice')->id : null;
 
         return [
-            'username' => ['required', Rule::exists('users', 'id')],
-            'film' => ['required', Rule::exists('films', 'id')],
-            'start_time' => ['required'],
-            'day' => ['required', 'date', 'after_or_equal:today'],
-            'room' => ['required', Rule::exists('rooms', 'id')],
-            'seat_count' => ['required', 'integer', 'min:1', 'max:3'],
+            'username' => [Rule::exists('users', 'id')],
+            'film' => [Rule::exists('films', 'id')],
+            // 'start_time' => ['required'],
+            // 'day' => ['required', 'date', 'after_or_equal:today'],
+            // 'room' => ['required', Rule::exists('rooms', 'id')],
+            // 'seat_count' => ['required', 'integer', 'min:1', 'max:3'],
             'total_amount' => ['required', 'numeric', 'min:0'],
             'transaction_id' => [
                 'required',
