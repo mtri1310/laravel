@@ -21,52 +21,105 @@
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                        <h1 class="title">Invoices</h1>
+                        <h1 class="title">Invoice </h1>
+                        <a href="{{ route('invoices.create') }}">
+                            <button class="btn btn-primary d-flex align-items-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                <span>Add New Invoice</span>
+                            </button>
+                        </a>
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
                             @include('fragments.search', ['entityName' => 'invoices'])
                         </div>
+                        
                         <div class="list-table-content">
                             <div class="table-responsive">
                                 <table class="table table-borderless table-striped table-vcenter">
                                     <thead>
                                         <tr>
-                                            <th class="d-none d-sm-table-cell text-center">Invoice ID</th>
-                                            <th class="d-none d-sm-table-cell text-center">Booking ID</th>
-                                            <th class="d-none d-sm-table-cell text-center">Showtime ID</th>
+                                            <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
+
+                                            <th class="d-none d-sm-table-cell text-center">Username</th>
                                             <th class="d-none d-sm-table-cell text-center">Film</th>
-                                            <th class="d-none d-sm-table-cell text-center">User</th>
-                                            <th class="d-none d-sm-table-cell text-center">Showtime</th>
+                                            <th class="d-none d-sm-table-cell text-center">Start time</th>
+                                            <th class="d-none d-sm-table-cell text-center">Day</th>
+                                            <th class="d-none d-sm-table-cell text-center">Room</th>
+
                                             <th class="d-none d-sm-table-cell text-center">Seats</th>
                                             <th class="d-none d-sm-table-cell text-center">Total Amount</th>
+                                            <th class="d-none d-sm-table-cell text-center">Transaction ID</th>
+                                            <th class="d-none d-sm-table-cell text-center">Payment Method</th>
+                                            <th class="d-none d-sm-table-cell text-center">Payment Status</th>
                                             <th class="text-center" style="width: 100px">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($invoices as $invoice)
                                             <tr>
-                                                <td class="text-center fs-sm"><strong>{{ $invoice->id }}</strong></td>
-                                                <td class="text-center fs-sm"><strong>{{ $invoice->payment->booking->id }}</strong></td>
-                                                <td class="text-center fs-sm"><strong>{{ $invoice->payment->booking->showtime->id }}</strong></td>
-                                                <td class="d-none d-md-table-cell fs-sm"><strong>{{ $invoice->payment->booking->showtime->film->film_name }}</strong></td>
+                                                <td class="d-none d-md-table-cell fs-sm text-center">
+                                                    {{ $invoice->invoice_number }}
+                                                </td>
+                                                
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ $invoice->payment->booking->user->full_name }}
+                                                    {{ $invoice->payment->booking->user->username }}
+                                                </td>
+                                                <td class="d-none d-md-table-cell fs-sm"><strong>{{ $invoice->payment->booking->showtime->film->film_name }}</strong></td>
+
+                                                <!-- Định dạng giờ -->
+                                                <td class="d-none d-md-table-cell fs-sm">
+                                                    {{ \Carbon\Carbon::parse($invoice->payment->booking->showtime->start_time)->format('H:i') }}
                                                 </td>
 
+                                                <!-- Định dạng ngày -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ $invoice->payment->booking->showtime->start_time }} {{ $invoice->payment->booking->showtime->day }}
+                                                    {{ \Carbon\Carbon::parse($invoice->payment->booking->showtime->day)->format('d/m/Y') }}
                                                 </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    @foreach ($invoice->payment->booking->bookingSeats as $seat)
-                                                        {{ $seat->seat->seat_number }},
-                                                    @endforeach
+                                                    {{ $invoice->payment->booking->showtime->room->room_name }}
                                                 </td>
+                                                <!-- Seat Numbers -->
+                                                <td class="d-none d-md-table-cell fs-sm">
+                                                    @if($invoice->payment->booking->seats->isEmpty())
+                                                        <span class="badge bg-secondary">No Seats</span>
+                                                    @else
+                                                        @foreach ($invoice->payment->booking->seats as $seat)
+                                                            <span class="badge bg-primary">{{ $seat->seat_number }}</span>
+                                                        @endforeach
+                                                    @endif
+                                                </td>
+
                                                 <td class="text-center fs-sm">{{ number_format($invoice->total_amount, 0) }} VND</td>
+                                                <td class="text-center fs-sm">
+                                                    <strong>{{ $invoice->payment->transaction_id }}</strong>
+                                                </td>
+                                                <td class="text-center fs-sm">
+                                                    <strong>{{ $invoice->payment->payment_method }}</strong>
+                                                </td>
+                                                <td class="text-center fs-sm">
+                                                    @if ($invoice->payment->payment_status === 'Completed')
+                                                        <span class="badge bg-success">{{ $invoice->payment->payment_status }}</span>
+                                                    @elseif ($invoice->payment->payment_status === 'Pending')
+                                                        <span class="badge bg-secondary">{{ $invoice->payment->payment_status }}</span>
+                                                    @elseif ($invoice->payment->payment_status === 'Failed')
+                                                        <span class="badge bg-danger">{{ $invoice->payment->payment_status }}</span>
+                                                    @else
+                                                        <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a href="#" class="btn btn-sm btn-alt-secondary" title="View Details">
-                                                        <i class="fas fa-eye text-primary"></i>
+                                                    <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                                        <i class="fas fa-pencil-alt"></i>
                                                     </a>
+                                                    <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this film?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                            <i class="fa fa-fw fa-times text-danger"></i>
+                                                        </button>
+                                                    </form>
+                                                    
                                                 </td>
                                             </tr>
                                         @empty
