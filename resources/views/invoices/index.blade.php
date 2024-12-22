@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Booking</title>
+    <title>Admin - Invoices</title>
     <link href="{{ asset('assets/images/icon.png') }}" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.css">
@@ -21,127 +21,130 @@
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                        <h1 class="title">Showtimes</h1>
-                        <a href="{{ route('showtimes.create') }}">
+                        <h1 class="title">Invoice </h1>
+                        <a href="{{ route('invoices.create') }}">
                             <button class="btn btn-primary d-flex align-items-center">
                                 <i class="fas fa-plus mr-2"></i>
-                                <span>Add New Showtime</span>
+                                <span>Add New Invoice</span>
                             </button>
                         </a>
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'bookings'])
+                            @include('fragments.search', ['entityName' => 'invoices'])
                         </div>
+                        
                         <div class="list-table-content">
                             <div class="table-responsive">
                                 <table class="table table-borderless table-striped table-vcenter">
                                     <thead>
                                         <tr>
-                                            <th class="d-none d-sm-table-cell text-center">Booking ID</th>
-                                            <th class="d-none d-sm-table-cell text-center">Showtime ID</th>
-                                            <th class="d-none d-sm-table-cell text-center">Film Name</th>
-                                            <th class="d-none d-sm-table-cell text-center">Room Name</th>
-                                            <th class="d-none d-sm-table-cell text-center">Start Time</th>
+                                            <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
+
+                                            <th class="d-none d-sm-table-cell text-center">Username</th>
+                                            <th class="d-none d-sm-table-cell text-center">Film</th>
+                                            <th class="d-none d-sm-table-cell text-center">Start time</th>
                                             <th class="d-none d-sm-table-cell text-center">Day</th>
-                                            <th class="d-none d-sm-table-cell text-center">User Name</th>
-                                            <th class="d-none d-sm-table-cell text-center">Seat Numbers</th>
+                                            <th class="d-none d-sm-table-cell text-center">Room</th>
+
+                                            <th class="d-none d-sm-table-cell text-center">Seats</th>
+                                            <th class="d-none d-sm-table-cell text-center">Total Amount</th>
+                                            <th class="d-none d-sm-table-cell text-center">Transaction ID</th>
+                                            <th class="d-none d-sm-table-cell text-center">Payment Method</th>
+                                            <th class="d-none d-sm-table-cell text-center">Payment Status</th>
                                             <th class="text-center" style="width: 100px">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($bookings as $booking)
+                                        @forelse ($invoices as $invoice)
                                             <tr>
-                                                <!-- Booking ID -->
-                                                <td class="text-center fs-sm"><strong>{{ $booking->id }}</strong></td>
-                                                
-                                                <!-- Showtime ID -->
-                                                <td class="d-none d-md-table-cell fs-sm">
-                                                    <strong>{{ $booking->showtime->id }}</strong>
+                                                <td class="d-none d-md-table-cell fs-sm text-center">
+                                                    {{ $invoice->invoice_number }}
                                                 </td>
                                                 
-                                                <!-- Film Name -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    <strong>{{ $booking->showtime->film->film_name }}</strong>
+                                                    {{ $invoice->payment->booking->user->username }}
                                                 </td>
-                                    
-                                                <!-- Room Name -->
+                                                <td class="d-none d-md-table-cell fs-sm"><strong>{{ $invoice->payment->booking->showtime->film->film_name }}</strong></td>
+
+                                                <!-- Định dạng giờ -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ $booking->showtime->room->room_name }}
+                                                    {{ \Carbon\Carbon::parse($invoice->payment->booking->showtime->start_time)->format('H:i') }}
                                                 </td>
-                                                
-                                                <!-- Start Time -->
+
+                                                <!-- Định dạng ngày -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}
+                                                    {{ \Carbon\Carbon::parse($invoice->payment->booking->showtime->day)->format('d/m/Y') }}
                                                 </td>
-                                                
-                                                <!-- Day -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ \Carbon\Carbon::parse($booking->showtime->day)->format('d/m/Y') }}
+                                                    {{ $invoice->payment->booking->showtime->room->room_name }}
                                                 </td>
-                                                
-                                                <!-- User Name -->
-                                                <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ $booking->user->full_name }} <!-- Đảm bảo rằng thuộc tính đúng tên -->
-                                                </td>
-                                                
                                                 <!-- Seat Numbers -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    @if($booking->seats->isEmpty())
+                                                    @if($invoice->payment->booking->seats->isEmpty())
                                                         <span class="badge bg-secondary">No Seats</span>
                                                     @else
-                                                        @foreach ($booking->seats as $seat)
+                                                        @foreach ($invoice->payment->booking->seats as $seat)
                                                             <span class="badge bg-primary">{{ $seat->seat_number }}</span>
                                                         @endforeach
                                                     @endif
                                                 </td>
-                                                
-                                                <!-- Actions -->
+
+                                                <td class="text-center fs-sm">{{ number_format($invoice->total_amount, 0) }} VND</td>
+                                                <td class="text-center fs-sm">
+                                                    <strong>{{ $invoice->payment->transaction_id }}</strong>
+                                                </td>
+                                                <td class="text-center fs-sm">
+                                                    <strong>{{ $invoice->payment->payment_method }}</strong>
+                                                </td>
+                                                <td class="text-center fs-sm">
+                                                    @if ($invoice->payment->payment_status === 'Completed')
+                                                        <span class="badge bg-success">{{ $invoice->payment->payment_status }}</span>
+                                                    @elseif ($invoice->payment->payment_status === 'Pending')
+                                                        <span class="badge bg-secondary">{{ $invoice->payment->payment_status }}</span>
+                                                    @elseif ($invoice->payment->payment_status === 'Failed')
+                                                        <span class="badge bg-danger">{{ $invoice->payment->payment_status }}</span>
+                                                    @else
+                                                        <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                                    <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this booking?')">
+                                                    <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this film?')">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
                                                             <i class="fa fa-fw fa-times text-danger"></i>
                                                         </button>
                                                     </form>
+                                                    
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">
+                                                <td colspan="6" class="text-center">
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
-                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No bookings" style="height: 200px;">
+                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No invoices" style="height: 200px;">
                                                         </div>
-                                                        <a href="{{ route('bookings.create') }}">
-                                                            <button class="btn btn-primary">
-                                                                <span>Create Now</span>
-                                                            </button>
-                                                        </a>
+                                                        <p>No invoices found</p>
                                                     </div>
                                                 </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                    
                                 </table>
-                                <!-- Phân trang -->
-                                {{-- <div class="mt-3">
-                                    {{ $bookings->links() }}
-                                </div> --}}
                             </div>
                         </div>
                     </section>
-                    
                     <!-- Laravel Pagination Links -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $bookings->links() }}
+                        {{ $invoices->links() }}
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>

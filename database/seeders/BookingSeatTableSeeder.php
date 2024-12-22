@@ -27,11 +27,13 @@ class BookingSeatTableSeeder extends Seeder
                 continue; 
             }
 
-            // Chọn ngẫu nhiên 2 ghế để đặt, ví dụ
-            // Đảm bảo không trùng lặp ghế trong cùng một booking
-            $selectedSeatIds = array_rand(array_flip($seats), 2);
+            // Chọn số lượng ghế ngẫu nhiên từ 1 đến 3
+            $numberOfSeats = rand(1, 3);
 
-            // Nếu chỉ có 1 ghế, array_rand sẽ trả về một giá trị đơn
+            // Chọn ngẫu nhiên các ghế từ danh sách ghế
+            $selectedSeatIds = array_rand(array_flip($seats), min($numberOfSeats, count($seats)));
+
+            // Nếu chỉ có 1 ghế, array_rand trả về một giá trị đơn
             if (!is_array($selectedSeatIds)) {
                 $selectedSeatIds = [$selectedSeatIds];
             }
