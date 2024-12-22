@@ -42,6 +42,7 @@ Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
 Route::get('/ticket_history/{userId}', [TicketHistoryController::class, 'getTicketHistory']);
 
+// Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
 
 // Đăng nhập bằng email và password
