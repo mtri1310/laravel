@@ -3,85 +3,46 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 
 class PaymentController extends Controller
 {
-    public function  payment(Request $request)
+    public function PaymentDetails($bookingId)
     {
-        // Các điều kiện kiểm tra
-        $paymentMethod = $request->input('payment_method'); // Phương thức thanh toán
-        $filmId = $request->input('film_id'); // ID phim
-        $seatNumber = $request->input('seat_number'); // Số ghế
+        $booking = Booking::with(['showtime.film', 'invoice', 'payment'])
+            ->where('id', $bookingId)
+            ->first();
 
-        // Kiểm tra điều kiện
-        if (!$paymentMethod || !in_array($paymentMethod, ['Zalo Pay', 'Shoppe Pay', 'ATM Card'])) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid payment method',
-                'error_code' => 'PAY001',
-            ], 400);
+        if (!$booking) {
+            return response()->json(['status' => 'error', 'message' => 'Booking not found'], 404);
         }
 
-        if (!$filmId || $filmId !== '001') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid film ID',
-                'error_code' => 'FILM001',
-            ], 400);
-        }
-
-        if (!$seatNumber || empty($seatNumber)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Seat number is required',
-                'error_code' => 'SEAT001',
-            ], 400);
-        }
-        // Stripe Payment
-        Stripe::setApiKey(config('stripe.sk')); // Lấy API Key từ config
-
-
-        $payment = [
+        return response()->json([
             'status' => 'success',
             'message' => 'Payment',
             'data' => [
-                'payment_id' => '123123',
-                'payment_method' => [
-                    [
-                        'id' => 123,
-                        'name' => 'Zalo Pay'
-                    ],
-                    [
-                        'id' => 124,
-                        'name' => 'Shoppe Pay'
-                    ],
-                    [
-                        'id' => 125,
-                        'name' => 'ATM Card'
-                    ],
-                ],
+                'booking_id' => $booking->id,
                 'film' => [
-                    'film_id' => '001',
-                    'film_name' => 'The Marvels',
-                    'movie_genre' => ['Action', 'Adventure', 'Sci-Fi'],
-                    'thumbnail' => 'https://example.com/poster/the-marvels.jpg',
+                    'film_id' => $booking->showtime->film->id,
+                    'film_name' => $booking->showtime->film->film_name,
+                    'thumbnail' => $booking->showtime->film->thumbnail,
+                    'movie_genre' => $booking->showtime->film->movie_genre,
                 ],
                 'showtime' => [
-                    'start_time' => '14:15',
-                    'day' => '20.2.2021',
+                    'start_time' => $booking->showtime->start_time,
+                    'day' => $booking->showtime->day,
                 ],
-                'booking' => [
-                    'booking_id' => '123',
-                    'seat_number' => 'H7, H8',
+                'seat' => [
+                    'seat_number' => $booking->seats->pluck('seat_number'),
                 ],
                 'invoice' => [
-                    'total_amount' => '12313vnd',
+                    'total_amount' => $booking->invoice->total_amount,
                 ],
-            ],
-        ];
-        return response()->json($payment);
+                'payment_method' => $booking->payment->payment_method,
+            ]
+        ]);
     }
 }
