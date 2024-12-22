@@ -32,7 +32,7 @@ use Illuminate\Console\View\Components\Secret;
 
 Route::get('/movies', [ImdbController::class, 'index']);
 Route::get('/listfilms', [ListFilmsController::class, 'listfilms']);
-Route::get('/payment', [PaymentController::class, 'payment']);
+Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails']);
 // Route::middleware('auth:api')->get('/login', [LoginController::class, 'getUserInfo']);
 // Route::post('auth/google',  [LoginController::class, 'loginWithGoogle']);
 // Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
