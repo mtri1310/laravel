@@ -48,6 +48,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'role' => 'boolean', 
     ];
     /**
      * Get the identifier that will be stored in the JWT subject claim.
@@ -68,6 +69,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::creating(function ($user) {
+    //         if (empty($user->picture)) {
+    //             $user->picture = 'https://res.cloudinary.com/dcjbbvqxe/image/upload/v1734784084/films/mnkcwhhmzdtcwxilvngy.png';
+    //         }
+    //     });
+    // }
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('d-m-Y H:i:s');

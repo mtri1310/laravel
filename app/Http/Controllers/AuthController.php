@@ -32,7 +32,7 @@ class AuthController extends Controller
 
         // Attempt login
         if (Auth::attempt($request->only(['email', 'password']), $request->filled('remember-me'))) {
-            if (Auth::user()->role !== 1) {
+            if (Auth::user()->role !== true) {
                 Auth::logout();
                 session()->flash('message', [
                     'title' => 'Error',
@@ -98,7 +98,7 @@ class AuthController extends Controller
                     'password' => Hash::make('tringu123'), // Tạo mật khẩu ngẫu nhiên
                     'phone' => '',
                     'picture' => $googleUser->getAvatar(),
-                    'role' => 1,
+                    'role' => true,
                     'google_id' => $googleUser->getId(),
                 ]);
             } else {
@@ -113,7 +113,7 @@ class AuthController extends Controller
             Auth::login($user, true);
 
             // Kiểm tra vai trò
-            if (Auth::user()->role !== 1) {
+            if (Auth::user()->role !== true) {
                 Auth::logout();
                 session()->flash('message', [
                     'title' => 'Error',

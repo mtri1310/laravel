@@ -4,10 +4,8 @@ use App\Http\Controllers\Api\MovieDetailController;
 use App\Http\Controllers\Api\MyTicketController;
 use App\Http\Controllers\Api\SelectSeatController;
 use App\Http\Controllers\Api\UserProfileController;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Api\ListFilmsController;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LoginGoogleController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SeatStatusController;
@@ -40,6 +38,7 @@ Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails'
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
 
+// Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
 
 // Đăng nhập bằng email và password
@@ -47,6 +46,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
+
+// Reset Password
+Route::post('/password-reset/request', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/password-reset/reset', [PasswordResetController::class, 'reset']);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
