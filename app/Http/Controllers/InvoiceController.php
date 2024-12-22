@@ -96,59 +96,60 @@ class InvoiceController extends Controller
     }
     
     public function update(InvoiceRequest $request, Invoice $invoice): RedirectResponse
-{
-    try {
-        $data = $request->validated();
+    {
+        try {
+            // $data = $request->validated();
+            $data = $request->only(['payment_method', 'payment_status', 'payment_id']);
 
-        // Keep `invoice_number` unchanged
-        $data['invoice_number'] = $invoice->invoice_number;
-        
+            // Keep `invoice_number` unchanged
+            $data['invoice_number'] = $invoice->invoice_number;
+            
 
-        DB::transaction(function () use ($data, $invoice) {
-            Log::info('Transaction started for updating invoice', ['invoice_id' => $invoice->id]);
-            Log::info('Incoming data for update', $data);
+            DB::transaction(function () use ($data, $invoice) {
+                Log::info('Transaction started for updating invoice', ['invoice_id' => $invoice->id]);
+                Log::info('Incoming data for update', $data);
 
-            // Update Payment
-            if (isset($data['payment_id'])) {
-                $payment = Payment::find($data['payment_id']);
-                if ($payment) {
-                    Log::info('Before payment update', [
-                        'payment_id' => $payment->id,
-                        'old_payment_method' => $payment->payment_method,
-                        'old_payment_status' => $payment->payment_status,
-                    ]);
+                // Update Payment
+                if (isset($data['payment_id'])) {
+                    $payment = Payment::find($data['payment_id']);
+                    if ($payment) {
+                        Log::info('Before payment update', [
+                            'payment_id' => $payment->id,
+                            'old_payment_method' => $payment->payment_method,
+                            'old_payment_status' => $payment->payment_status,
+                        ]);
 
-                    $payment->payment_method = $data['payment_method'];
-                    $payment->payment_status = $data['payment_status'];
-                    $payment->saveQuietly(); // Ensure the update is forced
+                        $payment->payment_method = $data['payment_method'];
+                        $payment->payment_status = $data['payment_status'];
+                        $payment->saveQuietly(); // Ensure the update is forced
 
-                    Log::info('After payment update', [
-                        'payment_id' => $payment->id,
-                        'new_payment_method' => $payment->payment_method,
-                        'new_payment_status' => $payment->payment_status,
-                    ]);
-                } else {
-                    Log::warning('Payment not found', ['payment_id' => $data['payment_id']]);
+                        Log::info('After payment update', [
+                            'payment_id' => $payment->id,
+                            'new_payment_method' => $payment->payment_method,
+                            'new_payment_status' => $payment->payment_status,
+                        ]);
+                    } else {
+                        Log::warning('Payment not found', ['payment_id' => $data['payment_id']]);
+                    }
                 }
-            }
 
-            // Update Invoice
-            Log::info('Before invoice update', ['invoice_id' => $invoice->id, 'old_data' => $invoice->toArray()]);
-            $invoice->update($data);
-            Log::info('After invoice update', ['invoice_id' => $invoice->id, 'new_data' => $invoice->fresh()->toArray()]);
-        });
+                // Update Invoice
+                Log::info('Before invoice update', ['invoice_id' => $invoice->id, 'old_data' => $invoice->toArray()]);
+                $invoice->update($data);
+                Log::info('After invoice update', ['invoice_id' => $invoice->id, 'new_data' => $invoice->fresh()->toArray()]);
+            });
 
-        return redirect()->route('invoices.index')
-            ->with('messageSuccess', 'Invoice has been updated successfully.');
-    } catch (\Exception $e) {
-        Log::error('Invoice Update Failed', [
-            'error' => $e->getMessage(),
-            'invoice_id' => $invoice->id,
-            'data' => $request->all(),
-        ]);
-        return back()->withInput()->with('messageError', 'An unexpected error occurred while updating the invoice.');
+            return redirect()->route('invoices.index')
+                ->with('messageSuccess', 'Invoice has been updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Invoice Update Failed', [
+                'error' => $e->getMessage(),
+                'invoice_id' => $invoice->id,
+                'data' => $request->all(),
+            ]);
+            return back()->withInput()->with('messageError', 'An unexpected error occurred while updating the invoice.');
+        }
     }
-}
 
     public function destroy(Invoice $invoice) : RedirectResponse
     {

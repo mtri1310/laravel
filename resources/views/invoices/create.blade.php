@@ -68,187 +68,203 @@
                                     @endif
 
                                     <form 
-                                        action="{{ isset($invoice->id) ? route('invoices.update', $invoice->id) : route('invoices.store') }}" 
-                                        method="POST" id="form-invoice">
-                                        @csrf
-                                        @if(isset($invoice->id))
-                                            @method('PUT')
-                                        @endif
+                                    action="{{ isset($invoice->id) ? route('invoices.update', $invoice->id) : route('invoices.store') }}" 
+                                    method="POST" id="form-invoice">
+                                    @csrf
+                                    @if(isset($invoice->id))
+                                        @method('PUT')
+                                    @endif
 
-                                        {{-- Username --}}
-                                        <div class="mb-3">
-                                            <label for="username" class="form-label">Username</label>
-                                            <select class="form-select @error('username') is-invalid @enderror" id="username" name="username" required>
-                                                @foreach ($users as $user)
-                                                    <option value="{{ $user->id }}"
-                                                        {{ old('username', $invoice->payment->booking->user->id ?? '') == $user->id ? 'selected' : '' }}>
-                                                        {{ $user->username }}
+                                    <!-- General Information Section -->
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-primary text-white">
+                                            <h5>General Information</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Username -->
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label"><i class="fas fa-user"></i> Username</label>
+                                                <select class="form-control @error('username') is-invalid @enderror" id="username" name="username" required>
+                                                    <option value="" disabled {{ old('username', $invoice->payment->booking->user->id ?? '') == '' ? 'selected' : '' }}>Select a Username</option>
+                                                    @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}" 
+                                                            {{ old('username', $invoice->payment->booking->user->id ?? '') == $user->id ? 'selected' : '' }}>
+                                                            {{ $user->username }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('username')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Film -->
+                                            <div class="mb-3">
+                                                <label for="film" class="form-label"><i class="fas fa-film"></i> Film</label>
+                                                <select class="form-control @error('film') is-invalid @enderror" id="film" name="film" required>
+                                                    <option value="" disabled {{ old('film', $invoice->payment->booking->showtime->film->id ?? '') == '' ? 'selected' : '' }}>Select a Film</option>
+                                                    @foreach ($films as $film)
+                                                        <option value="{{ $film->id }}" 
+                                                            {{ old('film', $invoice->payment->booking->showtime->film->id ?? '') == $film->id ? 'selected' : '' }}>
+                                                            {{ $film->film_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('film')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Showtime Details Section -->
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h5 class="mb-0"><i class="fas fa-info-circle"></i> Showtime Details</h5>
+                                        </div>
+                                        <div class="card-body row">
+                                            <!-- Start Time -->
+                                            <div class="col-md-6 mb-4">
+                                                <label for="start_time" class="form-label"><i class="far fa-clock"></i> Start Time</label>
+                                                <input type="time" 
+                                                    class="form-control @error('start_time') is-invalid @enderror" 
+                                                    id="start_time" 
+                                                    name="start_time" 
+                                                    value="{{ old('start_time', $invoice->payment->booking->showtime->start_time ?? '') }}" 
+                                                    required>
+                                                @error('start_time')
+                                                    <span class="invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Day -->
+                                            <div class="col-md-6 mb-4">
+                                                <label for="day" class="form-label"><i class="far fa-calendar-alt"></i> Day</label>
+                                                <input type="date" 
+                                                    class="form-control @error('day') is-invalid @enderror" 
+                                                    id="day" 
+                                                    name="day" 
+                                                    value="{{ old('day', isset($invoice->payment->booking->showtime->day) ? \Carbon\Carbon::parse($invoice->payment->booking->showtime->day)->format('Y-m-d') : '') }}" 
+                                                    required>
+                                                @error('day')
+                                                    <span class="invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Room -->
+                                            <div class="col-md-6 mb-4">
+                                                <label for="room" class="form-label"><i class="fas fa-door-open"></i> Room</label>
+                                                <select class="form-control @error('room') is-invalid @enderror" id="room" name="room" required>
+                                                    <option value="" disabled {{ old('room', $invoice->payment->booking->showtime->room->id ?? '') == '' ? 'selected' : '' }}>
+                                                        Select a Room
                                                     </option>
-                                                @endforeach
-                                            </select>
-                                            @error('username')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
+                                                    @foreach ($rooms as $room)
+                                                        <option value="{{ $room->id }}" 
+                                                            {{ old('room', $invoice->payment->booking->showtime->room->id ?? '') == $room->id ? 'selected' : '' }}>
+                                                            {{ $room->room_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('room')
+                                                    <span class="invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
 
-                                        {{-- Film --}}
-                                        <div class="mb-3">
-                                            <label for="film" class="form-label">Film</label>
-                                            <select class="form-select @error('film') is-invalid @enderror" id="film" name="film" required>
-                                                @foreach ($films as $film)
-                                                    <option value="{{ $film->id }}"
-                                                        {{ old('film', $invoice->payment->booking->showtime->film->id ?? '') == $film->id ? 'selected' : '' }}>
-                                                        {{ $film->film_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('film')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
+                                            <!-- Seats -->
+                                            <div class="col-md-6 mb-4">
+                                                <label for="seat_count" class="form-label"><i class="fas fa-chair"></i> Seats</label>
+                                                <input type="number" 
+                                                    class="form-control" 
+                                                    id="seat_count" 
+                                                    name="seat_count" 
+                                                    min="1" 
+                                                    max="3" 
+                                                    value="{{ old('seat_count', isset($invoice->payment->booking->seats) ? $invoice->payment->booking->seats->count() : '') }}" 
+                                                    readonly>
+                                                <div id="seat-count-error" class="text-danger" style="display: none;">You can only choose between 1 and 3 seats!</div>
+                                            </div>
                                         </div>
-
-                                        {{-- Start Time --}}
-                                        <div class="mb-3">
-                                            <label for="start_time" class="form-label">Start Time</label>
-                                            <input type="time" class="form-control @error('start_time') is-invalid @enderror"
-                                                id="start_time" name="start_time"
-                                                value="{{ old('start_time', $invoice->payment->booking->showtime->start_time ?? '') }}" required>
-                                            @error('start_time')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-
-                                        {{-- Day --}}
-                                        <div class="mb-3">
-                                            <label for="day" class="form-label">Day</label>
-                                            <input type="date" class="form-control @error('day') is-invalid @enderror" id="day"
-                                                name="day"
-                                                value="{{ old('day', isset($invoice->payment->booking->showtime->day) ? \Carbon\Carbon::parse($invoice->payment->booking->showtime->day)->format('Y-m-d') : '') }}" required>
-                                            @error('day')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
+                                    </div>
 
 
-                                        {{-- Room --}}
-                                        <div class="mb-3">
-                                            <label for="room" class="form-label">Room</label>
-                                            <select class="form-select @error('room') is-invalid @enderror" id="room" name="room" required>
-                                                @foreach ($rooms as $room)
-                                                    <option value="{{ $room->id }}"
-                                                        {{ old('room', $invoice->payment->booking->showtime->room->id ?? '') == $room->id ? 'selected' : '' }}>
-                                                        {{ $room->room_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('room')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
+                                    <!-- Payment Information Section -->
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-success text-white">
+                                            <h5>Payment Information</h5>
                                         </div>
+                                        <div class="card-body">
+                                            <!-- Total Amount -->
+                                            <div class="mb-3">
+                                                <label for="total_amount" class="form-label"><i class="fas fa-money-bill-wave"></i> Total Amount</label>
+                                                <input type="hidden" id="total_amount" name="total_amount"
+                                                    value="{{ old('total_amount', $invoice->total_amount ?? 0) }}" required>
+                                                <input type="text" id="total_amount_display" class="form-control"
+                                                    value="{{ isset($invoice->id) ? number_format($invoice->total_amount) : number_format(old('total_amount', 0)) }}" readonly>
+                                            </div>
 
-                                        {{-- Seats --}}
-                                        <div class="mb-3">
-                                            <label for="seat_count" class="form-label">How many seats? (1-3)</label>
-                                            <input 
-                                                type="number" 
-                                                class="form-control" 
-                                                id="seat_count" 
-                                                name="seat_count" 
-                                                min="1" 
-                                                max="3"
-                                                value="{{ old('seat_count', isset($invoice->payment->booking->seats) ? $invoice->payment->booking->seats->count() : '') }}" 
-                                                readonly>
-                                            <div id="seat-count-error" class="text-danger" style="display: none;">You can only choose between 1 and 3 seats!</div>
-                                        </div>
+                                            <!-- Transaction ID -->
+                                            <div class="mb-3">
+                                                <label for="transaction_id" class="form-label"><i class="fas fa-receipt"></i> Transaction ID</label>
+                                                <input type="text" class="form-control @error('transaction_id') is-invalid @enderror"
+                                                    id="transaction_id" name="transaction_id"
+                                                    value="{{ old('transaction_id', $invoice->payment->transaction_id ?? '') }}" readonly>
+                                                @error('transaction_id')
+                                                    <span class="invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
 
-                                        {{-- Total Amount --}}
-                                        <div class="mb-3">
-                                            <label for="total_amount" class="form-label">Total Amount</label>
-                                            <input type="hidden" id="total_amount" name="total_amount"
-                                                value="{{ old('total_amount', $invoice->total_amount ?? 0) }}" required>
-                                            <input type="text" id="total_amount_display" class="form-control"
-                                                value="{{ isset($invoice->id) ? number_format($invoice->total_amount) : number_format(old('total_amount', 0)) }}" readonly>
-                                        </div>
+                                            <!-- Payment Method -->
+                                            <div class="mb-3">
+                                                <label for="payment_method" class="form-label"><i class="fas fa-credit-card"></i> Payment Method</label>
+                                                <select class="form-control @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" required>
+                                                    <option value="" disabled {{ old('payment_method', $invoice->payment->payment_method ?? '') == '' ? 'selected' : '' }}>Select a Payment Method</option>
+                                                    <option value="Credit Card" {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
+                                                    <option value="PayPal" {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'PayPal' ? 'selected' : '' }}>PayPal</option>
+                                                    <option value="Cash" {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                                </select>
+                                                @error('payment_method')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
 
-                                        {{-- Transaction ID --}}
-                                        <div class="mb-3">
-                                            <label for="transaction_id" class="form-label">Transaction ID</label>
-                                            <input type="text" class="form-control @error('transaction_id') is-invalid @enderror"
-                                                id="transaction_id" name="transaction_id"
-                                                value="{{ old('transaction_id', $invoice->payment->transaction_id ?? '') }}" readonly>
-                                            @error('transaction_id')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
+                                            <!-- Payment Status -->
+                                            <div class="mb-3">
+                                                <label for="payment_status" class="form-label"><i class="fas fa-check-circle"></i> Payment Status</label>
+                                                <select class="form-control @error('payment_status') is-invalid @enderror" id="payment_status" name="payment_status" required>
+                                                    <option value="" disabled {{ old('payment_status', $invoice->payment->payment_status ?? '') == '' ? 'selected' : '' }}>Select Payment Status</option>
+                                                    <option value="Completed" {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Completed' ? 'selected' : '' }}>Completed</option>
+                                                    <option value="Pending" {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="Failed" {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Failed' ? 'selected' : '' }}>Failed</option>
+                                                </select>
+                                                @error('payment_status')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
 
-                                        {{-- Payment Method --}}
-                                        <div class="mb-3">
-                                            <label for="payment_method" class="form-label">Payment Method</label>
-                                            <select class="form-select @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" required>
-                                                <option value="Credit Card"
-                                                    {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'Credit Card' ? 'selected' : '' }}>
-                                                    Credit Card
-                                                </option>
-                                                <option value="PayPal"
-                                                    {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'PayPal' ? 'selected' : '' }}>
-                                                    PayPal
-                                                </option>
-                                                <option value="Cash"
-                                                    {{ old('payment_method', $invoice->payment->payment_method ?? '') == 'Cash' ? 'selected' : '' }}>
-                                                    Cash
-                                                </option>
-                                            </select>
-                                            @error('payment_method')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
+                                            <!-- Payment ID -->
+                                            <div class="mb-3">
+                                                <label for="payment_id" class="form-label"><i class="fas fa-barcode"></i> Payment ID</label>
+                                                <select class="form-control @error('payment_id') is-invalid @enderror" id="payment_id" name="payment_id" required>
+                                                    <option value="" disabled {{ old('payment_id', $invoice->payment_id ?? '') == '' ? 'selected' : '' }}>Select a Payment ID</option>
+                                                    @foreach ($payments as $payment)
+                                                        <option value="{{ $payment->id }}" {{ old('payment_id', $invoice->payment_id ?? '') == $payment->id ? 'selected' : '' }}>
+                                                            {{ $payment->id }} - {{ $payment->transaction_id }} - {{ number_format($payment->amount) }} VND
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('payment_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        {{-- Payment Status --}}
-                                        <div class="mb-3">
-                                            <label for="payment_status" class="form-label">Payment Status</label>
-                                            <select class="form-select @error('payment_status') is-invalid @enderror" id="payment_status" name="payment_status" required>
-                                                <option value="Completed"
-                                                    {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Completed' ? 'selected' : '' }}>
-                                                    Completed
-                                                </option>
-                                                <option value="Pending"
-                                                    {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Pending' ? 'selected' : '' }}>
-                                                    Pending
-                                                </option>
-                                                <option value="Failed"
-                                                    {{ old('payment_status', $invoice->payment->payment_status ?? '') == 'Failed' ? 'selected' : '' }}>
-                                                    Failed
-                                                </option>
-                                            </select>
-                                            @error('payment_status')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
+                                    <!-- Submit Button -->
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                                    </div>
+                                </form>
 
-                                        
-                                        {{-- Payment ID --}}
-                                        <div class="mb-3">
-                                            <label for="payment_id" class="form-label">Payment ID</label>
-                                            <select class="form-select @error('payment_id') is-invalid @enderror" id="payment_id" name="payment_id" required>
-                                                <option value="">Choose Payment ID</option>
-                                                @foreach ($payments as $payment)
-                                                    <option value="{{ $payment->id }}" {{ old('payment_id', $invoice->payment_id ?? '') == $payment->id ? 'selected' : '' }}>
-                                                        {{ $payment->id }} - {{ $payment->transaction_id }} - {{ number_format($payment->amount) }} VND
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('payment_id')
-                                                <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-
-                                        
-                
-                                        {{-- Submit Button --}}
-                                        <div class="d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-primary">Save</button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>
