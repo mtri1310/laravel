@@ -13,7 +13,7 @@ class Invoice extends Model
 
     protected $fillable = [
         'payment_id',
-        'invoice_number',
+        // 'invoice_number',
         'total_amount',
         'created_at',
     ];
@@ -38,4 +38,5 @@ class Invoice extends Model
     {
         return Carbon::parse($value)->format('d-m-Y H:i:s');
     }
+    
 }
