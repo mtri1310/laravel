@@ -1,15 +1,14 @@
 <?php
 
 use App\Http\Controllers\Api\MovieDetailController;
-use App\Http\Controllers\Api\MyTicketController;
 use App\Http\Controllers\Api\SelectSeatController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\ListFilmsController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\SeatStatusController;
-use App\Http\Controllers\Api\ShowtimeController;
+use App\Http\Controllers\api\SeatStatusController;
+use App\Http\Controllers\api\ShowtimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
@@ -30,13 +29,14 @@ use Illuminate\Console\View\Components\Secret;
 
 Route::get('/movies', [ImdbController::class, 'index']);
 Route::get('/listfilms', [ListFilmsController::class, 'listfilms']);
-Route::get('/payment', [PaymentController::class, 'payment']);
+Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails']);
 // Route::middleware('auth:api')->get('/login', [LoginController::class, 'getUserInfo']);
 // Route::post('auth/google',  [LoginController::class, 'loginWithGoogle']);
 // Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+Route::get('/ticket_history/{userId}', [TicketHistoryController::class, 'getTicketHistory']);
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
