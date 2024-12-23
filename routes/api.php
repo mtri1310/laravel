@@ -2,14 +2,14 @@
 
 use App\Http\Controllers\Api\MovieDetailController;
 use App\Http\Controllers\Api\SelectSeatController;
-use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\ListFilmsController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\api\SeatStatusController;
-use App\Http\Controllers\api\ShowtimeController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\SeatStatusController;
+use App\Http\Controllers\Api\ShowtimeController;
+use App\Http\Controllers\Api\MyTicketController;
+use App\Http\Controllers\Api\TicketHistoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
 use App\Models\Payment;
