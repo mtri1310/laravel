@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
+use App\Mail\NewRandomPasswordMail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -148,4 +149,58 @@ class PasswordResetController extends Controller
             'message' => 'Mật khẩu đã được cập nhật thành công.'
         ]);
     }
+
+    /**
+     * Yêu cầu reset mật khẩu bằng cách tạo mật khẩu ngẫu nhiên và gửi qua email
+     */
+    public function forgotPasswordWithRandom(Request $request)
+    {
+        // Xác thực email
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'email'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $email = $request->email;
+
+        // Kiểm tra xem email có tồn tại trong hệ thống không
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Nếu email này tồn tại trong hệ thống, chúng tôi đã gửi mật khẩu mới tới email của bạn.'
+            ]);
+        }
+
+        // Tạo mật khẩu ngẫu nhiên 8 ký tự
+        $newPassword = Str::random(8);
+
+        // Cập nhật mật khẩu mới cho người dùng
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        // Gửi email với mật khẩu mới
+        try {
+            Mail::to($email)->send(new NewRandomPasswordMail($newPassword, $user));
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể gửi email. Vui lòng thử lại sau.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Nếu email này tồn tại trong hệ thống, chúng tôi đã gửi mật khẩu mới tới email của bạn.'
+        ]);
+    }
+
 }

@@ -47,9 +47,12 @@ Route::post('/login', [AuthController::class, 'login']);
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
 
-// Reset Password
+// Cách 1: Reset Password
 Route::post('/password-reset/request', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/password-reset/reset', [PasswordResetController::class, 'reset']);
+
+// Cách 2: Reset Password
+Route::post('/password-reset/forgot', [PasswordResetController::class, 'forgotPasswordWithRandom']);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
@@ -57,6 +60,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::put('/userprofile', [AuthController::class, 'update']);
+    Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 });

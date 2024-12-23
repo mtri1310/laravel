@@ -266,4 +266,46 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function changePassword(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'old_password' => ['required'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thay đổi mật khẩu không thành công.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Kiểm tra mật khẩu cũ có đúng không
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mật khẩu cũ không đúng.'
+            ], 401);
+        }
+
+        // Kiểm tra mật khẩu mới có khác mật khẩu cũ không
+        if (Hash::check($request->new_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mật khẩu mới không được trùng với mật khẩu cũ.'
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Thay đổi mật khẩu thành công.'
+        ]);
+    }
 }
