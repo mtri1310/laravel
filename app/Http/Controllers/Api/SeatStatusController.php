@@ -98,7 +98,7 @@ class SeatStatusController extends Controller
                 'film_name' => $showtime->film->film_name,
                 'room_name' => $showtime->room->room_name,
                 'start_time' => $showtime->start_time,
-                'day' => $showtime->day->format('Y-m-d'),
+                'day' => $showtime->day->format('d-m-Y'),
                 'seats' => $seatsStatus,
             ],  
         ]);
