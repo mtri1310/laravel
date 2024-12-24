@@ -81,7 +81,7 @@ class SelectSeatController extends Controller
         $booking = Booking::create([
             'showtime_id' => $showtimeId,
             'user_id' => $user->id,
-            'created_at' => now(),
+            'created_at' => now(),  
             'updated_at' => now(),
         ]);
 
@@ -109,4 +109,6 @@ class SelectSeatController extends Controller
             ],
         ]);
     }
+
+    
 }

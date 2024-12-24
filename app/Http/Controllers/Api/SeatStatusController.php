@@ -29,20 +29,19 @@ class SeatStatusController extends Controller
         // Lấy dữ liệu từ request
         $dayInput = $request->input('day');
         $startTime = $request->input('start_time');
-        $roomId = $request->input('room_id');
+        
 
 
         $request->validate([
             'day' => 'required|date_format:d-m-Y',
             'start_time' => 'required|date_format:H:i:s',
-            'room_id' => 'required|integer|exists:rooms,id',
+            
         ], [
             'day.required' => 'Ngày suất chiếu là bắt buộc.',
             'day.date_format' => 'Ngày phải đúng định dạng DD-MM-YYYY.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
             'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',
-            'room_id.required' => 'ID phòng chiếu là bắt buộc.',
-            'room_id.exists' => 'Phòng chiếu không tồn tại.',
+            
         ]);
 
         // Chuyển đổi ngày từ d-m-Y sang Y-m-d
@@ -59,7 +58,6 @@ class SeatStatusController extends Controller
         $showtime = Showtime::with('room.seats')
             ->where('day', $day)
             ->where('start_time', $startTime)
-            ->where('room_id', $roomId)
             ->first();
 
         // Kiểm tra nếu không tìm thấy suất chiếu
