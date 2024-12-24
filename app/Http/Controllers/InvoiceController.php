@@ -12,6 +12,7 @@ use App\Models\Payment;
 use App\Models\Room;
 use App\Models\Seat;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB; // Import DB facade
 
@@ -21,33 +22,110 @@ class InvoiceController extends Controller
     public function index(Request $request): View
     {
         $keyword = $request->input('keyword');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
 
-        // Lấy danh sách các hóa đơn (invoice) và thông tin liên quan
-        $invoices = Invoice::with(['payment.booking.user', 'payment.booking.showtime.film', 'payment.booking.showtime.room', 'payment.booking.bookingSeats.seat']) // Eager load relationships
-            ->when($keyword, function($query, $keyword) {
-                return $query->whereHas('payment.booking.user', function($q) use ($keyword) {
-                        $q->where('username', 'like', "%{$keyword}%"); // Tìm theo Username
-                    })
-                    ->orWhereHas('payment.booking.showtime.film', function($q) use ($keyword) {
-                        $q->where('film_name', 'like', "%{$keyword}%"); // Tìm theo Film
-                    })
-                    ->orWhereHas('payment.booking.showtime.room', function($q) use ($keyword) {
-                        $q->where('room_name', 'like', "%{$keyword}%"); // Tìm theo Room
-                    })
-                    ->orWhereHas('payment.booking.bookingSeats.seat', function($q) use ($keyword) {
-                        $q->where('seat_number', 'like', "%{$keyword}%"); // Tìm theo Seats
-                    })
-                    ->orWhereHas('payment', function($q) use ($keyword) {
-                        $q->where('payment_method', 'like', "%{$keyword}%") // Tìm theo Payment Method trong bảng payments
-                          ->orWhere('payment_status', 'like', "%{$keyword}%") // Tìm theo Payment Status trong bảng payments
-                          ->orWhere('transaction_id', 'like', "%{$keyword}%"); // Tìm theo transaction_id  trong bảng payments
-                    });
-            })
-            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo giảm dần
-            ->paginate(10)
-            ->appends(['keyword' => $keyword]); // Giữ lại từ khóa tìm kiếm trong các liên kết phân trang
+        // Xây dựng query cơ bản với các mối quan hệ cần thiết
+        $query = Invoice::with([
+            'payment.booking.user',
+            'payment.booking.showtime.film',
+            'payment.booking.showtime.room',
+            'payment.booking.bookingSeats.seat'
+        ]);
 
-        return view('invoices.index', compact('invoices', 'keyword'));
+        // Lọc theo khoảng ngày nếu có
+        if ($dateFrom && $dateTo) {
+            // Chuyển đổi định dạng ngày nếu cần
+            try {
+                $dateFromParsed = Carbon::parse($dateFrom)->startOfDay();
+                $dateToParsed = Carbon::parse($dateTo)->endOfDay();
+
+                $query->whereBetween('created_at', [$dateFromParsed, $dateToParsed]);
+            } catch (\Exception $e) {
+                // Xử lý lỗi nếu định dạng ngày không hợp lệ
+                Log::error('Invalid date format for invoice filtering', [
+                    'date_from' => $dateFrom,
+                    'date_to' => $dateTo,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        // Lọc theo từ khóa nếu có
+        if ($keyword) {
+            $query->where(function($q) use ($keyword) {
+                $q->whereHas('payment.booking.user', function($q) use ($keyword) {
+                    $q->where('username', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('payment.booking.showtime.film', function($q) use ($keyword) {
+                    $q->where('film_name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('payment.booking.showtime.room', function($q) use ($keyword) {
+                    $q->where('room_name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('payment.booking.bookingSeats.seat', function($q) use ($keyword) {
+                    $q->where('seat_number', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('payment', function($q) use ($keyword) {
+                    $q->where('payment_method', 'like', "%{$keyword}%")
+                    ->orWhere('payment_status', 'like', "%{$keyword}%")
+                    ->orWhere('transaction_id', 'like', "%{$keyword}%");
+                });
+            });
+        }
+
+        // Lọc theo khoảng ngày nếu có
+        if ($dateFrom && $dateTo) {
+            // Chuyển đổi định dạng ngày nếu cần
+            try {
+                $dateFromParsed = Carbon::parse($dateFrom)->startOfDay();
+                $dateToParsed = Carbon::parse($dateTo)->endOfDay();
+
+                $query->whereBetween('created_at', [$dateFromParsed, $dateToParsed]);
+            } catch (\Exception $e) {
+                // Xử lý lỗi nếu định dạng ngày không hợp lệ
+                Log::error('Invalid date format for invoice filtering', [
+                    'date_from' => $dateFrom,
+                    'date_to' => $dateTo,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Sắp xếp và phân trang
+        $invoices = $query->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->appends([
+                            'keyword' => $keyword,
+                            'date_from' => $dateFrom,
+                            'date_to' => $dateTo,
+                        ]);
+        // // Lấy danh sách các hóa đơn (invoice) và thông tin liên quan
+        // $invoices = Invoice::with(['payment.booking.user', 'payment.booking.showtime.film', 'payment.booking.showtime.room', 'payment.booking.bookingSeats.seat']) // Eager load relationships
+        //     ->when($keyword, function($query, $keyword) {
+        //         return $query->whereHas('payment.booking.user', function($q) use ($keyword) {
+        //                 $q->where('username', 'like', "%{$keyword}%"); // Tìm theo Username
+        //             })
+        //             ->orWhereHas('payment.booking.showtime.film', function($q) use ($keyword) {
+        //                 $q->where('film_name', 'like', "%{$keyword}%"); // Tìm theo Film
+        //             })
+        //             ->orWhereHas('payment.booking.showtime.room', function($q) use ($keyword) {
+        //                 $q->where('room_name', 'like', "%{$keyword}%"); // Tìm theo Room
+        //             })
+        //             ->orWhereHas('payment.booking.bookingSeats.seat', function($q) use ($keyword) {
+        //                 $q->where('seat_number', 'like', "%{$keyword}%"); // Tìm theo Seats
+        //             })
+        //             ->orWhereHas('payment', function($q) use ($keyword) {
+        //                 $q->where('payment_method', 'like', "%{$keyword}%") // Tìm theo Payment Method trong bảng payments
+        //                   ->orWhere('payment_status', 'like', "%{$keyword}%") // Tìm theo Payment Status trong bảng payments
+        //                   ->orWhere('transaction_id', 'like', "%{$keyword}%"); // Tìm theo transaction_id  trong bảng payments
+        //             });
+        //     })
+        //     ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo giảm dần
+        //     ->paginate(10)
+        //     ->appends(['keyword' => $keyword]); // Giữ lại từ khóa tìm kiếm trong các liên kết phân trang
+
+        // return view('invoices.index', compact('invoices', 'keyword'));
+        return view('invoices.index', compact('invoices', 'keyword', 'dateFrom', 'dateTo'));
     }
 
     public function create(): View

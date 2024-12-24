@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('showtime_id')->constrained('showtimes')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('booking_time')->useCurrent();
             $table->timestamps();
         });
     }
