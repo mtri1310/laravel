@@ -47,13 +47,11 @@ Route::post('/login', [AuthController::class, 'login']);
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
 
-// Cách 1: Reset Password
-Route::post('/password-reset/request', [PasswordResetController::class, 'sendResetLinkEmail']);
-Route::post('/password-reset/reset', [PasswordResetController::class, 'reset']);
-
-// Cách 2: Reset Password
-Route::post('/password-reset/forgot', [PasswordResetController::class, 'forgotPasswordWithRandom']);
-
+Route::prefix('password')->group(function () {
+    Route::post('/request-reset-code', [PasswordResetController::class, 'requestResetCode']);
+    Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
+    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+});
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
