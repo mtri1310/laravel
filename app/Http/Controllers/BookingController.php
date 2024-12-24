@@ -22,27 +22,30 @@ class BookingController extends Controller
                 'showtime.film',
                 'showtime.room',
                 'user',
+                'seats'
             ])
             ->select('bookings.*')
             ->selectSub(function($query) {
                 $query->from('booking_seat')
-                      ->join('seats', 'booking_seat.seat_id', '=', 'seats.id')
-                      ->whereColumn('booking_seat.booking_id', 'bookings.id')
-                      ->selectRaw('GROUP_CONCAT(seats.seat_number ORDER BY seats.seat_number SEPARATOR ", ")');
-            }, 'seat_ids')
+                    ->join('seats', 'booking_seat.seat_id', '=', 'seats.id')
+                    ->whereColumn('booking_seat.booking_id', 'bookings.id')
+                    ->selectRaw('GROUP_CONCAT(seats.seat_number ORDER BY seats.seat_number SEPARATOR ", ")');
+            }, 'seat_numbers') // Changed alias to 'seat_numbers' for clarity
             ->when($keyword, function($query, $keyword) {
                 return $query->where(function($q) use ($keyword) {
-                    $q->where('bookings.id', 'like', "%{$keyword}%") // Tìm theo booking ID
-                      ->orWhereHas('showtime.film', function($q2) use ($keyword) {
-                          $q2->where('film_name', 'like', "%{$keyword}%");
-                      })
-                      ->orWhereHas('showtime.room', function($q2) use ($keyword) {
-                          $q2->where('room_name', 'like', "%{$keyword}%");
-                      })
-                      ->orWhereHas('user', function($q2) use ($keyword) {
-                          $q2->where('full_name', 'like', "%{$keyword}%");
-                      })
-                      ->orWhere('seat_ids', 'like', "%{$keyword}%"); // Tìm kiếm trong seat_ids
+                    $q->where('bookings.id', 'like', "%{$keyword}%") // Search by booking ID
+                    ->orWhereHas('showtime.film', function($q2) use ($keyword) {
+                        $q2->where('film_name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('showtime.room', function($q2) use ($keyword) {
+                        $q2->where('room_name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('user', function($q2) use ($keyword) {
+                        $q2->where('full_name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('seats', function($q2) use ($keyword) { // Added whereHas for seats
+                        $q2->where('seat_number', 'like', "%{$keyword}%");
+                    });
                 });
             })
             ->orderBy('bookings.created_at', 'desc') 
