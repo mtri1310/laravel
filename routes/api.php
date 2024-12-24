@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\SeatStatusController;
 use App\Http\Controllers\Api\ShowtimeController;
 use App\Http\Controllers\Api\MyTicketController;
 use App\Http\Controllers\Api\TicketHistoryController;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
 use App\Models\Payment;
@@ -36,7 +38,6 @@ Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails'])
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
-Route::get('/ticket_history/{userId}', [TicketHistoryController::class, 'getTicketHistory']);
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
@@ -61,5 +62,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
+    Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);

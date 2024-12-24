@@ -10,15 +10,10 @@ use App\Models\Showtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon; // Thêm sử dụng Carbon
 
 class SeatStatusController extends Controller
 {
-    /**
-     * Lấy danh sách ghế đã được đặt hoặc chưa trong một suất chiếu dựa trên thời gian và ngày.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getSeatsByTimeAndDay(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -30,20 +25,33 @@ class SeatStatusController extends Controller
                 "message" => "Unauthenticated"
             ], 401);
         }
-        // Lấy dữ liệu từ request
-        $day = $request->input('day'); 
-        $startTime = $request->input('start_time'); 
 
-        // Xác thực dữ liệu đầu vào
+        // Lấy dữ liệu từ request
+        $dayInput = $request->input('day');
+        $startTime = $request->input('start_time');
+        
+
+
         $request->validate([
-            'day' => 'required|date_format:Y-m-d',
+            'day' => 'required|date_format:d-m-Y',
             'start_time' => 'required|date_format:H:i:s',
+            
         ], [
             'day.required' => 'Ngày suất chiếu là bắt buộc.',
-            'day.date_format' => 'Ngày phải đúng định dạng YYYY-MM-DD.',
+            'day.date_format' => 'Ngày phải đúng định dạng DD-MM-YYYY.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
-            'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',
+            'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',            
         ]);
+
+        // Chuyển đổi ngày từ d-m-Y sang Y-m-d
+        try {
+            $day = Carbon::createFromFormat('d-m-Y', $dayInput)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ngày không hợp lệ.',
+            ], 400);
+        }
 
         // Tìm suất chiếu dựa trên ngày và giờ
         $showtime = Showtime::with('room.seats')
@@ -55,7 +63,7 @@ class SeatStatusController extends Controller
         if (!$showtime) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Không tìm thấy suất chiếu cho ngày và giờ đã chọn.',
+                'message' => 'Không tìm thấy suất chiếu cho ngày, giờ, và phòng đã chọn.',
             ], 404);
         }
 
@@ -87,9 +95,9 @@ class SeatStatusController extends Controller
                 'film_name' => $showtime->film->film_name,
                 'room_name' => $showtime->room->room_name,
                 'start_time' => $showtime->start_time,
-                'day' => $showtime->day->format('Y-m-d'),
+                'day' => $showtime->day->format('d-m-Y'),
                 'seats' => $seatsStatus,
-            ],
+            ],  
         ]);
     }
 }
