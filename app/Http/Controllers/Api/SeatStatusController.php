@@ -40,8 +40,7 @@ class SeatStatusController extends Controller
             'day.required' => 'Ngày suất chiếu là bắt buộc.',
             'day.date_format' => 'Ngày phải đúng định dạng DD-MM-YYYY.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
-            'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',
-            
+            'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',            
         ]);
 
         // Chuyển đổi ngày từ d-m-Y sang Y-m-d
