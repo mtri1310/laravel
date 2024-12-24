@@ -40,7 +40,7 @@ Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails'])
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
-Route::get('/ticket_history/{userId}', [TicketHistoryController::class, 'getTicketHistory']);
+
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
@@ -59,5 +59,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/userprofile', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
+    Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);

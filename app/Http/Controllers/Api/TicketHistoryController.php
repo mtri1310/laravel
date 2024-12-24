@@ -7,35 +7,38 @@ use Illuminate\Http\Request;
 
 class TicketHistoryController extends Controller
 {
-    public function getTicketHistory($userId)
+    public function getTicketHistory(Request $request)
     {
-        $bookings = Booking::with(['showtime.film'])
-            ->where('user_id', $userId)
+        // Lấy danh sách các booking của user hiện tại (dựa trên token)
+        $user = auth()->user(); // Middleware đã xác thực token và lấy user
+        if (!$user) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthenticated"
+            ], 401);
+        }
+        $bookings = Booking::where('user_id', $user->id)
+            ->with(['showtime.film'])
             ->get();
 
-        $ticketHistory = [
+        // Chuẩn bị dữ liệu JSON
+        $data = [
             'status' => 'success',
             'message' => 'Ticket History',
             'data' => [
-                'user_id' => $userId,
-                'film' => []
-            ]
+                'film' => $bookings->map(function ($booking) {
+                    return [
+                        'thumbnail' => $booking->showtime->film->thumbnail,
+                        'film_name' => $booking->showtime->film->film_name,
+                        'showtime' => [
+                            'start_time' => $booking->showtime->start_time,
+                            'day' => $booking->showtime->day,
+                        ],
+                    ];
+                }),
+            ],
         ];
 
-        foreach ($bookings as $booking) {
-            $film = $booking->showtime->film;
-
-            $ticketHistory['data']['film'][] = [
-                'thumbnail' => $film->thumbnail,
-                'film_name' => $film->film_name,
-                'showtime' => [
-                    'start_time' => $booking->showtime->start_time,
-                    'day' => $booking->showtime->day
-                ]
-            ];
-        }
-
-        // Trả về JSON
-        return response()->json($ticketHistory);
+        return response()->json($data);
     }
 }
