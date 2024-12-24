@@ -22,16 +22,60 @@
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
                         <h1 class="title">Invoice </h1>
-                        <a href="{{ route('invoices.create') }}">
-                            <button class="btn btn-primary d-flex align-items-center">
-                                <i class="fas fa-plus mr-2"></i>
-                                <span>Add New Invoice</span>
-                            </button>
-                        </a>
+                        
                     </div>
                     <section class="list-table">
-                        <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'invoices'])
+                        <div class="mb-4" style="margin-top: 50px;"  >
+                            <div class="row g-3">
+                                <!-- Biểu mẫu Tìm Kiếm (Bên Trái) -->
+                                <div class="col-md-6" >
+                                    @include('fragments.search', ['entityName' => 'invoices'])
+                                </div>
+                
+                                <!-- Biểu mẫu Lọc Theo Ngày (Bên Phải) -->
+                                <div class="col-md-6">
+                                    <form method="GET" action="{{ route('invoices.index') }}">
+                                        <!-- Hiển thị thông báo lỗi nếu có -->
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul class="mb-0">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+                
+                                        <div class="row g-3 align-items-end justify-content-end">
+                                            <!-- Trường Từ Ngày -->
+                                            <div class="col-md-4">
+                                                <label for="date_from" class="form-label">From</label>
+                                                <input type="date" name="date_from" id="date_from" class="form-control @error('date_from') is-invalid @enderror" 
+                                                    value="{{ request('date_from') }}">
+                                                @error('date_from')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                
+                                            <!-- Trường Đến Ngày -->
+                                            <div class="col-md-4">
+                                                <label for="date_to" class="form-label">To</label>
+                                                <input type="date" name="date_to" id="date_to" class="form-control @error('date_to') is-invalid @enderror" 
+                                                    value="{{ request('date_to') }}">
+                                                @error('date_to')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                
+                                            <!-- Nút Lọc và Reset -->
+                                            <div class="col-md-4 d-flex">
+                                                <button type="submit" class="btn btn-primary me-2 w-100" style="margin-right: 10px">Filter</button>
+                                                <a href="{{ route('invoices.index') }}" class="btn btn-secondary w-100" style="margin-right: 10px">Reset</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="list-table-content">
@@ -40,7 +84,7 @@
                                     <thead>
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
-
+                                            <th class="d-none d-sm-table-cell text-center">Day Create Invoice</th>
                                             <th class="d-none d-sm-table-cell text-center">Username</th>
                                             <th class="d-none d-sm-table-cell text-center">Film</th>
                                             <th class="d-none d-sm-table-cell text-center">Start time</th>
@@ -61,7 +105,9 @@
                                                 <td class="d-none d-md-table-cell fs-sm text-center">
                                                     {{ $invoice->invoice_number }}
                                                 </td>
-                                                
+                                                <td class="d-none d-md-table-cell fs-sm text-center">
+                                                    {{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y H:i') }}
+                                                </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
                                                     {{ $invoice->payment->booking->user->username }}
                                                 </td>

@@ -26,8 +26,7 @@ class BookingsTableSeeder extends Seeder
                 $bookings[] = [
                     'showtime_id'  => $showtime->id,
                     'user_id'      => $user->id,
-                    'booking_time' => Carbon::now(),
-                    'created_at'   => now(),
+                    'created_at'   => Carbon::now()->addDays(rand(-30, 30)),
                     'updated_at'   => now(),
                 ];
             }

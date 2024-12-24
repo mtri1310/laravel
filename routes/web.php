@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
@@ -52,11 +53,12 @@ Route::middleware('auth')->group(function () {
         'showtimes' => ShowtimeController::class,
         'bookings'  => BookingController::class,
         'invoices'  => InvoiceController::class,
+        'statistics' => StatisticsController::class,
     ], [
         'except' => ['show'],
     ]);
     
-
+    Route::get('/statistics', [StatisticsController::class, 'index']);
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });
