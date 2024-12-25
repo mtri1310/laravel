@@ -38,6 +38,10 @@ Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails'])
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+Route::post('create_payment', [PaymentController::class, 'createPayment']);
+Route::post('confirm_payment', [PaymentController::class, 'confirmPayment']);
+Route::post('cancel_payment', [PaymentController::class, 'cancelPayment']);
+
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
