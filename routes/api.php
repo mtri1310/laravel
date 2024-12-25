@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SeatStatusController;
 use App\Http\Controllers\Api\ShowtimeController;
 use App\Http\Controllers\Api\MyTicketController;
+use App\Http\Controllers\api\StripeWebhookController;
 use App\Http\Controllers\Api\TicketHistoryController;
 
 use Illuminate\Http\Request;
@@ -69,3 +70,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
