@@ -14,13 +14,7 @@ use Stripe\PaymentIntent;
 
 class PaymentController extends Controller
 {
-    protected $stripeService;
-
-    public function __construct(StripeService $stripeService)
-    {
-        $this->stripeService = $stripeService;
-    }
-
+    
     public function createPayment(Request $request)
     {
         $request->validate([
@@ -33,19 +27,7 @@ class PaymentController extends Controller
         // Tạo orderID ngẫu nhiên
         $orderID = $this->generateOrderID();
 
-        // Cấu hình Stripe
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-        try {
-            // Tạo PaymentIntent
-            $paymentIntent = PaymentIntent::create([
-                'amount' => $request->input('amount') * 100, // Stripe yêu cầu đơn vị là cents
-                'currency' => 'vnd',
-                'payment_method_types' => [$request->input('payment_method')],
-                'metadata' => [
-                    'booking_id' => $request->input('booking_id'),
-                    'order_id' => $orderID,
-                ],
-            ]);
+        
 
             // Lưu thông tin thanh toán với trạng thái "chờ"
             $payment = Payment::create([
@@ -61,19 +43,12 @@ class PaymentController extends Controller
                 'status' => 'success',
                 'message' => 'Payment created with pending status',
                 'data' => [
-                    'client_secret' => $paymentIntent->client_secret,
                     'order_id' => $orderID, // OrderID ngẫu nhiên
                     'amount' => $payment->amount,
                     'payment_status' => $payment->payment_status,
                 ],
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create PaymentIntent',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+       
     }
 
     public function confirmPayment(Request $request)
