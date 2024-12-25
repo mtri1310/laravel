@@ -16,7 +16,6 @@ class PaymentController extends Controller
         $request->validate([
             'booking_id' => 'required|integer',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string',
             'transaction_id' => 'required|string',
         ]);
 
@@ -29,7 +28,7 @@ class PaymentController extends Controller
             'amount' => $request->input('amount'),
             'order_id' => $orderID,
             'transaction_id' => $request->input('transaction_id'),
-            'payment_method' => $request->input('payment_method'),
+            'payment_method' => 'stripe',
             'payment_status' => 2, // Trạng thái "chờ"
         ]);
 
