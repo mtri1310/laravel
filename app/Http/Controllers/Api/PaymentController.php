@@ -6,74 +6,40 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Invoice;
-use App\Services\StripeService;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
-use Stripe\Checkout\Session;
-use Stripe\PaymentIntent;
 
 class PaymentController extends Controller
 {
-    protected $stripeService;
-
-    public function __construct(StripeService $stripeService)
-    {
-        $this->stripeService = $stripeService;
-    }
-
     public function createPayment(Request $request)
     {
         $request->validate([
             'booking_id' => 'required|integer',
-            // 'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string',
+            'amount' => 'required|numeric|min:0',
             'transaction_id' => 'required|string',
         ]);
 
         // Tạo orderID ngẫu nhiên
         $orderID = $this->generateOrderID();
 
-        // Cấu hình Stripe
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-        try {
-            // Tạo PaymentIntent
-            $paymentIntent = PaymentIntent::create([
-                'amount' => $request->input('amount') * 100, // Stripe yêu cầu đơn vị là cents
-                'currency' => 'vnd',
-                'payment_method_types' => [$request->input('payment_method')],
-                'metadata' => [
-                    'booking_id' => $request->input('booking_id'),
-                    'order_id' => $orderID,
-                ],
-            ]);
+        // Lưu thông tin thanh toán với trạng thái "chờ"
+        $payment = Payment::create([
+            'booking_id' => $request->input('booking_id'),
+            'amount' => $request->input('amount'),
+            'order_id' => $orderID,
+            'transaction_id' => $request->input('transaction_id'),
+            'payment_method' => 'stripe',
+            'payment_status' => 2, // Trạng thái "chờ"
+        ]);
 
-            // Lưu thông tin thanh toán với trạng thái "chờ"
-            $payment = Payment::create([
-                'booking_id' => $request->input('booking_id'),
-                'amount' => $request->input('amount'),
-                'order_id' => $orderID,
-                'transaction_id' => $request->input('transaction_id'),
-                'payment_method' => $request->input('payment_method'),
-                'payment_status' => 2, // Trạng thái "chờ"
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Payment created with pending status',
-                'data' => [
-                    'client_secret' => $paymentIntent->client_secret,
-                    'order_id' => $orderID, // OrderID ngẫu nhiên
-                    'amount' => $payment->amount,
-                    'payment_status' => $payment->payment_status,
-                ],
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create PaymentIntent',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment created with pending status',
+            'data' => [
+                'order_id' => $orderID, // OrderID ngẫu nhiên
+                'amount' => $payment->amount,
+                'payment_status' => $payment->payment_status,
+            ],
+        ]);
     }
 
     public function confirmPayment(Request $request)
@@ -87,9 +53,9 @@ class PaymentController extends Controller
 
         try {
             $payment = Payment::where('payment_status', 2) // Chỉ xác nhận nếu trạng thái là "chờ"
-                        ->firstOrFail();
+                ->firstOrFail();
 
-            // Cập nhật trạng thái thanh toán thành "thành công" và thêm transaction_id (nếu có)
+            // Cập nhật trạng thái thanh toán thành "thành công"
             $payment->update([
                 'payment_status' => 1,
             ]);
@@ -175,7 +141,6 @@ class PaymentController extends Controller
             ], 500);
         }
     }
-
 
     private function generateOrderID()
     {
