@@ -14,12 +14,12 @@ use Stripe\PaymentIntent;
 
 class PaymentController extends Controller
 {
-    
+
     public function createPayment(Request $request)
     {
         $request->validate([
             'booking_id' => 'required|integer',
-            // 'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0',
             'payment_method' => 'required|string',
             'transaction_id' => 'required|string',
         ]);
@@ -27,28 +27,25 @@ class PaymentController extends Controller
         // Tạo orderID ngẫu nhiên
         $orderID = $this->generateOrderID();
 
-        
+        // Lưu thông tin thanh toán với trạng thái "chờ"
+        $payment = Payment::create([
+            'booking_id' => $request->input('booking_id'),
+            'amount' => $request->input('amount'),
+            'order_id' => $orderID,
+            'transaction_id' => $request->input('transaction_id'),
+            'payment_method' => $request->input('payment_method'),
+            'payment_status' => 2, // Trạng thái "chờ"
+        ]);
 
-            // Lưu thông tin thanh toán với trạng thái "chờ"
-            $payment = Payment::create([
-                'booking_id' => $request->input('booking_id'),
-                'amount' => $request->input('amount'),
-                'order_id' => $orderID,
-                'transaction_id' => $request->input('transaction_id'),
-                'payment_method' => $request->input('payment_method'),
-                'payment_status' => 2, // Trạng thái "chờ"
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Payment created with pending status',
-                'data' => [
-                    'order_id' => $orderID, // OrderID ngẫu nhiên
-                    'amount' => $payment->amount,
-                    'payment_status' => $payment->payment_status,
-                ],
-            ]);
-       
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment created with pending status',
+            'data' => [
+                'order_id' => $orderID, // OrderID ngẫu nhiên
+                'amount' => $payment->amount,
+                'payment_status' => $payment->payment_status,
+            ],
+        ]);
     }
 
     public function confirmPayment(Request $request)
@@ -62,7 +59,7 @@ class PaymentController extends Controller
 
         try {
             $payment = Payment::where('payment_status', 2) // Chỉ xác nhận nếu trạng thái là "chờ"
-                        ->firstOrFail();
+                ->firstOrFail();
 
             // Cập nhật trạng thái thanh toán thành "thành công" và thêm transaction_id (nếu có)
             $payment->update([
