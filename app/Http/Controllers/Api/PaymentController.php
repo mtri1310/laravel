@@ -6,21 +6,15 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Invoice;
-use App\Services\StripeService;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
-use Stripe\Checkout\Session;
-use Stripe\PaymentIntent;
 
 class PaymentController extends Controller
 {
-
     public function createPayment(Request $request)
     {
         $request->validate([
             'booking_id' => 'required|integer',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string',
             'transaction_id' => 'required|string',
         ]);
 
@@ -33,7 +27,7 @@ class PaymentController extends Controller
             'amount' => $request->input('amount'),
             'order_id' => $orderID,
             'transaction_id' => $request->input('transaction_id'),
-            'payment_method' => $request->input('payment_method'),
+            'payment_method' => 'stripe',
             'payment_status' => 2, // Trạng thái "chờ"
         ]);
 
@@ -61,7 +55,7 @@ class PaymentController extends Controller
             $payment = Payment::where('payment_status', 2) // Chỉ xác nhận nếu trạng thái là "chờ"
                 ->firstOrFail();
 
-            // Cập nhật trạng thái thanh toán thành "thành công" và thêm transaction_id (nếu có)
+            // Cập nhật trạng thái thanh toán thành "thành công"
             $payment->update([
                 'payment_status' => 1,
             ]);
@@ -147,7 +141,6 @@ class PaymentController extends Controller
             ], 500);
         }
     }
-
 
     private function generateOrderID()
     {
