@@ -23,7 +23,7 @@
                             <p style="text-align: center; margin: 30px 0;">
                                 <span style="font-size: 24px; font-weight: bold;">{{ $code }}</span>
                             </p>
-                            <p>Mã xác thực này sẽ hết hạn sau <strong>3 phút</strong>.</p>
+                            <p>Mã xác thực này sẽ hết hạn sau <strong>10 phút</strong>.</p>
                             <p>Nếu bạn không yêu cầu reset mật khẩu, vui lòng bỏ qua email này.</p>
                             <p>Trân trọng,<br/>Đội ngũ hỗ trợ</p>
                         </td>
