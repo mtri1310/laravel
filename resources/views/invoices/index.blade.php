@@ -144,12 +144,12 @@
                                                     <strong>{{ $invoice->payment->payment_method }}</strong>
                                                 </td>
                                                 <td class="text-center fs-sm">
-                                                    @if ($invoice->payment->payment_status === 'Completed')
-                                                        <span class="badge bg-success">{{ $invoice->payment->payment_status }}</span>
-                                                    @elseif ($invoice->payment->payment_status === 'Pending')
-                                                        <span class="badge bg-secondary">{{ $invoice->payment->payment_status }}</span>
-                                                    @elseif ($invoice->payment->payment_status === 'Failed')
-                                                        <span class="badge bg-danger">{{ $invoice->payment->payment_status }}</span>
+                                                    @if ($invoice->payment->payment_status === 1)
+                                                        <span class="badge bg-success">Completed</span>
+                                                    @elseif ($invoice->payment->payment_status === 2)
+                                                        <span class="badge bg-secondary">Pending</span>
+                                                    @elseif ($invoice->payment->payment_status === 3)
+                                                        <span class="badge bg-danger">Failed</span>
                                                     @else
                                                         <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>
                                                     @endif

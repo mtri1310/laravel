@@ -35,7 +35,7 @@ class DashboardController extends Controller
         // 1. Tổng Tiền (Từ bảng invoice)
         $latestTotalAmount = Invoice::whereRaw('YEARWEEK(created_at, 1) = ?', [$latestWeek])
             ->whereHas('payment', function($query){
-                $query->where('payment_status', '=', 'Completed');
+                $query->where('payment_status', '=', '1');
             })
             ->sum('total_amount');
 
@@ -49,7 +49,7 @@ class DashboardController extends Controller
             ->count();
 
         // 4. Số Thanh Toán Đang Chờ (Từ bảng payment)
-        $paymentsPending = Payment::where('payment_status', 'Pending')
+        $paymentsPending = Payment::where('payment_status', '2')
             ->whereRaw('YEARWEEK(created_at, 1) = ?', [$latestWeek])
             ->count();
 
