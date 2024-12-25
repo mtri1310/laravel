@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     ]);
     
     Route::get('/statistics', [StatisticsController::class, 'index']);
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics')->middleware('auth');
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });
