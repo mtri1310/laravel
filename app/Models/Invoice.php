@@ -15,6 +15,7 @@ class Invoice extends Model
         'total_amount',
         'created_at',
     ];
+    public $timestamps = false;
 
     /**
      * Một invoice thuộc về một payment.

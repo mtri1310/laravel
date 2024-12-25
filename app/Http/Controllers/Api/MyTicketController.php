@@ -41,7 +41,7 @@ class MyTicketController extends Controller
                 'showtime' => [
                     'showtime_id' => $booking->showtime->id,
                     'start_time' => $booking->showtime->start_time,
-                    'day' => $booking->showtime->day
+                    'day' => $booking->showtime->day->format('d-m-Y'),
                 ],
                 'seat' => [
                     'seat_number' => $booking->seats->pluck('seat_number')->join(', ')
