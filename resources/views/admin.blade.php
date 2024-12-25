@@ -24,7 +24,7 @@
 
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    
+
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet"
         href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
@@ -63,9 +63,9 @@
                                 <!-- small box -->
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>150</h3>
+                                        <h3>{{ $paymentsPending }}</h3>
 
-                                        <p>New Orders</p>
+                                        <p>Payments Pending</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-bag"></i>
@@ -79,9 +79,9 @@
                                 <!-- small box -->
                                 <div class="small-box bg-success">
                                     <div class="inner">
-                                        <h3>53<sup style="font-size: 20px">%</sup></h3>
+                                        <h3>{{ $seatsBooked }}</h3>
 
-                                        <p>Bounce Rate</p>
+                                        <p>Seats Booked</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-stats-bars"></i>
@@ -95,7 +95,7 @@
                                 <!-- small box -->
                                 <div class="small-box bg-warning">
                                     <div class="inner">
-                                        <h3>44</h3>
+                                        <h3>{{ $usersRegistered }}</h3>
 
                                         <p>User Registrations</p>
                                     </div>
@@ -111,9 +111,9 @@
                                 <!-- small box -->
                                 <div class="small-box bg-danger">
                                     <div class="inner">
-                                        <h3>65</h3>
+                                        <h3>{{ number_format($latestTotalAmount, 0) }} VNĐ</h3>
 
-                                        <p>Unique Visitors</p>
+                                        <p>Total amount</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-pie-graph"></i>
@@ -222,86 +222,12 @@
 
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.js') }}"></script>
-    <!-- AdminLTE for demo purposes -->
+    {{-- <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('dist/js/demo.js')}}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script>
-    <!-- Script để vẽ Donut Chart -->
-    <!-- Script để vẽ Donut Chart -->
+    <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script> --}}
     <script>
-        // Kiểm tra xem biến $donutData có được truyền không
-        console.log(@json($donutData));
-
-        // Lấy dữ liệu từ Laravel và chuyển đổi thành JSON
-        const donutData = @json($donutData);
-
-        // Kiểm tra dữ liệu
-        console.log(donutData);
-
-        // Chuẩn bị labels và data cho biểu đồ
-        const labels = donutData.map(item => item.month_name);
-        const data = donutData.map(item => item.total_amount);
-
-        // Cấu hình dữ liệu cho Chart.js
-        const dataChart = {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40',
-                    '#C9CBCF',
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF'
-                ],
-                hoverBackgroundColor: [
-                    '#FF6384CC',
-                    '#36A2EBCC',
-                    '#FFCE56CC',
-                    '#4BC0C0CC',
-                    '#9966FFCC',
-                    '#FF9F40CC',
-                    '#C9CBCFCC',
-                    '#FF6384CC',
-                    '#36A2EBCC',
-                    '#FFCE56CC',
-                    '#4BC0C0CC',
-                    '#9966FFCC'
-                ]
-            }]
-        };
-
-        // Cấu hình tùy chọn cho Donut Chart
-        const options = {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Tổng Doanh Thu Theo Tháng'
-                }
-            }
-        };
-
-        // Khởi tạo Donut Chart khi trang đã tải xong
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('donutChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut', // Loại biểu đồ
-                data: dataChart,
-                options: options
-            });
-        });
+       
     </script>
 
 </body>

@@ -40,7 +40,7 @@ Route::middleware('guest')->group(function () {
 // Protected Routes (Require authentication)
 Route::middleware('auth')->group(function () {
     // Dashboard Route
-    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Logout Route
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
