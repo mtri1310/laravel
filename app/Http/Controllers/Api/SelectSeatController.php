@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Booking;
+use App\Models\Invoice;
 use App\Models\Seat;
 use App\Models\Showtime;
 
@@ -54,6 +55,10 @@ class SelectSeatController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'The selected seat does not belong to the room of the showtime.',
+                'debug' => [
+                    'seat_room_id' => $seat->room_id,
+                    'showtime_room_id' => $showtime->room_id,
+                ],
             ], 400);
         }
 
@@ -71,18 +76,19 @@ class SelectSeatController extends Controller
             ], 400);
         }
 
-        // Nếu chưa đặt, thêm ghế vào đặt chỗ
-        $booking = Booking::firstOrCreate([
+
+        // Lưu thông tin tạm thời vào bảng `booking`
+        $booking = Booking::create([
             'showtime_id' => $showtimeId,
             'user_id' => $user->id,
+            'created_at' => now(),  
+            'updated_at' => now(),
         ]);
 
-        $booking->seats()->attach($seatId);
 
-        // Trả về kết quả
         return response()->json([
             'status' => 'success',
-            'message' => 'Seat booked successfully.',
+            'message' => 'Seat reserved successfully. Please complete the payment to confirm booking.',
             'data' => [
                 'booking_id' => $booking->id,
                 'user' => [
@@ -97,10 +103,12 @@ class SelectSeatController extends Controller
                 'showtime' => [
                     'showtime_id' => $showtime->id,
                     'start_time' => $showtime->start_time,
-                    'day' => $showtime->day,
+                    'day' => $showtime->day->format('d-m-Y'),
                     'room_id' => $showtime->room_id,
                 ],
             ],
         ]);
     }
+
+    
 }
