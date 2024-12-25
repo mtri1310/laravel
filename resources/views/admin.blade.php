@@ -129,10 +129,10 @@
                         <div class="row">
                             <!-- Left col -->
                             <section class="col-lg-6 connectedSortable">
-                                <!-- DONUT CHART -->
-                                <div class="card card-danger">
+                                <!-- Tổng Doanh Thu Theo Tháng -->
+                                <div class="card card-success mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Donut Chart</h3>
+                                        <h3 class="card-title">Tổng Doanh Thu Theo Tháng</h3>
                             
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -144,7 +144,9 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        <div class="chart">
+                                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
@@ -152,22 +154,24 @@
                             <!-- /.Left col -->
                             <!-- right col (We are only adding the ID to make the widgets sortable)-->
                             <section class="col-lg-6 connectedSortable">
-                                <!-- DONUT CHART -->
-                                <div class="card card-danger">
+                                <!-- Số Lượng Ghế Đã Đặt Theo Tháng -->
+                                <div class="card card-warning mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Donut Chart</h3>
-                    
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                        <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
+                                        <h3 class="card-title">Số Lượng Ghế Đã Đặt Theo Tháng</h3>
+                            
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        <div class="chart">
+                                            <canvas id="seatsBookedChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
@@ -229,78 +233,140 @@
     <!-- Script để vẽ Donut Chart -->
     <!-- Script để vẽ Donut Chart -->
     <script>
-        // Kiểm tra xem biến $donutData có được truyền không
-        console.log(@json($donutData));
-
-        // Lấy dữ liệu từ Laravel và chuyển đổi thành JSON
-        const donutData = @json($donutData);
-
-        // Kiểm tra dữ liệu
-        console.log(donutData);
-
-        // Chuẩn bị labels và data cho biểu đồ
-        const labels = donutData.map(item => item.month_name);
-        const data = donutData.map(item => item.total_amount);
-
-        // Cấu hình dữ liệu cho Chart.js
-        const dataChart = {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40',
-                    '#C9CBCF',
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF'
-                ],
-                hoverBackgroundColor: [
-                    '#FF6384CC',
-                    '#36A2EBCC',
-                    '#FFCE56CC',
-                    '#4BC0C0CC',
-                    '#9966FFCC',
-                    '#FF9F40CC',
-                    '#C9CBCFCC',
-                    '#FF6384CC',
-                    '#36A2EBCC',
-                    '#FFCE56CC',
-                    '#4BC0C0CC',
-                    '#9966FFCC'
-                ]
-            }]
-        };
-
-        // Cấu hình tùy chọn cho Donut Chart
-        const options = {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Tổng Doanh Thu Theo Tháng'
-                }
-            }
-        };
-
-        // Khởi tạo Donut Chart khi trang đã tải xong
         document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('donutChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut', // Loại biểu đồ
-                data: dataChart,
-                options: options
+            // Dữ liệu cho biểu đồ Tổng Doanh Thu theo Tháng
+            const totalAmountLabels = @json($totalAmountPerMonth->map(function($data) {
+                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
+            }));
+            const totalAmountData = @json($totalAmountPerMonth->pluck('total_amount'));
+    
+            const ctx1 = document.getElementById('barChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar', // Bạn có thể chọn 'line', 'pie', 'doughnut', ...
+                data: {
+                    labels: totalAmountLabels,
+                    datasets: [{
+                        label: 'Tổng Doanh Thu (VND)',
+                        data: totalAmountData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                // Định dạng số theo VND
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+                                }
+                            }
+                        }, 
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tháng - Năm'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                        display: true,
+                        position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: 'Tổng Doanh Thu Theo Tháng'
+                        }
+                    }
+                }
             });
+
+            // // Dữ liệu cho biểu đồ Số Lượng Ghế Đã Đặt Theo Tháng
+            // const seatsBookedLabels = @json($seatsBookedPerMonth->map(function($data) {
+            //     return 'Tháng ' + $data->month_name + ' Năm ' + $data->year;
+            // }));
+            // const seatsBookedData = @json($seatsBookedPerMonth->pluck('seats_booked'));
+
+            // const ctxSeats = document.getElementById('seatsBookedChart').getContext('2d');
+            // new Chart(ctxSeats, {
+            //     type: 'bar', // Loại biểu đồ: bar
+            //     data: {
+            //         labels: seatsBookedLabels,
+            //         datasets: [{
+            //             label: 'Số Lượng Ghế Đã Đặt',
+            //             data: seatsBookedData,
+            //             backgroundColor: 'rgba(255, 206, 86, 0.6)', // Màu nền của các cột
+            //             borderColor: 'rgba(255, 206, 86, 1)', // Màu viền của các cột
+            //             borderWidth: 1
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         scales: {
+            //             y: {
+            //                 beginAtZero: true,
+            //                 ticks: {
+            //                     // Định dạng số không cần tiền tệ
+            //                     callback: function(value) {
+            //                         return value;
+            //                     }
+            //                 },
+            //                 title: {
+            //                     display: true,
+            //                     text: 'Số Lượng Ghế'
+            //                 }
+            //             },
+            //             x: {
+            //                 title: {
+            //                     display: true,
+            //                     text: 'Tháng - Năm'
+            //                 }
+            //             }
+            //         },
+            //         plugins: {
+            //             tooltip: {
+            //                 callbacks: {
+            //                     label: function(context) {
+            //                         let label = context.dataset.label || '';
+            //                         if (label) {
+            //                             label += ': ';
+            //                         }
+            //                         if (context.parsed.y !== null) {
+            //                             label += context.parsed.y;
+            //                         }
+            //                         return label;
+            //                     }
+            //                 }
+            //             },
+            //             legend: {
+            //                 display: true,
+            //                 position: 'top',
+            //             },
+            //             title: {
+            //                 display: false,
+            //                 text: 'Số Lượng Ghế Đã Đặt Theo Tháng'
+            //             }
+            //         }
+            //     }
+            // });
         });
     </script>
 
