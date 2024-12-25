@@ -128,13 +128,49 @@
                         <!-- Main row -->
                         <div class="row">
                             <!-- Left col -->
-                            <section class="col-lg-7 connectedSortable">
-                                
+                            <section class="col-lg-6 connectedSortable">
+                                <!-- DONUT CHART -->
+                                <div class="card card-danger">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Donut Chart</h3>
+                            
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
                             </section>
                             <!-- /.Left col -->
                             <!-- right col (We are only adding the ID to make the widgets sortable)-->
-                            <section class="col-lg-5 connectedSortable">
-
+                            <section class="col-lg-6 connectedSortable">
+                                <!-- DONUT CHART -->
+                                <div class="card card-danger">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Donut Chart</h3>
+                    
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
                             </section>
                             <!-- right col -->
                         </div>
@@ -190,6 +226,84 @@
     <script src="{{ asset('dist/js/demo.js')}}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script>
+    <!-- Script để vẽ Donut Chart -->
+    <!-- Script để vẽ Donut Chart -->
+    <script>
+        // Kiểm tra xem biến $donutData có được truyền không
+        console.log(@json($donutData));
+
+        // Lấy dữ liệu từ Laravel và chuyển đổi thành JSON
+        const donutData = @json($donutData);
+
+        // Kiểm tra dữ liệu
+        console.log(donutData);
+
+        // Chuẩn bị labels và data cho biểu đồ
+        const labels = donutData.map(item => item.month_name);
+        const data = donutData.map(item => item.total_amount);
+
+        // Cấu hình dữ liệu cho Chart.js
+        const dataChart = {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                    '#C9CBCF',
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF'
+                ],
+                hoverBackgroundColor: [
+                    '#FF6384CC',
+                    '#36A2EBCC',
+                    '#FFCE56CC',
+                    '#4BC0C0CC',
+                    '#9966FFCC',
+                    '#FF9F40CC',
+                    '#C9CBCFCC',
+                    '#FF6384CC',
+                    '#36A2EBCC',
+                    '#FFCE56CC',
+                    '#4BC0C0CC',
+                    '#9966FFCC'
+                ]
+            }]
+        };
+
+        // Cấu hình tùy chọn cho Donut Chart
+        const options = {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Tổng Doanh Thu Theo Tháng'
+                }
+            }
+        };
+
+        // Khởi tạo Donut Chart khi trang đã tải xong
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut', // Loại biểu đồ
+                data: dataChart,
+                options: options
+            });
+        });
+    </script>
+
 </body>
 
 </html>
