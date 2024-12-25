@@ -2,15 +2,14 @@
 
 use App\Http\Controllers\Api\MovieDetailController;
 use App\Http\Controllers\Api\SelectSeatController;
-use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\ListFilmsController;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LoginGoogleController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SeatStatusController;
 use App\Http\Controllers\Api\ShowtimeController;
 use App\Http\Controllers\Api\MyTicketController;
+use App\Http\Controllers\api\StripeWebhookController;
 use App\Http\Controllers\Api\TicketHistoryController;
 
 use Illuminate\Http\Request;
@@ -45,7 +44,6 @@ Route::post('confirm_payment', [PaymentController::class, 'confirmPayment']);
 Route::post('cancel_payment', [PaymentController::class, 'cancelPayment']);
 
 
-
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -55,14 +53,21 @@ Route::post('/login', [AuthController::class, 'login']);
 // Đăng nhập bằng Google
 Route::post('/login/google', [AuthController::class, 'loginOrRegisterWithGoogle']);
 
+Route::prefix('password')->group(function () {
+    Route::post('/request-reset-code', [PasswordResetController::class, 'requestResetCode']);
+    Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
+    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+});
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
     Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::put('/userprofile', [AuthController::class, 'update']);
+    Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
     Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);

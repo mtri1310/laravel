@@ -46,7 +46,7 @@ class MovieDetailController extends Controller
         'trailer_link' => $film->link_trailer,
         'Direction' => $film->director,
         'Actor' => $film->actor,
-        'Release' => $film->release ? $film->release->format('Y-m-d') : null
+        'Release' => $film->release ? $film->release->format('d-m-Y') : null
     ];
 
     // Trả về kết quả JSON

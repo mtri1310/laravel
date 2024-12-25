@@ -44,6 +44,8 @@ class DatabaseSeeder extends Seeder
             ShowtimesTableSeeder::class,
             BookingsTableSeeder::class,
             BookingSeatTableSeeder::class,
+            PaymentsTableSeeder::class,
+            InvoicesTableSeeder::class,
         ]);
 
     }
