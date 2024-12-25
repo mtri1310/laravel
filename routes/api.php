@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SeatStatusController;
 use App\Http\Controllers\Api\ShowtimeController;
 use App\Http\Controllers\Api\MyTicketController;
+use App\Http\Controllers\api\StripeWebhookController;
 use App\Http\Controllers\Api\TicketHistoryController;
 
 use Illuminate\Http\Request;
@@ -38,6 +39,10 @@ Route::get('/payment/{bookingId}', [PaymentController::class, 'PaymentDetails'])
 Route::get('/ticket/{bookingId}', [MyTicketController::class, 'getTicketDetails']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+Route::post('create_payment', [PaymentController::class, 'createPayment']);
+Route::post('confirm_payment', [PaymentController::class, 'confirmPayment']);
+Route::post('cancel_payment', [PaymentController::class, 'cancelPayment']);
+
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
@@ -65,3 +70,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
 Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);

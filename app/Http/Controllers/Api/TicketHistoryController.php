@@ -32,7 +32,7 @@ class TicketHistoryController extends Controller
                         'film_name' => $booking->showtime->film->film_name,
                         'showtime' => [
                             'start_time' => $booking->showtime->start_time,
-                            'day' => $booking->showtime->day,
+                            'day' => $booking->showtime->dayformat('d-m-Y'),
                         ],
                     ];
                 }),
