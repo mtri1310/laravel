@@ -177,6 +177,29 @@
                                 </div>
                             </section>
                             <!-- right col -->
+                            <section class="col-lg-6 connectedSortable">
+                                <!-- Payment Status Pending Theo Tháng -->
+                                <div class="card card-primary mb-4">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Payment Status Pending Theo Tháng</h3>
+                            
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart">
+                                            <canvas id="pendingPaymentsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </section>
                         </div>
                         <!-- /.row (main row) -->
                     </div><!-- /.container-fluid -->
@@ -298,78 +321,149 @@
                     }
                 }
             });
+            // Dữ liệu cho biểu đồ Số Lượng Ghế Đã Đặt Theo Tháng
+            const seatsBookedLabels = @json($seatsBookedPerMonth->map(function($data) {
+                // return 'Tháng ' + $data->month_name + ' Năm ' + $data->year;
+                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
 
-            // // Dữ liệu cho biểu đồ Số Lượng Ghế Đã Đặt Theo Tháng
-            // const seatsBookedLabels = @json($seatsBookedPerMonth->map(function($data) {
-            //     return 'Tháng ' + $data->month_name + ' Năm ' + $data->year;
-            // }));
-            // const seatsBookedData = @json($seatsBookedPerMonth->pluck('seats_booked'));
+            }));
+            const seatsBookedData = @json($seatsBookedPerMonth->pluck('seats_booked'));
 
-            // const ctxSeats = document.getElementById('seatsBookedChart').getContext('2d');
-            // new Chart(ctxSeats, {
-            //     type: 'bar', // Loại biểu đồ: bar
-            //     data: {
-            //         labels: seatsBookedLabels,
-            //         datasets: [{
-            //             label: 'Số Lượng Ghế Đã Đặt',
-            //             data: seatsBookedData,
-            //             backgroundColor: 'rgba(255, 206, 86, 0.6)', // Màu nền của các cột
-            //             borderColor: 'rgba(255, 206, 86, 1)', // Màu viền của các cột
-            //             borderWidth: 1
-            //         }]
-            //     },
-            //     options: {
-            //         responsive: true,
-            //         scales: {
-            //             y: {
-            //                 beginAtZero: true,
-            //                 ticks: {
-            //                     // Định dạng số không cần tiền tệ
-            //                     callback: function(value) {
-            //                         return value;
-            //                     }
-            //                 },
-            //                 title: {
-            //                     display: true,
-            //                     text: 'Số Lượng Ghế'
-            //                 }
-            //             },
-            //             x: {
-            //                 title: {
-            //                     display: true,
-            //                     text: 'Tháng - Năm'
-            //                 }
-            //             }
-            //         },
-            //         plugins: {
-            //             tooltip: {
-            //                 callbacks: {
-            //                     label: function(context) {
-            //                         let label = context.dataset.label || '';
-            //                         if (label) {
-            //                             label += ': ';
-            //                         }
-            //                         if (context.parsed.y !== null) {
-            //                             label += context.parsed.y;
-            //                         }
-            //                         return label;
-            //                     }
-            //                 }
-            //             },
-            //             legend: {
-            //                 display: true,
-            //                 position: 'top',
-            //             },
-            //             title: {
-            //                 display: false,
-            //                 text: 'Số Lượng Ghế Đã Đặt Theo Tháng'
-            //             }
-            //         }
-            //     }
-            // });
+            const ctx2 = document.getElementById('seatsBookedChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar', // Loại biểu đồ: bar
+                data: {
+                    labels: seatsBookedLabels,
+                    datasets: [{
+                        label: 'Số Lượng Ghế Đã Đặt',
+                        data: seatsBookedData,
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)', // Màu nền của các cột
+                        borderColor: 'rgba(255, 206, 86, 1)', // Màu viền của các cột
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                // Định dạng số không cần tiền tệ
+                                callback: function(value) {
+                                    return value;
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Số Lượng Ghế'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tháng - Năm'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: 'Số Lượng Ghế Đã Đặt Theo Tháng'
+                        }
+                    }
+                }
+            });
+            // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
+            const pendingPaymentsLabels = @json($pendingPaymentsPerMonth->map(function($data) {
+                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
+            }));
+            const pendingPaymentsData = @json($pendingPaymentsPerMonth->pluck('pending_count'));
+
+            const ctx3 = document.getElementById('pendingPaymentsChart').getContext('2d');
+            new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: pendingPaymentsLabels,
+                    datasets: [{
+                        label: 'Pending Payments',
+                        data: pendingPaymentsData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value;
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Số Lượng Pending Payments'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tháng - Năm'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
         });
     </script>
-
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+        });
+    </script> --}}
 </body>
 
 </html>
