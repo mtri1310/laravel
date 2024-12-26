@@ -119,9 +119,9 @@
                         <!-- Main row -->
                         <div class="row">
                             <!-- Left col -->
-                            <section class="col-lg-6 connectedSortable">
-                                <!-- Total Revenue Per Month -->
-                                <div class="card card-success mb-4">
+                            <section class="col-lg-7 connectedSortable">
+                                <!-- Donut Chart - Total Revenue Per Month -->
+                                <div class="card card-danger mb-4">
                                     <div class="card-header">
                                         <h3 class="card-title">Total Revenue Per Month</h3>
                             
@@ -135,16 +135,10 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <div class="chart">
-                                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                                        </div>
+                                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
-                            </section>
-                            <!-- /.Left col -->
-                            <!-- Right col (We are only adding the ID to make the widgets sortable)-->
-                            <section class="col-lg-6 connectedSortable">
                                 <!-- Seats Booked Per Month -->
                                 <div class="card card-warning mb-4">
                                     <div class="card-header">
@@ -166,9 +160,12 @@
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
+
+                                
                             </section>
-                            <!-- right col -->
-                            <section class="col-lg-6 connectedSortable">
+                            <!-- /.Left col -->
+                            <!-- Right col (We are only adding the ID to make the widgets sortable)-->
+                            <section class="col-lg-5 connectedSortable">
                                 <!-- Payment Status Pending Theo Tháng -->
                                 <div class="card card-primary mb-4">
                                     <div class="card-header">
@@ -189,49 +186,49 @@
                                         </div>
                                     </div>
                                     <!-- /.card-body -->
-                                    
+                                </div>
+                                
+                                <!-- Calendar -->
+                                <div class="card bg-gradient-success">
+                                    <div class="card-header border-0">
+                    
+                                    <h3 class="card-title">
+                                        <i class="far fa-calendar-alt"></i>
+                                        Calendar
+                                    </h3>
+                                    <!-- tools card -->
+                                    <div class="card-tools">
+                                        <!-- button with a dropdown -->
+                                        <div class="btn-group">
+                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
+                                            <i class="fas fa-bars"></i>
+                                        </button>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a href="#" class="dropdown-item">Add new event</a>
+                                            <a href="#" class="dropdown-item">Clear events</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a href="#" class="dropdown-item">View calendar</a>
+                                        </div>
+                                        </div>
+                                        <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <!-- /. tools -->
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body pt-0">
+                                    <!--The calendar -->
+                                    <div id="calendar" style="width: 100%"></div>
+                                    </div>
+                                    <!-- /.card-body -->
                                 </div>
                             </section>
-                            <section class="col-lg-6 connectedSortable">
-                                <!-- Calendar -->
-            <div class="card bg-gradient-success">
-                <div class="card-header border-0">
-  
-                  <h3 class="card-title">
-                    <i class="far fa-calendar-alt"></i>
-                    Calendar
-                  </h3>
-                  <!-- tools card -->
-                  <div class="card-tools">
-                    <!-- button with a dropdown -->
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
-                        <i class="fas fa-bars"></i>
-                      </button>
-                      <div class="dropdown-menu" role="menu">
-                        <a href="#" class="dropdown-item">Add new event</a>
-                        <a href="#" class="dropdown-item">Clear events</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">View calendar</a>
-                      </div>
-                    </div>
-                    <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
-                      <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                  <!-- /. tools -->
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body pt-0">
-                  <!--The calendar -->
-                  <div id="calendar" style="width: 100%"></div>
-                </div>
-                <!-- /.card-body -->
-              </div>
-                            </section>
+                            <!-- right col -->
+                            
                         </div>
                         <!-- /.row (main row) -->
                     </div><!-- /.container-fluid -->
@@ -267,76 +264,67 @@
 
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.js') }}"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Data for Total Revenue Per Month Chart
+            // The Calender
+            $('#calendar').datetimepicker({
+                format: 'L',
+                inline: true
+            })
+            // Data for Donut Chart - Total Revenue Per Month
             const totalAmountLabels = @json($totalAmountPerMonth->map(function($data) {
-                return ' ' . $data->month_name . '  ' . $data->year;
+                return $data->month_name . ' ' . $data->year;
             }));
             const totalAmountData = @json($totalAmountPerMonth->pluck('total_amount'));
 
-            const ctx1 = document.getElementById('barChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'bar', // You can choose 'line', 'pie', 'doughnut', etc.
-                data: {
-                    labels: totalAmountLabels,
-                    datasets: [{
-                        label: 'Total Revenue (VND)',
-                        data: totalAmountData,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                // Format numbers as VND
-                                callback: function(value) {
-                                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+            // Generate distinct colors for each segment
+            const backgroundColors = [
+                '#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de',
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+            ];
+
+            const donutChartCanvas = document.getElementById('donutChart').getContext('2d');
+            const donutData = {
+                labels: totalAmountLabels,
+                datasets: [{
+                    data: totalAmountData,
+                    backgroundColor: backgroundColors.slice(0, totalAmountData.length),
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            };
+            const donutOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
                                 }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Amount (VND)'
-                            }
-                        }, 
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Month - Year'
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed);
+                                }
+                                return label;
                             }
                         }
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
-                                    }
-                                    return label;
-                                }
-                            }
-                        },
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        title: {
-                            display: false,
-                            text: 'Total Revenue Per Month'
-                        }
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Total Revenue Per Month'
                     }
                 }
+            };
+            new Chart(donutChartCanvas, {
+                type: 'doughnut',
+                data: donutData,
+                options: donutOptions
             });
             // Data for Seats Booked Per Month Chart
             const seatsBookedLabels = @json($seatsBookedPerMonth->map(function($data) {
@@ -412,17 +400,23 @@
             }));
             const pendingPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
 
+
+            // const completedPaymentsData = @json($completedPaymentsPerMonth->pluck('completed_count')); // Ensure 'completed_count' exists in the data
             const ctx3 = document.getElementById('pendingPaymentsChart').getContext('2d');
             new Chart(ctx3, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: pendingPaymentsLabels,
+                    labels: pendingPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
                     datasets: [{
                         label: 'Completed Payments',
-                        data: pendingPaymentsData,
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
+                        data: pendingPaymentsData, // e.g., [50, 75, 100, ...]
+                        fill: false,
+                        borderColor: 'rgba(75, 192, 192, 1)', // Line color
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Point background color
+                        borderWidth: 2,
+                        tension: 0.1, // Smoothness of the line
+                        pointRadius: 5, // Size of the points
+                        pointHoverRadius: 7,
                     }]
                 },
                 options: {
@@ -437,7 +431,7 @@
                             },
                             title: {
                                 display: true,
-                                text: 'Số Lượng Pending Payments'
+                                text: 'Number of Completed Payments'
                             }
                         },
                         x: {
@@ -472,6 +466,8 @@
                     }
                 }
             });
+
+            
         });
     </script>
 
