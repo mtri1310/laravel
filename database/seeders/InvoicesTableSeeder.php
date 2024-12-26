@@ -22,10 +22,10 @@ class InvoicesTableSeeder extends Seeder
                 $invoiceNumber = 'INV-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT);
                 
                 // Lấy thời gian tạo của booking
-                $bookingCreatedAt = Carbon::parse($payment->booking->created_at);
+                $paymentCreatedAt = Carbon::parse($payment->created_at);
                 
                 // Thêm từ 1 đến 2 phút vào thời gian tạo của booking
-                $invoiceCreatedAt = $bookingCreatedAt->copy()->addMinutes(rand(1, 2));
+                $invoiceCreatedAt = $paymentCreatedAt->copy()->addMinutes(rand(1, 2));
                 
                 // Tạo dữ liệu invoice
                 $invoices[] = [
