@@ -10,22 +10,13 @@ use App\Models\Showtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // Thêm sử dụng Carbon
+use Carbon\Carbon; 
 
 class SeatStatusController extends Controller
 {
     public function getSeatsByTimeAndDay(Request $request): JsonResponse
     {
-        // $user = Auth::user();
-
-        // // Kiểm tra xem người dùng đã xác thực hay chưa
-        // if (!$user) {
-        //     return response()->json([
-        //         "status" => "error",
-        //         "message" => "Unauthenticated"
-        //     ], 401);
-        // }
-
+        
         // Lấy dữ liệu từ request
         $dayInput = $request->input('day');
         $startTime = $request->input('start_time');
