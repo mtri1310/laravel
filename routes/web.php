@@ -1,18 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\LoginGoogleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImdbController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
-use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
 use App\Http\Controllers\UserController;
 
@@ -48,9 +43,6 @@ Route::middleware('auth')->group(function () {
     ], [
         'except' => ['show'],
     ]);
-    
-    Route::get('/statistics', [StatisticsController::class, 'index']);
-    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics')->middleware('auth');
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });

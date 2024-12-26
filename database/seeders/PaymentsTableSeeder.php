@@ -32,7 +32,7 @@ class PaymentsTableSeeder extends Seeder
                 'transaction_id'  => rand(100000, 999999), // ID giao dịch ngẫu nhiên
                 'amount'          => $amount, // Số tiền dựa trên số ghế
                 'payment_method'  => collect(['Credit Card', 'PayPal', 'Cash'])->random(), // Phương thức thanh toán ngẫu nhiên
-                'payment_status'  => collect(['Completed', 'Pending', 'Failed'])->random(), // Trạng thái thanh toán ngẫu nhiên
+                'payment_status'  => collect([1, 2, 3])->random(), // Trạng thái thanh toán ngẫu nhiên
                 'created_at'      => $paymentCreatedAt,
                 'updated_at'      => $paymentCreatedAt,
             ]);

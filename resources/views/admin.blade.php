@@ -181,7 +181,7 @@
                                 <!-- Payment Status Pending Theo Tháng -->
                                 <div class="card card-primary mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Payment Status Pending Theo Tháng</h3>
+                                        <h3 class="card-title">Payment Status Completed Theo Tháng</h3>
                             
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -390,10 +390,10 @@
                 }
             });
             // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
-            const pendingPaymentsLabels = @json($pendingPaymentsPerMonth->map(function($data) {
+            const pendingPaymentsLabels = @json($completedPaymentsPerMonth->map(function($data) {
                 return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
             }));
-            const pendingPaymentsData = @json($pendingPaymentsPerMonth->pluck('pending_count'));
+            const pendingPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
 
             const ctx3 = document.getElementById('pendingPaymentsChart').getContext('2d');
             new Chart(ctx3, {
@@ -401,7 +401,7 @@
                 data: {
                     labels: pendingPaymentsLabels,
                     datasets: [{
-                        label: 'Pending Payments',
+                        label: 'Completed Payments',
                         data: pendingPaymentsData,
                         backgroundColor: 'rgba(255, 99, 132, 0.6)',
                         borderColor: 'rgba(255, 99, 132, 1)',
