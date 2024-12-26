@@ -67,7 +67,7 @@ class SelectSeatController extends Controller
             ->whereHas('seats', function ($query) use ($seatId) {
                 $query->where('id', $seatId);
             })
-            ->first();
+            ->exists();
 
         if ($existingBooking) {
             return response()->json([
@@ -84,7 +84,6 @@ class SelectSeatController extends Controller
             'created_at' => now(),  
             'updated_at' => now(),
         ]);
-
 
         return response()->json([
             'status' => 'success',

@@ -57,7 +57,7 @@ Route::prefix('password')->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
-    Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
+    Route::post('/purchase', [SelectSeatController::class, 'getSelectSeat']);
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::put('/userprofile', [AuthController::class, 'update']);
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
@@ -66,7 +66,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('create_payment', [PaymentController::class, 'createPayment']);
     Route::post('confirm_payment', [PaymentController::class, 'confirmPayment']);
     Route::post('cancel_payment', [PaymentController::class, 'cancelPayment']);
+    Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
+    Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 });
-Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
-Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);

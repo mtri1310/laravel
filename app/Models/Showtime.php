@@ -53,4 +53,8 @@ class Showtime extends Model
     {
         return Carbon::parse($value)->format('d-m-Y H:i:s');
     }
+    public function dayformat($format = 'd-m-Y')
+    {
+        return Carbon::parse($this->day)->format($format);
+    }
 }

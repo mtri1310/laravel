@@ -5,12 +5,21 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Showtime;
+use Illuminate\Support\Facades\Auth;
 
 class ShowtimeController extends Controller
 {
     public function getShowtimesByFilm(Request $request)
     {
-      
+        $user = Auth::user();
+
+        // Kiểm tra xem người dùng đã xác thực hay chưa
+        if (!$user) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthenticated"
+            ], 401);
+        }
         $request->validate([
             'film_id' => 'required|exists:films,id',
         ]);
