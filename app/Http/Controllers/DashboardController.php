@@ -121,29 +121,32 @@ class DashboardController extends Controller
             // ===============================
             // Lấy số lượng payment_method trạng thái Completed theo tháng
             // ===============================
-            $completedPaymentsPerMonth = DB::table('invoices')
+            $completedAndFailedPaymentsPerMonth = DB::table('invoices')
                 ->join('payments', 'invoices.payment_id', '=', 'payments.id')
                 ->select(
                     DB::raw('YEAR(invoices.created_at) as year'),
                     DB::raw('MONTH(invoices.created_at) as month'),
-                    DB::raw('COUNT(payments.id) as completed_count')
+                    DB::raw('SUM(CASE WHEN payments.payment_status = 1 THEN 1 ELSE 0 END) as completed_count'),
+                    DB::raw('SUM(CASE WHEN payments.payment_status = 3 THEN 1 ELSE 0 END) as failed_count')
                 )
-                ->where('payments.payment_status', 1) 
+                ->whereIn('payments.payment_status', [1, 3]) // Include both statuses
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'asc')
                 ->orderBy('month', 'asc')
                 ->get()
                 ->map(function ($item) {
-                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM');
+                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM'); // e.g., 'November'
                     return (object)[
                         'year' => $item->year,
                         'month' => $item->month,
                         'month_name' => $month_name,
                         'completed_count' => $item->completed_count,
+                        'failed_count' => $item->failed_count,
                     ];
                 });
 
-            Log::info('Payment Completed Per Month:', $completedPaymentsPerMonth->toArray());
+            // Log for debugging
+            Log::info('Completed and Failed Payments Per Month:', $completedAndFailedPaymentsPerMonth->toArray());
 
             // ====================================
             // Chuẩn bị dữ liệu để truyền vào view
@@ -156,7 +159,7 @@ class DashboardController extends Controller
                 'paymentsPending' => $paymentsPending,
                 'totalAmountPerMonth' => $totalAmountPerMonth,
                 'seatsBookedPerMonth' => $seatsBookedPerMonth,
-                'completedPaymentsPerMonth' => $completedPaymentsPerMonth,
+                'completedAndFailedPaymentsPerMonth' => $completedAndFailedPaymentsPerMonth,
             ];
 
             return view('admin', $data);
