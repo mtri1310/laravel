@@ -12,7 +12,7 @@
                     <!-- Header -->
                     <tr>
                         <td align="center" style="padding: 20px; background-color:#4CAF50;">
-                            <h1 style="color:#ffffff; margin:0; font-family: Arial, sans-serif;">TriNguCompany</h1>
+                            <h1 style="color:#ffffff; margin:0; font-family: Arial, sans-serif;">TriThongMinhCompany</h1>
                         </td>
                     </tr>
                     <!-- Body -->
@@ -31,7 +31,7 @@
                     <!-- Footer -->
                     <tr>
                         <td style="padding: 20px; background-color:#f4f4f4; text-align: center; font-family: Arial, sans-serif; color:#777777; font-size:12px;">
-                            © {{ date('Y') }} TriNguCompany. All rights reserved.
+                            © {{ date('Y') }} TriThongMinhCompany. All rights reserved.
                         </td>
                     </tr>
                 </table>
