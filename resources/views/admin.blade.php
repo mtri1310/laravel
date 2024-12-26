@@ -164,11 +164,11 @@
                             <!-- /.Left col -->
                             <!-- Right col (We are only adding the ID to make the widgets sortable)-->
                             <section class="col-lg-5 connectedSortable">
-                                <!-- Payment Status Pending Theo Tháng -->
+                                <!-- Payment Status Completed and Failed Per Month - Line Chart -->
                                 <div class="card card-primary mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Payment Status Completed Per Month</h3>
-                            
+                                        <h3 class="card-title">Payment Status Completed and Failed Per Month</h3>
+
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                                 <i class="fas fa-minus"></i>
@@ -179,9 +179,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <div class="chart">
-                                            <canvas id="pendingPaymentsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                                        </div>
+                                        <canvas id="completedFailedPaymentsChart" aria-label="Completed and Failed Payments Per Month" role="img" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
@@ -391,29 +389,43 @@
                 }
             });
             // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
-            const pendingPaymentsLabels = @json($completedPaymentsPerMonth->map(function($data) {
+            
+
+            const completedFailedPaymentsLabels = @json($completedAndFailedPaymentsPerMonth->map(function($data) {
                 return ' ' . $data->month_name . '  ' . $data->year;
             }));
-            const pendingPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
 
-
-            // const completedPaymentsData = @json($completedPaymentsPerMonth->pluck('completed_count')); // Ensure 'completed_count' exists in the data
-            const ctx3 = document.getElementById('pendingPaymentsChart').getContext('2d');
+            const completedPaymentsData = @json($completedAndFailedPaymentsPerMonth->pluck('completed_count'));
+            const failedPaymentsData = @json($completedAndFailedPaymentsPerMonth->pluck('failed_count'));
+            const ctx3 = document.getElementById('completedFailedPaymentsChart').getContext('2d');
             new Chart(ctx3, {
                 type: 'line',
                 data: {
-                    labels: pendingPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
-                    datasets: [{
+                    labels: completedFailedPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
+                    datasets: [
+                    {
                         label: 'Completed Payments',
-                        data: pendingPaymentsData, // e.g., [50, 75, 100, ...]
+                        data: completedPaymentsData, // e.g., [50, 75, 100, ...]
                         fill: false,
-                        borderColor: 'rgba(75, 192, 192, 1)', // Line color
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Point background color
+                        borderColor: 'rgba(75, 192, 192, 1)', // Line color for Completed
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Point background color for Completed
                         borderWidth: 2,
                         tension: 0.1, // Smoothness of the line
                         pointRadius: 5, // Size of the points
                         pointHoverRadius: 7,
-                    }]
+                    },
+                    {
+                        label: 'Failed Payments',
+                        data: failedPaymentsData, // e.g., [5, 10, 2, ...]
+                        fill: false,
+                        borderColor: 'rgba(255, 99, 132, 1)', // Line color for Failed
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)', // Point background color for Failed
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }
+                ]
                 },
                 options: {
                     responsive: true,
@@ -427,7 +439,7 @@
                             },
                             title: {
                                 display: true,
-                                text: 'Number of Completed Payments'
+                                text: 'Number of Payments'
                             }
                         },
                         x: {
@@ -462,9 +474,10 @@
                     }
                 }
             });
+        });
 
             
-        });
+        
     </script>
 
 </body>
