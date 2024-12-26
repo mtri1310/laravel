@@ -126,7 +126,7 @@ class DashboardController extends Controller
                 ->select(
                     DB::raw('YEAR(invoices.created_at) as year'),
                     DB::raw('MONTH(invoices.created_at) as month'),
-                    DB::raw('COUNT(payments.id) as pending_count')
+                    DB::raw('COUNT(payments.id) as completed_count')
                 )
                 ->where('payments.payment_status', 1) 
                 ->groupBy('year', 'month')
@@ -139,11 +139,11 @@ class DashboardController extends Controller
                         'year' => $item->year,
                         'month' => $item->month,
                         'month_name' => $month_name,
-                        'pending_count' => $item->pending_count,
+                        'completed_count' => $item->completed_count,
                     ];
                 });
 
-            Log::info('Pending Completed Per Month:', $completedPaymentsPerMonth->toArray());
+            Log::info('Payment Completed Per Month:', $completedPaymentsPerMonth->toArray());
 
             // ====================================
             // Chuẩn bị dữ liệu để truyền vào view

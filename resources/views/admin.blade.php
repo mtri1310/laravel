@@ -391,10 +391,10 @@
                 }
             });
             // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
-            const pendingPaymentsLabels = @json($completedPaymentsPerMonth->map(function($data) {
+            const completedPaymentsLabels = @json($completedPaymentsPerMonth->map(function($data) {
                 return ' ' . $data->month_name . '  ' . $data->year;
             }));
-            const pendingPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
+            const completedPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
 
 
             // const completedPaymentsData = @json($completedPaymentsPerMonth->pluck('completed_count')); // Ensure 'completed_count' exists in the data
@@ -402,10 +402,10 @@
             new Chart(ctx3, {
                 type: 'line',
                 data: {
-                    labels: pendingPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
+                    labels: completedPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
                     datasets: [{
                         label: 'Completed Payments',
-                        data: pendingPaymentsData, // e.g., [50, 75, 100, ...]
+                        data: completedPaymentsData, // e.g., [50, 75, 100, ...]
                         fill: false,
                         borderColor: 'rgba(75, 192, 192, 1)', // Line color
                         backgroundColor: 'rgba(75, 192, 192, 0.6)', // Point background color
