@@ -61,7 +61,7 @@ Route::prefix('password')->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
-    Route::post('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
+    Route::post('/purchase', [SelectSeatController::class, 'getSelectSeat']);
     Route::get('/userprofile', [AuthController::class, 'getUser']);
     Route::put('/userprofile', [AuthController::class, 'update']);
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
