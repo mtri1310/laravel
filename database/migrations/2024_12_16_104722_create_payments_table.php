@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
             $table->bigInteger('transaction_id')->nullable()->unique();
             $table->decimal('amount', 10, 2);
-            $table->string('payment_method')->nullable()->change();
-            $table->string('payment_status');
+            $table->string('payment_method')->nullable();
+            $table->integer('payment_status');
             $table->timestamps();
         });
     }
