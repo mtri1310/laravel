@@ -67,7 +67,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
+    Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
+    Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 });
-Route::get('/showtimes/film', [ShowtimeController::class, 'getShowtimesByFilm']);
-Route::post('/showtimes/seats', [SeatStatusController::class, 'getSeatsByTimeAndDay']);
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
