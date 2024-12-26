@@ -18,101 +18,98 @@ class StatisticsController extends Controller
             // ================================
             // Lấy tổng doanh thu theo tuần
             // ================================
-            $totalAmountPerWeek = DB::table('invoices')
+            $totalAmountPerMonth = DB::table('invoices')
+                ->join('payments', 'invoices.payment_id', '=', 'payments.id') // Join bảng payments để lấy payment_status
                 ->select(
-                    DB::raw('YEARWEEK(created_at, 1) as week'),
-                    DB::raw('SUM(total_amount) as total_amount')
+                    DB::raw('YEAR(invoices.created_at) as year'),
+                    DB::raw('MONTH(invoices.created_at) as month'),
+                    DB::raw('SUM(invoices.total_amount) as total_amount')
                 )
-                ->groupBy('week')
-                ->orderBy('week', 'asc')
-                ->get()
-                ->map(function($item) {
-                    $year = floor($item->week / 100);
-                    $week_num = $item->week % 100;
-                    $date = Carbon::now()->setISODate($year, $week_num)->startOfWeek();
-                    $month = $date->month;
-                    $month_name = $date->isoFormat('MMMM'); // Tên tháng bằng tiếng Anh
-                    return (object)[
-                        'week' => $item->week,
-                        'total_amount' => $item->total_amount,
-                        'year' => $year,
-                        'week_num' => $week_num,
-                        'month' => $month,
-                        'month_name' => $month_name,
-                        'week_start_date' => $date->toDateString(),
-                    ];
-                });
-
-            // Ghi log tổng doanh thu theo tuần
-            Log::info('Total Amount Per Week:', $totalAmountPerWeek->toArray());
-
-            // ===============================
-            // Lấy số ghế đã đặt theo tuần
-            // ===============================
-            $seatsBookedPerWeek = DB::table('invoices')
-                ->join('payments', 'invoices.payment_id', '=', 'payments.id')
-                ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
-                ->join('booking_seat', 'bookings.id', '=', 'booking_seat.booking_id')
-                ->select(
-                    DB::raw('YEARWEEK(invoices.created_at, 1) as week'),
-                    DB::raw('COUNT(booking_seat.seat_id) as seats_booked')
-                )
-                ->groupBy('week')
-                ->orderBy('week', 'asc')
-                ->get()
-                ->map(function($item) {
-                    $year = floor($item->week / 100);
-                    $week_num = $item->week % 100;
-                    $date = Carbon::now()->setISODate($year, $week_num)->startOfWeek();
-                    $month = $date->month;
-                    $month_name = $date->isoFormat('MMMM'); // Tên tháng bằng tiếng Anh
-                    return (object)[
-                        'week' => $item->week,
-                        'seats_booked' => $item->seats_booked,
-                        'year' => $year,
-                        'week_num' => $week_num,
-                        'month' => $month,
-                        'month_name' => $month_name,
-                        'week_start_date' => $date->toDateString(),
-                    ];
-                });
-
-            // Ghi log số ghế đã đặt theo tuần
-            Log::info('Seats Booked Per Week:', $seatsBookedPerWeek->toArray());
-
-            // =========================================
-            // Tổng hợp dữ liệu cho biểu đồ Donut theo tháng
-            // =========================================
-            $donutData = DB::table('invoices')
-                ->select(
-                    DB::raw('MONTH(created_at) as month'),
-                    DB::raw('SUM(total_amount) as total_amount')
-                )
-                ->groupBy('month')
+                ->where('payments.payment_status', 'Completed') // Chỉ lấy các bản ghi có payment_status là 'Completed'
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'asc')
                 ->orderBy('month', 'asc')
                 ->get()
                 ->map(function($item) {
                     $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM'); // Tên tháng bằng tiếng Anh
                     return (object)[
+                        'year' => $item->year,
                         'month' => $item->month,
                         'month_name' => $month_name,
                         'total_amount' => $item->total_amount,
                     ];
                 });
 
-            // Ghi log dữ liệu biểu đồ Donut
-            Log::info('Donut Chart Data:', $donutData->toArray());
+            // Ghi log tổng doanh thu theo tháng
+            Log::info('Total Amount Per Month:', $totalAmountPerMonth->toArray());
+
+            // ===============================
+            // Lấy số ghế đã đặt theo thang
+            // ===============================
+            $seatsBookedPerMonth = DB::table('invoices')
+                ->join('payments', 'invoices.payment_id', '=', 'payments.id')
+                ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
+                ->join('booking_seat', 'bookings.id', '=', 'booking_seat.booking_id')
+                ->select(
+                    DB::raw('YEAR(invoices.created_at) as year'),
+                    DB::raw('MONTH(invoices.created_at) as month'),
+                    DB::raw('COUNT(booking_seat.seat_id) as seats_booked')
+                )
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'asc')
+                ->orderBy('month', 'asc')
+                ->get()
+                ->map(function($item) {
+                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM'); // Tên tháng bằng tiếng Anh
+                    return (object)[
+                        'year' => $item->year,
+                        'month' => $item->month,
+                        'month_name' => $month_name,
+                        'seats_booked' => $item->seats_booked,
+                    ];
+                });
+
+            // Ghi log số ghế đã đặt theo tháng
+            Log::info('Seats Booked Per Month:', $seatsBookedPerMonth->toArray());
+            
+            // ===============================
+            // Lấy số lượng payment_method trạng thái Pending theo tháng
+            // ===============================
+            $pendingPaymentsPerMonth = DB::table('invoices')
+                ->join('payments', 'invoices.payment_id', '=', 'payments.id')
+                ->select(
+                    DB::raw('YEAR(invoices.created_at) as year'),
+                    DB::raw('MONTH(invoices.created_at) as month'),
+                    DB::raw('COUNT(payments.id) as pending_count')
+                )
+                ->where('payments.payment_status', '=', 'Pending')
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'asc')
+                ->orderBy('month', 'asc')
+                ->get()
+                ->map(function ($item) {
+                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM');
+                    return (object)[
+                        'year' => $item->year,
+                        'month' => $item->month,
+                        'month_name' => $month_name,
+                        'pending_count' => $item->pending_count,
+                    ];
+                });
+
+            Log::info('Pending Payments Per Month:', $pendingPaymentsPerMonth->toArray());
+
 
             // ====================================
             // Chuẩn bị dữ liệu để truyền vào view
             // ====================================
             $data = [
-                'totalAmountPerWeek' => $totalAmountPerWeek,
-                'seatsBookedPerWeek' => $seatsBookedPerWeek,
-                'donutData' => $donutData, // Thêm donutData vào mảng dữ liệu
+                'totalAmountPerMonth' => $totalAmountPerMonth,
+                'seatsBookedPerMonth' => $seatsBookedPerMonth,
+                'pendingPaymentsPerMonth' => $pendingPaymentsPerMonth,
             ];
 
-            return view('statistics.index', $data);
+            return view('admin', $data);
         } catch (\Exception $e) {
             // Ghi log lỗi nếu có
             Log::error('Error fetching statistics:', ['error' => $e->getMessage()]);
