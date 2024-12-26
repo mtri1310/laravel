@@ -16,15 +16,7 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ShowtimeController;
 use App\Http\Controllers\UserController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are grouped based on their functionality and middleware.
-|
-*/
+
 
 // Public Routes (Accessible without authentication)
 Route::middleware('guest')->group(function () {
@@ -53,7 +45,6 @@ Route::middleware('auth')->group(function () {
         'showtimes' => ShowtimeController::class,
         'bookings'  => BookingController::class,
         'invoices'  => InvoiceController::class,
-        'statistics' => StatisticsController::class,
     ], [
         'except' => ['show'],
     ]);
@@ -63,12 +54,3 @@ Route::middleware('auth')->group(function () {
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });
-
-// External/Public Routes
-Route::get('/movies', [ImdbController::class, 'index'])->name('movies.index');
-
-// Payment Routes
-Route::get('/checkout', [StripeController::class, 'createCheckoutSession']);
-Route::get('/homepayment', [StripeController::class, 'index']);
-Route::get('payment/success', [StripeController::class, 'success'])->name('payment.success');
-Route::get('payment/cancel', [StripeController::class, 'cancel'])->name('payment.cancel');
