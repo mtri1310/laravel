@@ -19,6 +19,7 @@ class DashboardController extends Controller
             // Thiết lập ngôn ngữ cho Carbon là tiếng Anh
             Carbon::setLocale('en');
 
+            $currentDate = Carbon::today();
             $currentYear = Carbon::now()->year;
             $currentWeek = Carbon::now()->weekOfYear;
 
@@ -34,7 +35,7 @@ class DashboardController extends Controller
             // 1. Tổng Tiền (Từ bảng invoice)
             $latestTotalAmount = Invoice::whereRaw('YEARWEEK(created_at, 1) = ?', [$latestWeek])
                 ->whereHas('payment', function($query){
-                    $query->where('payment_status', '=', 1); // Giả sử payment_status là số
+                    $query->where('payment_status', '=', 1); 
                 })
                 ->sum('total_amount');
 
@@ -48,8 +49,8 @@ class DashboardController extends Controller
                 ->count();
 
             // 4. Số Thanh Toán Đang Chờ (Từ bảng payment)
-            $paymentsPending = Payment::where('payment_status', 2) // Giả sử payment_status là số
-                ->whereRaw('YEARWEEK(created_at, 1) = ?', [$latestWeek])
+            $paymentsPending = Payment::where('payment_status', 2)
+                ->whereDate('created_at', $currentDate)
                 ->count();
 
             // Log các chỉ số tuần hiện tại

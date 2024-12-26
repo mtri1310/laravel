@@ -170,12 +170,12 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="13" class="text-center">
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
-                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No invoices" style="height: 200px;">
+                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No Films" style="height: 200px;">
                                                         </div>
-                                                        <p>No invoices found</p>
+                                                        <span>No Invoices Found</span>
                                                     </div>
                                                 </td>
                                             </tr>
