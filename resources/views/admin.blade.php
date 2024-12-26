@@ -129,10 +129,10 @@
                         <div class="row">
                             <!-- Left col -->
                             <section class="col-lg-6 connectedSortable">
-                                <!-- Tổng Doanh Thu Theo Tháng -->
+                                <!-- Total Revenue Per Month -->
                                 <div class="card card-success mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Tổng Doanh Thu Theo Tháng</h3>
+                                        <h3 class="card-title">Total Revenue Per Month</h3>
                             
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -152,12 +152,12 @@
                                 </div>
                             </section>
                             <!-- /.Left col -->
-                            <!-- right col (We are only adding the ID to make the widgets sortable)-->
+                            <!-- Right col (We are only adding the ID to make the widgets sortable)-->
                             <section class="col-lg-6 connectedSortable">
-                                <!-- Số Lượng Ghế Đã Đặt Theo Tháng -->
+                                <!-- Seats Booked Per Month -->
                                 <div class="card card-warning mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Số Lượng Ghế Đã Đặt Theo Tháng</h3>
+                                        <h3 class="card-title">Seats Booked Per Month</h3>
                             
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -181,7 +181,7 @@
                                 <!-- Payment Status Pending Theo Tháng -->
                                 <div class="card card-primary mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Payment Status Completed Theo Tháng</h3>
+                                        <h3 class="card-title">Payment Status Completed Per Month</h3>
                             
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -255,19 +255,19 @@
     <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Dữ liệu cho biểu đồ Tổng Doanh Thu theo Tháng
+            // Data for Total Revenue Per Month Chart
             const totalAmountLabels = @json($totalAmountPerMonth->map(function($data) {
-                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
+                return ' ' . $data->month_name . '  ' . $data->year;
             }));
             const totalAmountData = @json($totalAmountPerMonth->pluck('total_amount'));
-    
+
             const ctx1 = document.getElementById('barChart').getContext('2d');
             new Chart(ctx1, {
-                type: 'bar', // Bạn có thể chọn 'line', 'pie', 'doughnut', ...
+                type: 'bar', // You can choose 'line', 'pie', 'doughnut', etc.
                 data: {
                     labels: totalAmountLabels,
                     datasets: [{
-                        label: 'Tổng Doanh Thu (VND)',
+                        label: 'Total Revenue (VND)',
                         data: totalAmountData,
                         backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -280,16 +280,20 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                // Định dạng số theo VND
+                                // Format numbers as VND
                                 callback: function(value) {
                                     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
                                 }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Amount (VND)'
                             }
                         }, 
                         x: {
                             title: {
                                 display: true,
-                                text: 'Tháng - Năm'
+                                text: 'Month - Year'
                             }
                         }
                     },
@@ -309,34 +313,32 @@
                             }
                         },
                         legend: {
-                        display: true,
-                        position: 'top',
+                            display: true,
+                            position: 'top',
                         },
                         title: {
                             display: false,
-                            text: 'Tổng Doanh Thu Theo Tháng'
+                            text: 'Total Revenue Per Month'
                         }
                     }
                 }
             });
-            // Dữ liệu cho biểu đồ Số Lượng Ghế Đã Đặt Theo Tháng
+            // Data for Seats Booked Per Month Chart
             const seatsBookedLabels = @json($seatsBookedPerMonth->map(function($data) {
-                // return 'Tháng ' + $data->month_name + ' Năm ' + $data->year;
-                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
-
+                return ' ' . $data->month_name . '  ' . $data->year;
             }));
             const seatsBookedData = @json($seatsBookedPerMonth->pluck('seats_booked'));
 
             const ctx2 = document.getElementById('seatsBookedChart').getContext('2d');
             new Chart(ctx2, {
-                type: 'bar', // Loại biểu đồ: bar
+                type: 'bar', // Chart type: bar
                 data: {
                     labels: seatsBookedLabels,
                     datasets: [{
-                        label: 'Số Lượng Ghế Đã Đặt',
+                        label: 'Seats Booked',
                         data: seatsBookedData,
-                        backgroundColor: 'rgba(255, 206, 86, 0.6)', // Màu nền của các cột
-                        borderColor: 'rgba(255, 206, 86, 1)', // Màu viền của các cột
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)', // Column background color
+                        borderColor: 'rgba(255, 206, 86, 1)', // Column border color
                         borderWidth: 1
                     }]
                 },
@@ -346,20 +348,20 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                // Định dạng số không cần tiền tệ
+                                // No currency formatting needed
                                 callback: function(value) {
                                     return value;
                                 }
                             },
                             title: {
                                 display: true,
-                                text: 'Số Lượng Ghế'
+                                text: 'Number of Seats'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Tháng - Năm'
+                                text: 'Month - Year'
                             }
                         }
                     },
@@ -384,14 +386,14 @@
                         },
                         title: {
                             display: false,
-                            text: 'Số Lượng Ghế Đã Đặt Theo Tháng'
+                            text: 'Seats Booked Per Month'
                         }
                     }
                 }
             });
             // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
             const pendingPaymentsLabels = @json($completedPaymentsPerMonth->map(function($data) {
-                return 'Tháng ' . $data->month_name . ' Năm ' . $data->year;
+                return ' ' . $data->month_name . '  ' . $data->year;
             }));
             const pendingPaymentsData = @json($completedPaymentsPerMonth->pluck('pending_count'));
 
@@ -426,7 +428,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Tháng - Năm'
+                                text: 'Month - Year'
                             }
                         }
                     },
@@ -457,11 +459,7 @@
             });
         });
     </script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            
-        });
-    </script> --}}
+
 </body>
 
 </html>
