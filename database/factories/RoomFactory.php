@@ -13,7 +13,7 @@ class RoomFactory extends Factory
     {
         return [
             'room_name'  => 'Room ' . $this->faker->unique()->numberBetween(1, 10),
-            'capacity'   => $this->faker->randomElement([50, 100]),
+            'capacity'   => $this->faker->randomElement([50, 70]),
             'room_type'  => $this->faker->randomElement(['IMAX', '3D', 'Standard']),
         ];
     }

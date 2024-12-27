@@ -28,8 +28,7 @@ class PaymentController extends Controller
             $payment = Payment::whereHas('booking', function ($query) use ($user, $request) {
                 $query->where('user_id', $user->id ) // Kiểm tra user_id
                       ->where('id', $request->input('booking_id')); // Kiểm tra booking_id
-            })->where('payment_status', 2) // Chỉ xử lý nếu trạng thái là "chờ"
-              ->first();
+            })->first();
             
             if (!$payment) {
                 return response()->json([

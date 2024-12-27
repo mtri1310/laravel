@@ -5,17 +5,29 @@ use App\Models\Booking;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MyTicketController extends Controller
 {
-    public function getTicketDetails($bookingId)
+    public function getTicketDetails(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'email'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
         $booking = Booking::with([
             'showtime.film',
             'showtime.room',
             'seats',
             'invoice'
-        ])->where('id', $bookingId)->first();
+        ])->where('id', 2)->first();
 
         // Handle case where booking ID is not found
         if (!$booking) {
