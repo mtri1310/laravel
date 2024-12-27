@@ -4,13 +4,13 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\BookingSeat;
 use App\Models\Seat;
 use App\Models\Showtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon; 
+use Illuminate\Support\Facades\Log;
 
 class SeatStatusController extends Controller
 {
@@ -18,23 +18,21 @@ class SeatStatusController extends Controller
     {
         $user = Auth::user();
 
-        // Kiểm tra xem người dùng đã xác thực hay chưa
         if (!$user) {
             return response()->json([
                 "status" => "error",
                 "message" => "Unauthenticated"
             ], 401);
         }
+
         // Lấy dữ liệu từ request
         $dayInput = $request->input('day');
         $startTime = $request->input('start_time');
-        
 
-
+        // Validate request
         $request->validate([
             'day' => 'required|date_format:d-m-Y',
             'start_time' => 'required|date_format:H:i:s',
-            
         ], [
             'day.required' => 'Ngày suất chiếu là bắt buộc.',
             'day.date_format' => 'Ngày phải đúng định dạng DD-MM-YYYY.',
@@ -42,7 +40,6 @@ class SeatStatusController extends Controller
             'start_time.date_format' => 'Giờ bắt đầu phải đúng định dạng HH:MM:SS.',            
         ]);
 
-        // Chuyển đổi ngày từ d-m-Y sang Y-m-d
         try {
             $day = Carbon::createFromFormat('d-m-Y', $dayInput)->format('Y-m-d');
         } catch (\Exception $e) {
@@ -53,7 +50,7 @@ class SeatStatusController extends Controller
         }
 
         // Tìm suất chiếu dựa trên ngày và giờ
-        $showtime = Showtime::with('room.seats')
+        $showtime = Showtime::with('room.seats', 'film')
             ->where('day', $day)
             ->where('start_time', $startTime)
             ->first();
@@ -69,8 +66,8 @@ class SeatStatusController extends Controller
         // Lấy danh sách các ghế trong phòng
         $seats = $showtime->room->seats;
 
-        // Lấy danh sách các `seat_id` đã được đặt từ bảng `booking_seat`
         $bookedSeatIds = Booking::where('showtime_id', $showtime->id)
+            ->where('status', Booking::STATUS_CONFIRMED) // Chỉ lấy các booking đã xác nhận
             ->join('booking_seat', 'bookings.id', '=', 'booking_seat.booking_id')
             ->pluck('booking_seat.seat_id')
             ->unique()
@@ -85,7 +82,6 @@ class SeatStatusController extends Controller
             ];
         });
 
-        // Trả về kết quả
         return response()->json([
             'status' => 'success',
             'message' => 'Trạng thái ghế đã được lấy thành công.',
@@ -94,7 +90,7 @@ class SeatStatusController extends Controller
                 'film_name' => $showtime->film->film_name,
                 'room_name' => $showtime->room->room_name,
                 'start_time' => $showtime->start_time,
-                'day' => $showtime->day->format('d-m-Y'),
+                'day' => Carbon::parse($showtime->day)->format('d-m-Y'),
                 'seats' => $seatsStatus,
             ],  
         ]);

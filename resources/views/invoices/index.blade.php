@@ -145,9 +145,9 @@
                                                 </td>
                                                 <td class="text-center fs-sm">
                                                     @if ($invoice->payment->payment_status === 1)
-                                                        <span class="badge bg-success">Completed</span>
+                                                        <span class="badge bg-success">Pending</span>
                                                     @elseif ($invoice->payment->payment_status === 2)
-                                                        <span class="badge bg-secondary">Pending</span>
+                                                        <span class="badge bg-secondary">Completed</span>
                                                     @elseif ($invoice->payment->payment_status === 3)
                                                         <span class="badge bg-danger">Failed</span>
                                                     @else

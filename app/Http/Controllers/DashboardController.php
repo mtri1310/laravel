@@ -49,17 +49,10 @@ class DashboardController extends Controller
                 ->count();
 
             // 4. Số Thanh Toán Đang Chờ (Từ bảng payment)
-            $paymentsPending = Payment::where('payment_status', 2)
+            $bookingsPending = Booking::where('status', 1)
                 ->whereDate('created_at', $currentDate)
                 ->count();
 
-            // Log các chỉ số tuần hiện tại
-            Log::info('Các chỉ số Dashboard cho Tuần: ' . $latestWeek, [
-                'total_amount' => $latestTotalAmount,
-                'seats_booked' => $seatsBooked,
-                'users_registered' => $usersRegistered,
-                'payments_pending' => $paymentsPending,
-            ]);
 
             // ================================
             // Lấy tổng doanh thu theo tháng
@@ -121,15 +114,16 @@ class DashboardController extends Controller
             // ===============================
             // Lấy số lượng payment_method trạng thái Completed theo tháng
             // ===============================
-            $completedAndFailedPaymentsPerMonth = DB::table('invoices')
+            $completedAndFailedBookingsPerMonth = DB::table('invoices')
                 ->join('payments', 'invoices.payment_id', '=', 'payments.id')
+                ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
                 ->select(
                     DB::raw('YEAR(invoices.created_at) as year'),
                     DB::raw('MONTH(invoices.created_at) as month'),
-                    DB::raw('SUM(CASE WHEN payments.payment_status = 1 THEN 1 ELSE 0 END) as completed_count'),
-                    DB::raw('SUM(CASE WHEN payments.payment_status = 3 THEN 1 ELSE 0 END) as failed_count')
+                    DB::raw('SUM(CASE WHEN bookings.status = ' . Booking::STATUS_CONFIRMED . ' THEN 1 ELSE 0 END) as completed_count'),
+                    DB::raw('SUM(CASE WHEN bookings.status = ' . Booking::STATUS_FAILED . ' THEN 1 ELSE 0 END) as failed_count')
                 )
-                ->whereIn('payments.payment_status', [1, 3]) // Include both statuses
+                ->whereIn('bookings.status', [Booking::STATUS_CONFIRMED, Booking::STATUS_FAILED]) // Include only confirmed and failed statuses
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'asc')
                 ->orderBy('month', 'asc')
@@ -146,7 +140,7 @@ class DashboardController extends Controller
                 });
 
             // Log for debugging
-            Log::info('Completed and Failed Payments Per Month:', $completedAndFailedPaymentsPerMonth->toArray());
+            Log::info('Completed and Failed Bookings Per Month:', $completedAndFailedBookingsPerMonth->toArray());
 
             // ====================================
             // Chuẩn bị dữ liệu để truyền vào view
@@ -156,10 +150,10 @@ class DashboardController extends Controller
                 'latestTotalAmount' => $latestTotalAmount,
                 'seatsBooked' => $seatsBooked,
                 'usersRegistered' => $usersRegistered,
-                'paymentsPending' => $paymentsPending,
+                'bookingsPending' => $bookingsPending,
                 'totalAmountPerMonth' => $totalAmountPerMonth,
                 'seatsBookedPerMonth' => $seatsBookedPerMonth,
-                'completedAndFailedPaymentsPerMonth' => $completedAndFailedPaymentsPerMonth,
+                'completedAndFailedBookingsPerMonth' => $completedAndFailedBookingsPerMonth,
             ];
 
             return view('admin', $data);

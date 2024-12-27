@@ -70,6 +70,7 @@ class SeatController extends Controller
 
         // Step 2: Fetch active bookings for the nearest showtime
         $activeBookings = Booking::where('showtime_id', $nextShowtime->id)
+            ->where('status', Booking::STATUS_CONFIRMED)
             ->with(['seats']) // Eager load seats related to bookings
             ->get();
 

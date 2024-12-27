@@ -52,9 +52,9 @@
                                 <!-- small box -->
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>{{ $paymentsPending }}</h3>
+                                        <h3>{{ $bookingsPending }}</h3>
 
-                                        <p>Payments Pending</p>
+                                        <p>Bookings Pending</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-bag"></i>
@@ -159,7 +159,7 @@
                                 <!-- Payment Status Completed and Failed Per Month - Line Chart -->
                                 <div class="card card-primary mb-4">
                                     <div class="card-header">
-                                        <h3 class="card-title">Payment Status Completed and Failed Per Month</h3>
+                                        <h3 class="card-title">Bookings Status Completed and Failed Per Month</h3>
 
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -171,7 +171,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="completedFailedPaymentsChart" aria-label="Completed and Failed Payments Per Month" role="img" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        <canvas id="completedFailedBookingsChart" aria-label="Completed and Failed Bookings Per Month" role="img" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
@@ -383,21 +383,21 @@
             // Dữ liệu cho biểu đồ Pending Payments Theo Tháng
             
 
-            const completedFailedPaymentsLabels = @json($completedAndFailedPaymentsPerMonth->map(function($data) {
+            const completedFailedBookingsLabels= @json($completedAndFailedBookingsPerMonth->map(function($data) {
                 return ' ' . $data->month_name . '  ' . $data->year;
             }));
 
-            const completedPaymentsData = @json($completedAndFailedPaymentsPerMonth->pluck('completed_count'));
-            const failedPaymentsData = @json($completedAndFailedPaymentsPerMonth->pluck('failed_count'));
-            const ctx3 = document.getElementById('completedFailedPaymentsChart').getContext('2d');
+            const completedBookingsData = @json($completedAndFailedBookingsPerMonth->pluck('completed_count'));
+            const failedBookingsData = @json($completedAndFailedBookingsPerMonth->pluck('failed_count'));
+            const ctx3 = document.getElementById('completedFailedBookingsChart').getContext('2d');
             new Chart(ctx3, {
                 type: 'line',
                 data: {
-                    labels: completedFailedPaymentsLabels, // e.g., ['November 2023', 'December 2023', ...]
+                    labels: completedFailedBookingsLabels, // e.g., ['November 2023', 'December 2023', ...]
                     datasets: [
                     {
-                        label: 'Completed Payments',
-                        data: completedPaymentsData, // e.g., [50, 75, 100, ...]
+                        label: 'Completed Bookings',
+                        data: completedBookingsData, // e.g., [50, 75, 100, ...]
                         fill: false,
                         borderColor: 'rgba(75, 192, 192, 1)', // Line color for Completed
                         backgroundColor: 'rgba(75, 192, 192, 0.6)', // Point background color for Completed
@@ -407,8 +407,8 @@
                         pointHoverRadius: 7,
                     },
                     {
-                        label: 'Failed Payments',
-                        data: failedPaymentsData, // e.g., [5, 10, 2, ...]
+                        label: 'Failed Bookings',
+                        data: failedBookingsData, // e.g., [5, 10, 2, ...]
                         fill: false,
                         borderColor: 'rgba(255, 99, 132, 1)', // Line color for Failed
                         backgroundColor: 'rgba(255, 99, 132, 0.6)', // Point background color for Failed
@@ -431,7 +431,7 @@
                             },
                             title: {
                                 display: true,
-                                text: 'Number of Payments'
+                                text: 'Number of Bookings'
                             }
                         },
                         x: {
