@@ -85,10 +85,10 @@ class SelectSeatController extends Controller
                 'invalid_seats' => $invalidSeats,
             ], 400);
         }
-
         $booking = Booking::create([
             'showtime_id' => $showtimeId,
             'user_id' => $user->id,
+            'seat_id' => implode(',', array_map(fn($seat) => $seat->id, $validSeats)),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

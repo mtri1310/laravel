@@ -85,52 +85,45 @@ class PaymentController extends Controller
     }
 
     public function cancelPayment(Request $request)
-{
-    $request->validate([
-        'booking_id' => 'required|integer', // Sử dụng booking_id để xác định payment
-    ]);
-
-    $user = auth()->user(); // Lấy thông tin user từ token
-
-    DB::beginTransaction();
-
-    try {
-        // Tìm Payment với trạng thái "chờ" và thuộc về booking của user hiện tại
-        $payment = Payment::where('payment_status', 2) // Chỉ hủy khi trạng thái là "chờ"
-            ->whereHas('booking', function ($query) use ($user, $request) {
-                $query->where('user_id', $user->id)
-                      ->where('id', $request->input('booking_id')); // Kiểm tra booking_id
-            })
-            ->firstOrFail();
-
-        // Cập nhật trạng thái thành "thất bại" (payment_status = 3)
-        $payment->update([
-            'payment_status' => 3, // Thất bại
-            'transaction_id' => null, // Đặt transaction_id về null
-            'payment_method' => null, // Đặt payment_method về null
-        ]);
-
-        DB::commit();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Payment cancelled successfully',
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Payment cancellation failed',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
-
-
-
-    private function generateOrderID()
     {
-        return substr(str_shuffle(str_repeat('0123456789', 16)), 0, 16);
+        $request->validate([
+            'booking_id' => 'required|integer', // Sử dụng booking_id để xác định payment
+        ]);
+
+        $user = auth()->user(); // Lấy thông tin user từ token
+
+        DB::beginTransaction();
+
+        try {
+            // Tìm Payment với trạng thái "chờ" và thuộc về booking của user hiện tại
+            $payment = Payment::where('payment_status', 2) // Chỉ hủy khi trạng thái là "chờ"
+                ->whereHas('booking', function ($query) use ($user, $request) {
+                    $query->where('user_id', $user->id)
+                        ->where('id', $request->input('booking_id')); // Kiểm tra booking_id
+                })
+                ->firstOrFail();
+
+            // Cập nhật trạng thái thành "thất bại" (payment_status = 3)
+            $payment->update([
+                'payment_status' => 3, // Thất bại
+                'transaction_id' => null, // Đặt transaction_id về null
+                'payment_method' => null, // Đặt payment_method về null
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Payment cancelled successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Payment cancellation failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

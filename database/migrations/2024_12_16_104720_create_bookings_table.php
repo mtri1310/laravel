@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('showtime_id')->constrained('showtimes')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('seat_id')->nullable(); // danh sách ghế tạm để hiện lên booking
             $table->timestamps();
         });
     }
