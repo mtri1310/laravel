@@ -11,51 +11,6 @@ use Stripe\Checkout\Session;
 
 class PaymentController extends Controller
 {
-    public function createPayment(Request $request)
-{
-    $request->validate([
-        'booking_id' => 'required|integer',
-        'amount' => 'required|numeric|min:0',
-    ]);
-
-    $user = auth()->user(); // Lấy thông tin user từ token
-
-    // Kiểm tra xem booking có thuộc về user hiện tại không
-    $booking = DB::table('bookings')
-        ->where('id', $request->input('booking_id'))
-        ->where('user_id', $user->id)
-        ->first();
-
-    if (!$booking) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Booking not found or does not belong to the authenticated user',
-        ], 403);
-    }
-
-    // Tạo orderID ngẫu nhiên
-    $orderID = $this->generateOrderID();
-
-    // Lưu thông tin thanh toán với trạng thái "chờ"
-    $payment = Payment::create([
-        'booking_id' => $request->input('booking_id'),
-        'amount' => $request->input('amount'),
-        'payment_method' => 'stripe',
-        'payment_status' => 2, // Trạng thái "chờ"
-    ]);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Payment created with pending status',
-        'data' => [
-            'order_id' => $orderID, // OrderID ngẫu nhiên
-            'amount' => $payment->amount,
-            'payment_status' => $payment->payment_status,
-        ],
-    ]);
-}
-
-
     public function confirmPayment(Request $request)
     {
         $request->validate([

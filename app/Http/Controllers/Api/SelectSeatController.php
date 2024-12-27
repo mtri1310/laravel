@@ -10,16 +10,16 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Models\Seat;
 use App\Models\Showtime;
+use App\Models\Film;
+
 
 class SelectSeatController extends Controller
 {
 
     public function getSelectSeat(Request $request): JsonResponse
     {
-
         $user = Auth::user();
 
-        // Kiểm tra xem người dùng đã xác thực hay chưa
         if (!$user) {
             return response()->json([
                 "status" => "error",
@@ -27,86 +27,120 @@ class SelectSeatController extends Controller
             ], 401);
         }
 
-        // Lấy dữ liệu từ request
-        $seatId = $request->input('seat_id'); // ID ghế cần đặt
-        $showtimeId = $request->input('showtime_id'); // ID suất chiếu
+        $seatIds = $request->input('seat_id'); // danh sách 604,605
+        $showtimeId = $request->input('showtime_id'); 
+        $amount = $request->input('amount');
 
-        // Kiểm tra dữ liệu đầu vào
-        if (!$seatId || !$showtimeId) {
+        if (!$seatIds || !$showtimeId) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Seat ID and Showtime ID are required.',
+                'message' => 'Seat IDs and Showtime ID are required.',
             ], 400);
         }
 
-        $showtime = Showtime::find($showtimeId);
-        $seat = Seat::find($seatId);
+        $seatIdsArray = array_map('trim', explode(',', $seatIds));
 
-        // Kiểm tra nếu không tìm thấy suất chiếu hoặc ghế
-        if (!$showtime || !$seat) {
+        $showtime = Showtime::with('film')->find($showtimeId);
+        if (!$showtime) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid Showtime ID or Seat ID.',
+                'message' => 'Invalid Showtime ID.',
             ], 404);
         }
 
-        // So sánh `room_id` giữa `Showtime` và `Seat`
-        if ($showtime->room_id !== $seat->room_id) {
+        $film = $showtime->film;
+
+        $invalidSeats = [];
+        $validSeats = [];
+
+        foreach ($seatIdsArray as $seatId) {
+            $seat = Seat::find($seatId);
+
+            // Kiểm tra ghế có tồn tại và thuộc phòng của suất chiếu không
+            if (!$seat || $seat->room_id !== $showtime->room_id) {
+                $invalidSeats[] = $seatId;
+                continue;
+            }
+
+            // Kiểm tra ghế đã được đặt trong suất chiếu này chưa
+            $existingBooking = Booking::where('showtime_id', $showtimeId)
+                ->whereHas('seats', function ($query) use ($seatId) {
+                    $query->where('id', $seatId);
+                })
+                ->exists();
+
+            if ($existingBooking) {
+                $invalidSeats[] = $seatId;
+                continue;
+            }
+
+            $validSeats[] = $seat;
+        }
+
+        // Nếu có ghế không hợp lệ, trả về thông báo lỗi
+        if (!empty($invalidSeats)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'The selected seat does not belong to the room of the showtime.',
-                'debug' => [
-                    'seat_room_id' => $seat->room_id,
-                    'showtime_room_id' => $showtime->room_id,
-                ],
+                'message' => 'Some seats are invalid or already booked.',
+                'invalid_seats' => $invalidSeats,
             ], 400);
         }
 
-        // Kiểm tra xem ghế đã được đặt bởi bất kỳ người dùng nào trong cùng suất chiếu chưa
-        $existingBooking = Booking::where('showtime_id', $showtimeId)
-            ->whereHas('seats', function ($query) use ($seatId) {
-                $query->where('id', $seatId);
-            })
-            ->exists();
-
-        if ($existingBooking) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You have already booked this seat for the selected showtime.',
-            ], 400);
-        }
-
-
-        // Lưu thông tin tạm thời vào bảng `booking`
         $booking = Booking::create([
             'showtime_id' => $showtimeId,
             'user_id' => $user->id,
-            'created_at' => now(),  
+            'created_at' => now(),
             'updated_at' => now(),
         ]);
 
+        foreach ($validSeats as $seat) {
+            $booking->seats()->attach($seat->id);
+        }
+
+        $seatData = array_map(function ($seat) {
+            return [
+                'seat_id' => $seat->id,
+                'seat_number' => $seat->seat_number,
+            ];
+        }, $validSeats);
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Seat reserved successfully. Please complete the payment to confirm booking.',
+            'message' => 'Seats reserved successfully. Please complete the payment to confirm booking.',
             'data' => [
+                'order_id' => $this->generateOrderID(),
                 'booking_id' => $booking->id,
+                'amount' => $amount,
+                'film' => [
+                    'id' => $film->id,
+                    'film_name' => $film->film_name,
+                    'thumbnail' => $film->thumbnail,
+                    'duration' => $film->duration,
+                    'review' => $film->review,
+                    'story_line' => $film->story_line,
+                    'trailer_link' => $film->link_trailer,
+                    'movie_genre' => $film->movie_genre,
+                    'censorship' => $film->censorship,
+                    'language' => $film->language,
+                    'director' => $film->director,
+                    'actor' => $film->actor,
+                    'status' => $film->status,
+                    'release' => $film->release->format('d-m-Y'),
+                ],
                 'user' => [
                     'user_id' => $user->id,
                     'name' => $user->full_name,
                     'email' => $user->email,
                 ],
-                'seat' => [
-                    'seat_id' => $seatId,
-                    'seat_number' => $seat->seat_number,
-                ],
-                'showtime' => [
-                    'showtime_id' => $showtime->id,
-                    'start_time' => $showtime->start_time,
-                    'day' => $showtime->day->format('d-m-Y'),
-                    'room_id' => $showtime->room_id,
-                ],
+                'seats' => $seatData,
+                'showtime_id' => $showtime->id,
             ],
         ]);
+    }
+
+    private function generateOrderID()
+    {
+        return substr(str_shuffle(str_repeat('0123456789', 16)), 0, 16);
     }
 
     
