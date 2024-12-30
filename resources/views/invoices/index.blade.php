@@ -84,6 +84,8 @@
                                     <thead>
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
+                                            <th class="d-none d-sm-table-cell text-center">Booking ID</th>
+
                                             <th class="d-none d-sm-table-cell text-center">Day Create Invoice</th>
                                             <th class="d-none d-sm-table-cell text-center">Username</th>
                                             <th class="d-none d-sm-table-cell text-center">Film</th>
@@ -105,6 +107,9 @@
                                                 <td class="d-none d-md-table-cell fs-sm text-center">
                                                     {{ $invoice->invoice_number }}
                                                 </td>
+                                                <!-- Booking ID -->
+                                                <td class="text-center fs-sm"><strong>{{ $invoice->payment->booking->id }}</strong></td>
+                                                
                                                 <td class="d-none d-md-table-cell fs-sm text-center">
                                                     {{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y H:i') }}
                                                 </td>
@@ -145,10 +150,8 @@
                                                 </td>
                                                 <td class="text-center fs-sm">
                                                     @if ($invoice->payment->payment_status === 1)
-                                                        <span class="badge bg-success">Pending</span>
+                                                        <span class="badge bg-success">Completed</span>
                                                     @elseif ($invoice->payment->payment_status === 2)
-                                                        <span class="badge bg-secondary">Completed</span>
-                                                    @elseif ($invoice->payment->payment_status === 3)
                                                         <span class="badge bg-danger">Failed</span>
                                                     @else
                                                         <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>

@@ -28,7 +28,7 @@ class BookingsTableSeeder extends Seeder
                 $bookings[] = [
                     'showtime_id'  => $showtime->id,
                     'user_id'      => $user->id,
-                    'status'       => collect([1, 2, 3, 4])->random(), //'pending', 'confirmed', 'failed', 'cancelled'
+                    'status'       => collect([1, 2, 3, 4])->random(), //'Pending', Confirmed, Failed, 'Cancelled'
                     'created_at'   => Carbon::now()->addDays(rand(-60, 60)),
                     'updated_at'   => now(),
                 ];
