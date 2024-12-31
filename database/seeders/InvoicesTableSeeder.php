@@ -21,7 +21,6 @@ class InvoicesTableSeeder extends Seeder
         foreach ($payments as $payment) {
             // Kiểm tra xem Payment có liên kết với Booking hay không
             if ($payment->booking) {
-                if ($payment->payment_status === Payment::STATUS_COMPLETED) {
                     // Gán số hóa đơn và tăng số đếm
                     $invoiceNumber = (string)$currentInvoiceNumber;
                     $currentInvoiceNumber++;
@@ -40,7 +39,6 @@ class InvoicesTableSeeder extends Seeder
                         'created_at'     => $invoiceCreatedAt,
                         'updated_at'     => $invoiceCreatedAt,
                     ];
-                } elseif ($payment->payment_status === Payment::STATUS_FAILED) {
                     // Tạo Invoice với invoice_number là null cho Payment thất bại
                     $paymentCreatedAt = Carbon::parse($payment->created_at);
                     $invoiceCreatedAt = $paymentCreatedAt->copy()->addMinutes(rand(1, 2));
@@ -52,7 +50,6 @@ class InvoicesTableSeeder extends Seeder
                         'created_at'     => $invoiceCreatedAt,
                         'updated_at'     => $invoiceCreatedAt,
                     ];
-                }
             }
         }
 
