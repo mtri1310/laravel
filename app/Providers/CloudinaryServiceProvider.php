@@ -14,22 +14,47 @@ class CloudinaryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Bind Cloudinary as a singleton
         $this->app->singleton(Cloudinary::class, function ($app) {
-            $config = [
+            $cloudinaryUrl = env('CLOUDINARY_URL');
+
+            // Kiểm tra xem CLOUDINARY_URL có tồn tại
+            if (!$cloudinaryUrl) {
+                throw new \Exception('CLOUDINARY_URL is not set in the .env file.');
+            }
+
+            $parsedUrl = parse_url($cloudinaryUrl);
+
+            if (!$parsedUrl) {
+                throw new \Exception('Invalid CLOUDINARY_URL format.');
+            }
+
+            // Extract các thành phần từ URL
+            $scheme = $parsedUrl['scheme'] ?? null;
+            $user = $parsedUrl['user'] ?? null;
+            $pass = $parsedUrl['pass'] ?? null;
+            $host = $parsedUrl['host'] ?? null;
+
+            if (!$scheme || !$user || !$pass || !$host) {
+                throw new \Exception('Incomplete CLOUDINARY_URL.');
+            }
+
+            $cloudName = $host;      // Lấy cloud_name từ host
+            $apiKey = $user;         // API Key từ user
+            $apiSecret = $pass;      // API Secret từ pass
+
+            // Thiết lập cấu hình
+            $config = new Configuration([
                 'cloud' => [
-                    'cloud_name' => config('cloudinary.cloud_name'),
-                    'api_key'    => config('cloudinary.api_key'),
-                    'api_secret' => config('cloudinary.api_secret'),
+                    'cloud_name' => $cloudName,
+                    'api_key'    => $apiKey,
+                    'api_secret' => $apiSecret,
                 ],
                 'url' => [
                     'secure' => true,
                 ],
-            ];
+            ]);
 
-            Configuration::instance($config);
-
-            return new Cloudinary();
+            return new Cloudinary($config);
         });
 
         // Bind CloudinaryService
