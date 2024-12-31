@@ -49,7 +49,12 @@ class PaymentController extends Controller
                     'message' => 'Booking not found or does not belong to the user.',
                 ], 404);
             }
-
+            if ($booking->status === Booking::STATUS_CANCELLED) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cannot completed a cancelled booking.',
+                ], 400);
+            }
             $payment = Payment::create([
                 'booking_id' => $booking->id,
                 'payment_status' => Payment::STATUS_COMPLETED,
