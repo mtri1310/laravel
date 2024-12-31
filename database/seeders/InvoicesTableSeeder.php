@@ -39,17 +39,6 @@ class InvoicesTableSeeder extends Seeder
                         'created_at'     => $invoiceCreatedAt,
                         'updated_at'     => $invoiceCreatedAt,
                     ];
-                    // Tạo Invoice với invoice_number là null cho Payment thất bại
-                    $paymentCreatedAt = Carbon::parse($payment->created_at);
-                    $invoiceCreatedAt = $paymentCreatedAt->copy()->addMinutes(rand(1, 2));
-
-                    $invoices[] = [
-                        'payment_id'     => $payment->id,
-                        'invoice_number' => null,
-                        'total_amount'   => $payment->amount,
-                        'created_at'     => $invoiceCreatedAt,
-                        'updated_at'     => $invoiceCreatedAt,
-                    ];
             }
         }
 

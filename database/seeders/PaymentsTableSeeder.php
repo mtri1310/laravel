@@ -38,8 +38,8 @@ class PaymentsTableSeeder extends Seeder
                 $bookingStatus  = Booking::STATUS_CONFIRMED;
             } else {
                 $paymentStatus  = Payment::STATUS_FAILED;
-                $paymentMethod  = null; // Theo yêu cầu
-                $transactionId  = null; // Theo yêu cầu
+                $paymentMethod  = 'Stripe'; 
+                $transactionId  = 'pi_' . strtoupper(\Str::random(14)); 
                 $bookingStatus  = Booking::STATUS_FAILED;
             }
 
