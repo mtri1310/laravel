@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Models\Payment;
 use App\Models\Invoice;
@@ -14,31 +15,36 @@ class InvoicesTableSeeder extends Seeder
         $payments = Payment::with('booking')->get();
 
         $invoices = [];
+        // Khởi tạo số hóa đơn bắt đầu từ 1000000000000000
+        $currentInvoiceNumber = 1000000000000000;
 
         foreach ($payments as $payment) {
-            // Kiểm tra xem payment có liên kết với booking hay không
+            // Kiểm tra xem Payment có liên kết với Booking hay không
             if ($payment->booking) {
-                // Tạo số hóa đơn với định dạng INV-000001, INV-000002, ...
-                $invoiceNumber = 'INV-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT);
-                
-                // Lấy thời gian tạo của booking
-                $paymentCreatedAt = Carbon::parse($payment->created_at);
-                
-                // Thêm từ 1 đến 2 phút vào thời gian tạo của booking
-                $invoiceCreatedAt = $paymentCreatedAt->copy()->addMinutes(rand(1, 2));
-                
-                // Tạo dữ liệu invoice
-                $invoices[] = [
-                    'payment_id'     => $payment->id,
-                    'invoice_number' => $invoiceNumber,
-                    'total_amount'   => $payment->amount,
-                    'created_at'     => $invoiceCreatedAt,
-                    'updated_at'     => $invoiceCreatedAt,
-                ];
+                    // Gán số hóa đơn và tăng số đếm
+                    $invoiceNumber = (string)$currentInvoiceNumber;
+                    $currentInvoiceNumber++;
+
+                    // Lấy thời gian tạo của Payment
+                    $paymentCreatedAt = Carbon::parse($payment->created_at);
+
+                    // Thêm từ 1 đến 2 phút vào thời gian tạo của Payment cho Invoice
+                    $invoiceCreatedAt = $paymentCreatedAt->copy()->addMinutes(rand(1, 2));
+
+                    // Tạo dữ liệu Invoice
+                    $invoices[] = [
+                        'payment_id'     => $payment->id,
+                        'invoice_number' => $invoiceNumber,
+                        'total_amount'   => $payment->amount,
+                        'created_at'     => $invoiceCreatedAt,
+                        'updated_at'     => $invoiceCreatedAt,
+                    ];
             }
         }
 
-        // Chèn tất cả các invoice một cách hiệu quả
-        Invoice::insert($invoices);
+        // Chèn tất cả các Invoice vào database một cách hiệu quả
+        if (!empty($invoices)) {
+            Invoice::insert($invoices);
+        }
     }
 }

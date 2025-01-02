@@ -19,14 +19,20 @@ class DashboardController extends Controller
             // Thiết lập ngôn ngữ cho Carbon là tiếng Anh
             Carbon::setLocale('en');
 
+            // Lấy ngày hiện tại
             $currentDate = Carbon::today();
-            $currentYear = Carbon::now()->year;
-            $currentWeek = Carbon::now()->weekOfYear;
 
-            // Chuyển đổi thành YEARWEEK định dạng
-            $latestWeek = $currentYear * 100 + $currentWeek;
+            // Lấy năm tuần và số tuần theo ISO
+            $currentWeekYear = $currentDate->isoWeekYear;
+            $currentWeek = $currentDate->isoWeek;
 
-            Log::info('Tuần Hiện Tại:', ['latest_week' => $latestWeek]);
+            Log::info('Năm Tuần Hiện Tại:', ['currentWeekYear' => $currentWeekYear]);
+            Log::info('Số Tuần Hiện Tại:', ['currentWeek' => $currentWeek]);
+
+            // Chuyển đổi thành YEARWEEK định dạng mode 1 (tuần bắt đầu từ Thứ Hai)
+            $latestWeek = $currentWeekYear * 100 + $currentWeek;
+
+            Log::info('Tuần Hiện Tại (YEARWEEK):', ['latest_week' => $latestWeek]);
 
             // ================================================
             // Lấy các chỉ số cho Tuần Hiện Tại
@@ -35,12 +41,13 @@ class DashboardController extends Controller
             // 1. Tổng Tiền (Từ bảng invoice)
             $latestTotalAmount = Invoice::whereRaw('YEARWEEK(created_at, 1) = ?', [$latestWeek])
                 ->whereHas('payment', function($query){
-                    $query->where('payment_status', '=', 1); 
+                    $query->where('payment_status', '=', Payment::STATUS_COMPLETED); 
                 })
                 ->sum('total_amount');
 
             // 2. Số Ghế Đã Đặt (Từ bảng booking_seat và booking)
             $seatsBooked = Booking::whereRaw('YEARWEEK(bookings.created_at, 1) = ?', [$latestWeek])
+                ->where('status', Booking::STATUS_CONFIRMED)
                 ->join('booking_seat', 'bookings.id', '=', 'booking_seat.booking_id')
                 ->count('booking_seat.seat_id');
 
@@ -49,10 +56,9 @@ class DashboardController extends Controller
                 ->count();
 
             // 4. Số Thanh Toán Đang Chờ (Từ bảng payment)
-            $bookingsPending = Booking::where('status', 1)
+            $bookingsPending = Booking::where('status', Booking::STATUS_PENDING)
                 ->whereDate('created_at', $currentDate)
                 ->count();
-
 
             // ================================
             // Lấy tổng doanh thu theo tháng
@@ -64,7 +70,7 @@ class DashboardController extends Controller
                     DB::raw('MONTH(invoices.created_at) as month'),
                     DB::raw('SUM(invoices.total_amount) as total_amount')
                 )
-                ->where('payments.payment_status', 1) // Giả sử '1' tương ứng với 'Completed'
+                ->where('payments.payment_status', Payment::STATUS_COMPLETED) 
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'asc')
                 ->orderBy('month', 'asc')
@@ -108,11 +114,10 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // Ghi log số ghế đã đặt theo tháng
             Log::info('Seats Booked Per Month:', $seatsBookedPerMonth->toArray());
             
             // ===============================
-            // Lấy số lượng payment_method trạng thái Completed theo tháng
+            // Lấy số lượng payment_method trạng thái Completed và Failed theo tháng
             // ===============================
             $completedAndFailedBookingsPerMonth = DB::table('invoices')
                 ->join('payments', 'invoices.payment_id', '=', 'payments.id')
@@ -123,13 +128,13 @@ class DashboardController extends Controller
                     DB::raw('SUM(CASE WHEN bookings.status = ' . Booking::STATUS_CONFIRMED . ' THEN 1 ELSE 0 END) as completed_count'),
                     DB::raw('SUM(CASE WHEN bookings.status = ' . Booking::STATUS_FAILED . ' THEN 1 ELSE 0 END) as failed_count')
                 )
-                ->whereIn('bookings.status', [Booking::STATUS_CONFIRMED, Booking::STATUS_FAILED]) // Include only confirmed and failed statuses
+                ->whereIn('bookings.status', [Booking::STATUS_CONFIRMED, Booking::STATUS_FAILED]) // Include only completed and failed statuses
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'asc')
                 ->orderBy('month', 'asc')
                 ->get()
                 ->map(function ($item) {
-                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM'); // e.g., 'November'
+                    $month_name = Carbon::create()->month($item->month)->isoFormat('MMMM'); // Tên tháng bằng tiếng Anh
                     return (object)[
                         'year' => $item->year,
                         'month' => $item->month,
@@ -139,7 +144,6 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // Log for debugging
             Log::info('Completed and Failed Bookings Per Month:', $completedAndFailedBookingsPerMonth->toArray());
 
             // ====================================
@@ -157,11 +161,10 @@ class DashboardController extends Controller
             ];
 
             return view('admin', $data);
-        } catch (\Exception $e) {
-            // Ghi log lỗi nếu có
+        }
+        catch (\Exception $e) {
             Log::error('Error fetching statistics:', ['error' => $e->getMessage()]);
 
-            // Chuyển hướng trở lại với thông báo lỗi
             return redirect()->back()->with('messageError', 'Đã xảy ra lỗi khi lấy dữ liệu thống kê.');
         }
     }

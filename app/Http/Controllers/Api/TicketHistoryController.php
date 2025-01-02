@@ -18,6 +18,7 @@ class TicketHistoryController extends Controller
             ], 401);
         }
         $bookings = Booking::where('user_id', $user->id)
+            ->where('status', Booking::STATUS_CONFIRMED)
             ->with(['showtime.film'])
             ->get();
 
@@ -28,6 +29,7 @@ class TicketHistoryController extends Controller
             'data' => [
                 'film' => $bookings->map(function ($booking) {
                     return [
+                        'booking_id' => $booking->id,
                         'thumbnail' => $booking->showtime->film->thumbnail,
                         'film_name' => $booking->showtime->film->film_name,
                         'showtime' => [

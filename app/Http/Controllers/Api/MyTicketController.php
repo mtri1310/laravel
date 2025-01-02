@@ -34,6 +34,7 @@ class MyTicketController extends Controller
             'status' => 'success',
             'message' => 'Ticket details retrieved successfully',
             'data' => [
+                'order_id' => $booking->payment->invoice->invoice_number,
                 'booking_id' => $booking->id,
                 'film' => [
                     'film_name' => $booking->showtime->film->film_name,
