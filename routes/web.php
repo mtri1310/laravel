@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
     ], [
         'except' => ['show'],
     ]);
+    // Thêm Route Dependencies cho Rooms
+    Route::get('/rooms/{room}/dependencies', [RoomController::class, 'checkDependencies'])->name('rooms.dependencies');
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });

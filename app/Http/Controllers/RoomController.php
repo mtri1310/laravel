@@ -8,6 +8,7 @@ use App\Models\Seat;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 
@@ -111,10 +112,65 @@ class RoomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Room $room) : RedirectResponse
+    
+    // public function destroy(Room $room) : RedirectResponse
+    // {
+    //     $room->delete();
+    //     return redirect()->route('rooms.index')
+    //             ->withSuccess('Room is deleted successfully.');
+    // }
+
+    // Phương thức hiện tại để xóa phòng
+    public function destroy(Request $request, Room $room): RedirectResponse
     {
+        // Kiểm tra xem có xác nhận xóa dữ liệu liên quan hay không
+        if ($request->input('confirm') === 'yes') {
+            // Xóa các dữ liệu liên quan
+            $room->showtimes()->delete();
+            $room->seats()->delete();
+            // Nếu có các bảng khác liên quan, thêm các lệnh xóa tương tự ở đây
+
+            // Cuối cùng, xóa phòng
+            $room->delete();
+
+            return redirect()->route('rooms.index')
+                ->with('messageSuccess', 'Phòng và các dữ liệu liên quan đã được xóa thành công.');
+        }
+
+        // Nếu không có xác nhận, kiểm tra xem có dữ liệu liên quan hay không
+        $hasDependencies = $room->showtimes()->exists() || $room->seats()->exists();
+        if ($hasDependencies) {
+            return redirect()->route('rooms.index')
+                ->with('messageError', 'Phòng này có dữ liệu liên quan. Vui lòng xác nhận để xóa tất cả các dữ liệu liên quan.');
+        }
+
+        // Nếu không có dữ liệu liên quan, xóa phòng
         $room->delete();
         return redirect()->route('rooms.index')
-                ->withSuccess('Room is deleted successfully.');
+            ->with('messageSuccess', 'Phòng đã được xóa thành công.');
     }
+
+    // Phương thức để kiểm tra dữ liệu liên quan (sử dụng AJAX)
+    public function checkDependencies(Room $room)
+    {
+        // Kiểm tra các bảng liên quan
+        $hasShowtimes = $room->showtimes()->exists();
+        $hasSeats = $room->seats()->exists();
+        // Thêm kiểm tra cho các bảng khác nếu cần
+
+        $dependencies = [];
+        if ($hasShowtimes) {
+            $dependencies[] = 'Showtimes';
+        }
+        if ($hasSeats) {
+            $dependencies[] = 'Seats';
+        }
+        // Thêm các bảng khác vào danh sách nếu cần
+
+        return response()->json([
+            'hasDependencies' => !empty($dependencies),
+            'dependencies' => $dependencies,
+        ]);
+    }
+    
 }

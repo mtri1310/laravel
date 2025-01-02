@@ -60,10 +60,10 @@
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
 
-                                                    <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this room?')">
+                                                    <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="d-inline delete-room-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                        <button type="button" class="btn btn-sm btn-alt-danger btn-delete" data-room-id="{{ $room->id }}" title="Delete">
                                                             <i class="fa fa-fw fa-times text-danger"></i>
                                                         </button>
                                                     </form>
@@ -108,6 +108,81 @@
     
     <script>
         $(document).ready(function() {
+            $('.btn-delete').on('click', function(e) {
+                e.preventDefault();
+                let roomId = $(this).data('room-id');
+                let form = $(this).closest('form');
+    
+                // Gọi AJAX để kiểm tra dữ liệu liên quan
+                $.ajax({
+                    url: `/rooms/${roomId}/dependencies`,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.hasDependencies) {
+                            // Tạo thông báo cảnh báo với tùy chọn Yes/No
+                            let dependencyDetails = response.dependencies.join(', ');
+    
+                            Swal.fire({
+                                title: 'Cảnh báo!',
+                                html: `Phòng này có dữ liệu liên quan trong các bảng: <strong>${dependencyDetails}</strong>. Bạn có chắc chắn muốn xóa phòng và tất cả các dữ liệu liên quan?`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'No, cancel',
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Thêm input xác nhận xóa dữ liệu liên quan
+                                    $('<input>').attr({
+                                        type: 'hidden',
+                                        name: 'confirm',
+                                        value: 'yes'
+                                    }).appendTo(form);
+    
+                                    // Gửi form để xóa
+                                    form.submit();
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    Swal.fire(
+                                        'Hủy bỏ',
+                                        'Phòng không bị xóa.',
+                                        'info'
+                                    );
+                                }
+                            });
+                        } else {
+                            // Nếu không có dữ liệu liên quan, xác nhận xóa thông thường
+                            Swal.fire({
+                                title: 'Bạn có chắc chắn?',
+                                text: "Bạn sẽ không thể khôi phục lại phòng này!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'No, cancel',
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    Swal.fire(
+                                        'Hủy bỏ',
+                                        'Phòng không bị xóa.',
+                                        'info'
+                                    );
+                                }
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Lỗi!',
+                            'Đã xảy ra lỗi khi kiểm tra dữ liệu liên quan.',
+                            'error'
+                        );
+                    }
+                });
+            });
+    
+            // Xử lý các thông báo thành công và lỗi như trước
             let messageError = "{{ session('messageError') }}";
             let messageSuccess = "{{ session('messageSuccess') }}";
     
