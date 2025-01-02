@@ -107,8 +107,8 @@ class PasswordResetController extends Controller
             ], 404);
         }
 
-        // Kiểm tra thời gian hết hạn (3 phút)
-        $expiresAt = Carbon::parse($record->created_at)->addMinutes(3);
+        // Kiểm tra thời gian hết hạn (10 phút)
+        $expiresAt = Carbon::parse($record->created_at)->addMinutes(10);
         if (Carbon::now()->greaterThan($expiresAt)) {
             return response()->json([
                 'success' => false,
@@ -162,6 +162,14 @@ class PasswordResetController extends Controller
                 'success' => false,
                 'message' => 'Không tìm thấy yêu cầu reset mật khẩu.'
             ], 404);
+        }
+
+        $expiresAt = Carbon::parse($record->created_at)->addMinutes(10);
+        if (Carbon::now()->greaterThan($expiresAt)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã xác thực đã hết hạn.'
+            ], 400);
         }
 
         // Kiểm tra mã

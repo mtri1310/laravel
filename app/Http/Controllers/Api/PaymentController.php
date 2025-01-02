@@ -1,105 +1,85 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Invoice;
+use App\Models\Booking;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
-use Stripe\Checkout\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    public function createPayment(Request $request)
-{
-    $request->validate([
-        'booking_id' => 'required|integer',
-        'amount' => 'required|numeric|min:0',
-    ]);
-
-    $user = auth()->user(); // Lấy thông tin user từ token
-
-    // Kiểm tra xem booking có thuộc về user hiện tại không
-    $booking = DB::table('bookings')
-        ->where('id', $request->input('booking_id'))
-        ->where('user_id', $user->id)
-        ->first();
-
-    if (!$booking) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Booking not found or does not belong to the authenticated user',
-        ], 403);
-    }
-
-    // Tạo orderID ngẫu nhiên
-    $orderID = $this->generateOrderID();
-
-    // Lưu thông tin thanh toán với trạng thái "chờ"
-    $payment = Payment::create([
-        'booking_id' => $request->input('booking_id'),
-        'amount' => $request->input('amount'),
-        'payment_method' => 'stripe',
-        'payment_status' => 2, // Trạng thái "chờ"
-    ]);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Payment created with pending status',
-        'data' => [
-            'order_id' => $orderID, // OrderID ngẫu nhiên
-            'amount' => $payment->amount,
-            'payment_status' => $payment->payment_status,
-        ],
-    ]);
-}
-
-
+    /**
+     * Xác nhận thanh toán thành công và cập nhật trạng thái booking.
+     */
     public function confirmPayment(Request $request)
     {
+        // Bước 1: Validate dữ liệu đầu vào
         $request->validate([
             'order_id' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'transaction_id' => 'required|string',
             'booking_id' => 'required|integer',
+        ], [
+            'order_id.required' => 'Mã đơn hàng là bắt buộc.',
+            'amount.required' => 'Số tiền là bắt buộc.',
+            'transaction_id.required' => 'Mã giao dịch là bắt buộc.',
+            'booking_id.required' => 'Mã booking là bắt buộc.',
         ]);
 
         DB::beginTransaction();
 
         try {
-            $user = auth()->user(); // Lấy thông tin user đã đăng nhập
-            // Tìm Payment thông qua Booking và kiểm tra user_id
-            $payment = Payment::whereHas('booking', function ($query) use ($user, $request) {
-                $query->where('user_id', $user->id ) // Kiểm tra user_id
-                      ->where('id', $request->input('booking_id')); // Kiểm tra booking_id
-            })->where('payment_status', 2) // Chỉ xử lý nếu trạng thái là "chờ"
-              ->first();
-            
-            if (!$payment) {
+            $user = Auth::user(); // Lấy thông tin user đã đăng nhập
+
+            // Bước 2: Tìm Booking và kiểm tra quyền sở hữu
+            $booking = Booking::where('id', $request->input('booking_id'))
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$booking) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Payment not found or already confirmed',
+                    'message' => 'Booking not found or does not belong to the user.',
                 ], 404);
             }
-    
-            // Cập nhật trạng thái thanh toán thành "thành công"
-            $payment->update([
-                'payment_status' => 1,
-                'transaction_id' => $request->input('transaction_id'), // Lưu Transaction ID
+            if ($booking->status === Booking::STATUS_CANCELLED) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cannot completed a cancelled booking.',
+                ], 400);
+            }
+            $payment = Payment::create([
+                'booking_id' => $booking->id,
+                'payment_status' => Payment::STATUS_COMPLETED,
+                'amount'=> $request->input('amount'),
+                'transaction_id' => $request->input('transaction_id'),
+                // 'payment_method' => $request->input('payment_method'), // Nếu có
+                'payment_method' => "Stripe",
             ]);
 
-            // Lưu thông tin vào bảng Invoice
+            // Bước 4: Cập nhật trạng thái booking thành "Confirmed"
+            $booking->update([
+                'status' => Booking::STATUS_CONFIRMED,
+            ]);
+
+            // Bước 5: Tạo bản ghi Invoice
             $invoice = Invoice::create([
                 'payment_id' => $payment->id,
-                'invoice_number' => $request->input('order_id'), // Lưu orderID vào invoice_number
+                'invoice_number' => $request->input('order_id'),
                 'total_amount' => $request->input('amount'),
                 'created_at' => now(),
             ]);
 
-            // Truy xuất thông tin liên quan
-            $filmName = $payment->booking->showtime->film->film_name;
-            $seats = $payment->booking->bookingSeats->map(function ($bookingSeat) {
+            // Bước 6: Truy xuất thông tin liên quan
+            $filmName = $booking->showtime->film->film_name;
+            $seats = $booking->bookingSeats->map(function ($bookingSeat) {
                 return [
                     'seat_id' => $bookingSeat->seat->id,
                     'seat_number' => $bookingSeat->seat->seat_number,
@@ -110,7 +90,7 @@ class PaymentController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Payment confirmed and invoice created',
+                'message' => 'Payment confirmed and invoice created successfully.',
                 'data' => [
                     'invoice_number' => $invoice->invoice_number,
                     'film_name' => $filmName,
@@ -121,61 +101,102 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            Log::error('Payment confirmation failed: ' . $e->getMessage());
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Payment confirmation failed',
+                'message' => 'Payment confirmation failed.',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
 
+    /**
+     * Hủy thanh toán và cập nhật trạng thái booking.
+     */
     public function cancelPayment(Request $request)
-{
-    $request->validate([
-        'booking_id' => 'required|integer', // Sử dụng booking_id để xác định payment
-    ]);
-
-    $user = auth()->user(); // Lấy thông tin user từ token
-
-    DB::beginTransaction();
-
-    try {
-        // Tìm Payment với trạng thái "chờ" và thuộc về booking của user hiện tại
-        $payment = Payment::where('payment_status', 2) // Chỉ hủy khi trạng thái là "chờ"
-            ->whereHas('booking', function ($query) use ($user, $request) {
-                $query->where('user_id', $user->id)
-                      ->where('id', $request->input('booking_id')); // Kiểm tra booking_id
-            })
-            ->firstOrFail();
-
-        // Cập nhật trạng thái thành "thất bại" (payment_status = 3)
-        $payment->update([
-            'payment_status' => 3, // Thất bại
-            'transaction_id' => null, // Đặt transaction_id về null
-            'payment_method' => null, // Đặt payment_method về null
-        ]);
-
-        DB::commit();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Payment cancelled successfully',
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Payment cancellation failed',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
-
-
-
-    private function generateOrderID()
     {
-        return substr(str_shuffle(str_repeat('0123456789', 16)), 0, 16);
+        // Bước 1: Validate dữ liệu đầu vào
+        $request->validate([
+            'booking_id' => 'required|integer',
+        ], [
+            'booking_id.required' => 'Mã booking là bắt buộc.',
+            'booking_id.integer' => 'Mã booking phải là số nguyên.',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $user = Auth::user(); // Lấy thông tin user đã đăng nhập
+
+            // Bước 2: Tìm Booking và kiểm tra quyền sở hữu
+            $booking = Booking::where('id', $request->input('booking_id'))
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$booking) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Booking not found or does not belong to the user.',
+                ], 404);
+            }
+
+            // Bước 3: Tìm Payment liên kết với Booking
+            $payment = $booking->payment;
+
+            if ($payment) {
+                // Kiểm tra trạng thái hiện tại của Payment
+                if ($payment->payment_status === Payment::STATUS_COMPLETED) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Cannot cancel a completed payment.',
+                    ], 400);
+                }
+
+                if ($payment->payment_status === Payment::STATUS_FAILED) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Payment has already been failed.',
+                    ], 400);
+                }
+
+                // Cập nhật Payment đã tồn tại
+                $payment->update([
+                    'payment_status' => Payment::STATUS_FAILED,
+                    'transaction_id' => null,
+                    'payment_method' => null, // Nếu có
+                ]);
+            } else {
+                // Tạo Payment mới với trạng thái Failed nếu chưa tồn tại
+                $payment = Payment::create([
+                    'booking_id' => $booking->id,
+                    'payment_status' => Payment::STATUS_FAILED,
+                    'transaction_id' => null,
+                    'payment_method' => null, // Nếu có
+                ]);
+            }
+
+            // Bước 4: Cập nhật trạng thái booking thành "Failed"
+            $booking->update([
+                'status' => Booking::STATUS_FAILED,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Payment cancelled and booking status updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Payment cancellation failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Payment cancellation failed.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

@@ -11,12 +11,12 @@
 
                 </span>
                 <span style="padding-bottom: 10px">
-                    <img alt="avatar" src="{{ asset('assets/images/default.png') }}" class="avatar"/>
+                    <img alt="avatar" src="{{ auth()->user()->picture }}" class="avatar"/>
                 </span>
             </div>
             <ul class="dropdown-menu dropdown-menu-profile" aria-labelledby="dropdownMenuButton">
                 <li class="dropdown-item d-flex justify-content-center align-items-center flex-column">
-                    <img alt="avatar" src="https://picsum.photos/200/300" class="avatar-thumb"/>
+                    <img alt="avatar" src="{{ auth()->user()->picture }}" class="avatar-thumb"/>
                     <p class="dropdown-item-name mt-2 text-center" style="text-transform: capitalize">
                         {{ auth()->user()->full_name }}
                     </p>

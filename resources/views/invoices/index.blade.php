@@ -84,6 +84,8 @@
                                     <thead>
                                         <tr>
                                             <th class="d-none d-sm-table-cell text-center">Invoice Number</th>
+                                            <th class="d-none d-sm-table-cell text-center">Booking ID</th>
+
                                             <th class="d-none d-sm-table-cell text-center">Day Create Invoice</th>
                                             <th class="d-none d-sm-table-cell text-center">Username</th>
                                             <th class="d-none d-sm-table-cell text-center">Film</th>
@@ -105,6 +107,9 @@
                                                 <td class="d-none d-md-table-cell fs-sm text-center">
                                                     {{ $invoice->invoice_number }}
                                                 </td>
+                                                <!-- Booking ID -->
+                                                <td class="text-center fs-sm"><strong>{{ $invoice->payment->booking->id }}</strong></td>
+                                                
                                                 <td class="d-none d-md-table-cell fs-sm text-center">
                                                     {{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y H:i') }}
                                                 </td>
@@ -144,12 +149,12 @@
                                                     <strong>{{ $invoice->payment->payment_method }}</strong>
                                                 </td>
                                                 <td class="text-center fs-sm">
-                                                    @if ($invoice->payment->payment_status === 'Completed')
-                                                        <span class="badge bg-success">{{ $invoice->payment->payment_status }}</span>
-                                                    @elseif ($invoice->payment->payment_status === 'Pending')
-                                                        <span class="badge bg-secondary">{{ $invoice->payment->payment_status }}</span>
-                                                    @elseif ($invoice->payment->payment_status === 'Failed')
-                                                        <span class="badge bg-danger">{{ $invoice->payment->payment_status }}</span>
+                                                    @if ($invoice->payment->payment_status === 1)
+                                                        <span class="badge bg-secondary">Pending</span>
+                                                    @elseif ($invoice->payment->payment_status === 2)
+                                                        <span class="badge bg-success">Completed</span>
+                                                    @elseif ($invoice->payment->payment_status === 3)
+                                                        <span class="badge bg-danger">Failed</span>
                                                     @else
                                                         <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>
                                                     @endif
@@ -170,12 +175,12 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="14" class="text-center">
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
-                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No invoices" style="height: 200px;">
+                                                            <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No Films" style="height: 200px;">
                                                         </div>
-                                                        <p>No invoices found</p>
+                                                        <span>No Invoices Found</span>
                                                     </div>
                                                 </td>
                                             </tr>

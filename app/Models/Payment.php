@@ -11,6 +11,9 @@ class Payment extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 1;
+    const STATUS_COMPLETED = 2;
+    const STATUS_FAILED = 3;
     protected $fillable = [
         'booking_id',
         'transaction_id',
@@ -18,6 +21,10 @@ class Payment extends Model
         'payment_method',
         'payment_status',
         'created_at',
+    ];
+
+    protected $casts = [
+        'payment_status' => 'integer',
     ];
 
     /**

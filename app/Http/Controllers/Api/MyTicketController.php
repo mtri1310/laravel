@@ -5,17 +5,20 @@ use App\Models\Booking;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MyTicketController extends Controller
 {
-    public function getTicketDetails($bookingId)
-    {
+    public function getTicketDetails(Request $request)
+    {        
+        $booking_id =  $request->input('booking_id');
+
         $booking = Booking::with([
             'showtime.film',
             'showtime.room',
             'seats',
             'invoice'
-        ])->where('id', $bookingId)->first();
+        ])->where('id', $booking_id)->first();
 
         // Handle case where booking ID is not found
         if (!$booking) {
@@ -31,6 +34,7 @@ class MyTicketController extends Controller
             'status' => 'success',
             'message' => 'Ticket details retrieved successfully',
             'data' => [
+                'order_id' => $booking->payment->invoice->invoice_number,
                 'booking_id' => $booking->id,
                 'film' => [
                     'film_name' => $booking->showtime->film->film_name,

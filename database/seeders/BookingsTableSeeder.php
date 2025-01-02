@@ -22,12 +22,13 @@ class BookingsTableSeeder extends Seeder
 
         foreach ($showtimes as $showtime) {
             foreach ($users as $user) {
-                // Tạo một booking cho mỗi user và showtime
+                // Tạo một booking cho mỗi user và showtime với trạng thái mặc định là 'pending'
                 $bookings[] = [
-                    'showtime_id'  => $showtime->id,
-                    'user_id'      => $user->id,
-                    'created_at'   => Carbon::now()->addDays(rand(-30, 30)),
-                    'updated_at'   => now(),
+                    'showtime_id' => $showtime->id,
+                    'user_id'     => $user->id,
+                    'status'      => Booking::STATUS_PENDING, //'Pending', Confirmed, Failed, 'Cancelled'
+                    'created_at'  => Carbon::now()->addDays(rand(-120, 2)),
+                    'updated_at'  => now(),
                 ];
             }
         }
@@ -35,3 +36,4 @@ class BookingsTableSeeder extends Seeder
         Booking::insert($bookings);
     }
 }
+

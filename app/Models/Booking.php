@@ -10,11 +10,15 @@ use Carbon\Carbon;
 class Booking extends Model
 {
     use HasFactory;
+    const STATUS_PENDING = 1;
+    const STATUS_CONFIRMED = 2;
+    const STATUS_FAILED = 3;
+    const STATUS_CANCELLED = 4;
 
     protected $fillable = [
         'showtime_id',
         'user_id',
-        'booking_time',
+        'status'
     ];
 
     /**

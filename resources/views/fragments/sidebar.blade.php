@@ -11,7 +11,7 @@
         <div id="kt_aside_menu" class="aside-menu mb-1" data-menu-vertical="1" data-menu-scroll="1" data-menu-dropdown-timeout="500">
             <ul class="menu-nav">
                 <li class="menu-item menu-item-active" aria-haspopup="true">
-                    <a href="/dashboard" class="menu-link" {{ $key == 'dashboard' ? 'menu-active' : '' }}>
+                    <a href="/" class="menu-link" {{ $key == 'dashboard' ? 'menu-active' : '' }}>
                         <span class="svg-icon menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">

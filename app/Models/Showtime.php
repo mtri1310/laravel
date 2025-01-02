@@ -20,6 +20,19 @@ class Showtime extends Model
         'day' => 'date',
         'start_time' => 'string', // Remains a string
     ];
+    // public function getStartTimeAttribute($value)
+    // {
+    //     return $value ? Carbon::parse($value) : null;
+    // }
+
+    // public function setStartTimeAttribute($value)
+    // {
+    //     if ($value instanceof Carbon) {
+    //         $this->attributes['start_time'] = $value->format('H:i:s');
+    //     } else {
+    //         $this->attributes['start_time'] = Carbon::createFromFormat('H:i', $value)->format('H:i:s');
+    //     }
+    // }
 
     /**
      * Một showtime thuộc về một film.

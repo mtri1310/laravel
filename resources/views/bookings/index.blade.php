@@ -16,22 +16,48 @@
 <body>
     <div id="page-container" class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
-            @include('fragments.sidebar', ['key' => 'room', 'subkey' => 'room_all'])
+            @include('fragments.sidebar', ['key' => 'booking', 'subkey' => 'booking_all'])
             <div class="d-flex flex-column wrapper">
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                        <h1 class="title">Showtimes</h1>
-                        <a href="{{ route('showtimes.create') }}">
+                        <h1 class="title">Booking</h1>
+                        {{-- <a href="{{ route('showtimes.create') }}">
                             <button class="btn btn-primary d-flex align-items-center">
                                 <i class="fas fa-plus mr-2"></i>
                                 <span>Add New Showtime</span>
                             </button>
-                        </a>
+                        </a> --}}
                     </div>
                     <section class="list-table">
                         <div class="list-table-header d-flex align-items-center justify-content-between">
-                            @include('fragments.search', ['entityName' => 'bookings'])
+                            <form method="GET" action="{{ route('bookings.index') }}">
+                                <div class="profile-order-filter d-flex align-items-center">
+                                    <!-- Tìm kiếm theo từ khóa -->
+                                    <div class="profile-order-filter-item d-flex flex-column mr-3">
+                                        <label class="form-label" for="keyword">Search</label>
+                                        <input type="text" value="{{ request('keyword') }}" placeholder="Search booking..." name="keyword" class="form-control profile-order-input input-search-order" id="keyword"/>
+                                    </div>
+
+                                    <!-- Lọc theo trạng thái -->
+                                    <div class="profile-order-filter-item d-flex flex-column mr-3">
+                                        <label class="form-label" for="status">Status</label>
+                                        <select class="custom-select profile-order-input" id="status" name="status">
+                                            <option value="0" {{ request('status') == 0 ? 'selected' : '' }}>Tất cả</option>
+                                            @foreach($orderStatusList as $statusItem)
+                                                <option value="{{ $statusItem['id'] }}" {{ request('status') == $statusItem['id'] ? 'selected' : '' }}>
+                                                    {{ $statusItem['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- Nút Lọc -->
+                                    <div class="profile-order-filter-item d-flex flex-column align-self-end">
+                                        <button class="profile-form-btn" style="text-transform: inherit; letter-spacing: inherit" type="submit">Lọc</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                         <div class="list-table-content">
                             <div class="table-responsive">
@@ -46,6 +72,7 @@
                                             <th class="d-none d-sm-table-cell text-center">Day</th>
                                             <th class="d-none d-sm-table-cell text-center">User Name</th>
                                             <th class="d-none d-sm-table-cell text-center">Seat Numbers</th>
+                                            <th class="d-none d-sm-table-cell text-center">Status</th> <!-- Thêm cột Status -->
                                             <th class="text-center" style="width: 100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -82,7 +109,7 @@
                                                 
                                                 <!-- User Name -->
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    {{ $booking->user->full_name }} <!-- Đảm bảo rằng thuộc tính đúng tên -->
+                                                    {{ $booking->user->full_name }}
                                                 </td>
                                                 
                                                 <!-- Seat Numbers -->
@@ -96,15 +123,35 @@
                                                     @endif
                                                 </td>
                                                 
+                                                <!-- Status -->
+                                                <td class="d-none d-md-table-cell fs-sm">
+                                                    @switch($booking->status)
+                                                        @case(\App\Models\Booking::STATUS_PENDING)
+                                                            <span class="badge bg-warning text-dark">Pending</span>
+                                                            @break
+                                                        @case(\App\Models\Booking::STATUS_CONFIRMED)
+                                                            <span class="badge bg-success">Confirmed</span>
+                                                            @break
+                                                        @case(\App\Models\Booking::STATUS_FAILED)
+                                                            <span class="badge bg-danger">Failed</span>
+                                                            @break
+                                                        @case(\App\Models\Booking::STATUS_CANCELLED)
+                                                            <span class="badge bg-secondary">Cancelled</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge bg-light text-dark">{{ ucfirst($booking->status) }}</span>
+                                                    @endswitch
+                                                </td>
+                                                
                                                 <!-- Actions -->
                                                 <td class="text-center fs-sm" style="width: 100px">
-                                                    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
+                                                    {{-- <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-alt-secondary" title="Edit">
                                                         <i class="fas fa-pencil-alt"></i>
-                                                    </a>
-                                                    <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this booking?')">
+                                                    </a> --}}
+                                                    <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this booking?')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Delete">
+                                                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Cancel">
                                                             <i class="fa fa-fw fa-times text-danger"></i>
                                                         </button>
                                                     </form>
@@ -112,16 +159,12 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">
+                                                <td colspan="11" class="text-center"> <!-- Tăng colspan để bao phủ cả cột mới -->
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
                                                             <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No bookings" style="height: 200px;">
                                                         </div>
-                                                        <a href="{{ route('bookings.create') }}">
-                                                            <button class="btn btn-primary">
-                                                                <span>Create Now</span>
-                                                            </button>
-                                                        </a>
+                                                        <span>No Bookings Found</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -156,7 +199,7 @@
         $(document).ready(function() {
             let messageError = "{{ session('messageError') }}";
             let messageSuccess = "{{ session('messageSuccess') }}";
-    
+
             if (messageSuccess) {
                 Swal.fire({
                     title: '',
@@ -165,7 +208,7 @@
                     confirmButtonColor: '#3085d6'
                 });
             }
-    
+
             if (messageError) {
                 Swal.fire({
                     title: '',
