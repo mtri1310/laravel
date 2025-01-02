@@ -9,6 +9,24 @@ use Carbon\Carbon;
 class Room extends Model
 {
     use HasFactory;
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($room) {
+            // Xóa showtimes liên quan
+            $room->showtimes()->each(function ($showtime) {
+                $showtime->delete();
+            });
+
+            // Xóa seats liên quan
+            $room->seats()->each(function ($seat) {
+                $seat->delete();
+            });
+
+            // Thêm xóa các liên kết khác nếu cần
+        });
+    }
 
     protected $fillable = [
         'room_name',
