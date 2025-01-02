@@ -45,6 +45,9 @@ Route::middleware('auth')->group(function () {
     ]);
     // Thêm Route Dependencies cho Rooms
     Route::get('/rooms/{room}/dependencies', [RoomController::class, 'checkDependencies'])->name('rooms.dependencies');
+
+    Route::get('/showtimes/{showtime}/dependencies', [ShowtimeController::class, 'checkDependencies'])->name('showtimes.dependencies');
+
     // Seat Routes
     Route::get('/rooms/{room}/seats', [SeatController::class, 'index'])->name('seats.index');
 });
