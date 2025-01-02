@@ -202,8 +202,8 @@ class SelectSeatController extends Controller
                 ], 404);
             }
 
-            // Xóa các liên kết với ghế trong bảng pivot booking_seat
-            $booking->seats()->detach();
+            // // Xóa các liên kết với ghế trong bảng pivot booking_seat
+            // $booking->seats()->detach();
 
             // Cập nhật trạng thái booking thành Cancelled
             $booking->update([
