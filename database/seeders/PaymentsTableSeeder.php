@@ -11,8 +11,8 @@ class PaymentsTableSeeder extends Seeder
 {
     public function run()
     {
-        // Lấy tất cả các Booking có trạng thái 'Confirmed' (2) hoặc 'Failed' (3)
-        $bookings = Booking::whereIn('status', [2, 3])->get();
+        // Lấy tất cả các Booking có trạng thái 'Pending'
+        $bookings = Booking::where('status', Booking::STATUS_PENDING)->get();
 
         $paymentMethods = ['Stripe', 'Credit Card', 'PayPal', 'Cash'];
 
@@ -29,27 +29,34 @@ class PaymentsTableSeeder extends Seeder
             // Thêm từ 3 đến 5 phút vào thời gian tạo của booking
             $paymentCreatedAt = $bookingCreatedAt->copy()->addMinutes(rand(3, 5));
 
-            // Xác định payment_status và payment_method dựa trên trạng thái của Booking
-            if ($booking->status === 2) { // Confirmed
-                $paymentStatus = 1; // Completed
-                $paymentMethod = collect($paymentMethods)->random();
-            } elseif ($booking->status === 3) { // Failed
-                $paymentStatus = 2; // Failed
-                $paymentMethod = 'Stripe';
+            $isSuccessful = rand(1, 100) <= 80; // 80% thành công
+
+            if ($isSuccessful) {
+                $paymentStatus  = Payment::STATUS_COMPLETED;
+                $paymentMethod  = 'Stripe'; 
+                $transactionId  = 'pi_' . strtoupper(\Str::random(14)); // Giống Stripe
+                $bookingStatus  = Booking::STATUS_CONFIRMED;
             } else {
-                // Nếu trạng thái không phải 2 hoặc 3, không tạo Payment
-                return;
+                $paymentStatus  = Payment::STATUS_FAILED;
+                $paymentMethod  = 'Stripe'; 
+                $transactionId  = 'pi_' . strtoupper(\Str::random(14)); 
+                $bookingStatus  = Booking::STATUS_FAILED;
             }
 
             // Tạo Payment cho mỗi Booking
             Payment::create([
                 'booking_id'      => $booking->id,
-                'transaction_id'  => rand(100000, 999999), // ID giao dịch ngẫu nhiên
+                'transaction_id'  => $transactionId,
                 'amount'          => $amount, // Số tiền dựa trên số ghế
                 'payment_method'  => $paymentMethod,
                 'payment_status'  => $paymentStatus,
                 'created_at'      => $paymentCreatedAt,
                 'updated_at'      => $paymentCreatedAt,
+            ]);
+
+            // Cập nhật trạng thái của Booking dựa trên Payment status
+            $booking->update([
+                'status' => $bookingStatus,
             ]);
         }
     }

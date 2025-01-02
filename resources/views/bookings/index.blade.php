@@ -159,16 +159,12 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center"> <!-- Tăng colspan để bao phủ cả cột mới -->
+                                                <td colspan="11" class="text-center"> <!-- Tăng colspan để bao phủ cả cột mới -->
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
                                                             <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No bookings" style="height: 200px;">
                                                         </div>
-                                                        <a href="{{ route('bookings.create') }}">
-                                                            <button class="btn btn-primary">
-                                                                <span>Create Now</span>
-                                                            </button>
-                                                        </a>
+                                                        <span>No Bookings Found</span>
                                                     </div>
                                                 </td>
                                             </tr>

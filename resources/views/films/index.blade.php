@@ -118,7 +118,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="13" class="text-center">
+                                                <td colspan="15" class="text-center">
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
                                                             <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No Films" style="height: 200px;">

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +36,8 @@ class DatabaseSeeder extends Seeder
             'role' => 0, // Role là user
             'google_id' => '18062325687999322159'
         ]);
+
+        // Gọi các Seeders theo thứ tự
         $this->call([
             FilmsTableSeeder::class,
             RoomsTableSeeder::class,
@@ -47,6 +48,5 @@ class DatabaseSeeder extends Seeder
             PaymentsTableSeeder::class,
             InvoicesTableSeeder::class,
         ]);
-
     }
 }

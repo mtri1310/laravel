@@ -164,6 +164,7 @@ class SelectSeatController extends Controller
             ], 500);
         }
     }
+
     public function cancelPurchase(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -230,10 +231,21 @@ class SelectSeatController extends Controller
     }
 
     /**
-     * Tạo mã đơn hàng ngẫu nhiên.
+     * Tạo mã đơn hàng dựa trên invoice_number lớn nhất + 1.
      */
     private function generateOrderID()
     {
-        return substr(str_shuffle(str_repeat('0123456789', 16)), 0, 16);
+        // Lấy invoice_number lớn nhất hiện tại
+        $maxInvoiceNumber = Invoice::whereNotNull('invoice_number')->max('invoice_number');
+
+        if ($maxInvoiceNumber) {
+            $newOrderID = (string)((int)$maxInvoiceNumber + 1);
+        } else {
+            // Nếu chưa có invoice nào, bắt đầu từ 1000000000000000
+            $newOrderID = '1000000000000000';
+        }
+
+        // Đảm bảo rằng order_id là chuỗi 16 chữ số
+        return str_pad($newOrderID, 16, '0', STR_PAD_LEFT);
     }
 }

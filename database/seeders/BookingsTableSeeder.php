@@ -7,14 +7,12 @@ use App\Models\Booking;
 use App\Models\Showtime;
 use App\Models\User;
 use Carbon\Carbon;
-use Faker\Factory as Faker;
 
 class BookingsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    
     public function run(): void
     {
         $showtimes = Showtime::all();
@@ -24,13 +22,13 @@ class BookingsTableSeeder extends Seeder
 
         foreach ($showtimes as $showtime) {
             foreach ($users as $user) {
-                // Tạo một booking cho mỗi user và showtime
+                // Tạo một booking cho mỗi user và showtime với trạng thái mặc định là 'pending'
                 $bookings[] = [
-                    'showtime_id'  => $showtime->id,
-                    'user_id'      => $user->id,
-                    'status'       => collect([1, 2, 3, 4])->random(), //'Pending', Confirmed, Failed, 'Cancelled'
-                    'created_at'   => Carbon::now()->addDays(rand(-60, 60)),
-                    'updated_at'   => now(),
+                    'showtime_id' => $showtime->id,
+                    'user_id'     => $user->id,
+                    'status'      => Booking::STATUS_PENDING, //'Pending', Confirmed, Failed, 'Cancelled'
+                    'created_at'  => Carbon::now()->addDays(rand(-120, 2)),
+                    'updated_at'  => now(),
                 ];
             }
         }
@@ -38,3 +36,4 @@ class BookingsTableSeeder extends Seeder
         Booking::insert($bookings);
     }
 }
+

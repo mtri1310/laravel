@@ -150,8 +150,10 @@
                                                 </td>
                                                 <td class="text-center fs-sm">
                                                     @if ($invoice->payment->payment_status === 1)
-                                                        <span class="badge bg-success">Completed</span>
+                                                        <span class="badge bg-secondary">Pending</span>
                                                     @elseif ($invoice->payment->payment_status === 2)
+                                                        <span class="badge bg-success">Completed</span>
+                                                    @elseif ($invoice->payment->payment_status === 3)
                                                         <span class="badge bg-danger">Failed</span>
                                                     @else
                                                         <span class="badge bg-info">{{ $invoice->payment->payment_status }}</span>
@@ -173,7 +175,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="13" class="text-center">
+                                                <td colspan="14" class="text-center">
                                                     <div class="empty d-flex flex-column align-items-center">
                                                         <div class="empty-image d-flex justify-content-center align-items-center mb-3">
                                                             <img src="{{ asset('assets/images/empty-icon.svg') }}" alt="No Films" style="height: 200px;">

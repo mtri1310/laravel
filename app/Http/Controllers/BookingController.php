@@ -104,7 +104,7 @@ class BookingController extends Controller
             // Commit transaction
             DB::commit();
 
-            return redirect()->route('Bookings.index')
+            return redirect()->route('bookings.index')
                 ->with('messageSuccess', 'New booking has been added successfully.');
         } catch (\Exception $e) {
             // Rollback transaction nếu có lỗi xảy ra
@@ -122,7 +122,7 @@ class BookingController extends Controller
         try {
             $booking = Booking::findOrFail($booking_id);
 
-            if ($booking->status !== 'pending') {
+            if ($booking->status !== Booking::STATUS_PENDING) {
                 return back()->with('messageError', 'Only pending bookings can be cancelled.');
             }
 
@@ -130,16 +130,16 @@ class BookingController extends Controller
             DB::beginTransaction();
 
             // Cập nhật trạng thái đơn đặt vé thành 'cancelled'
-            $booking->status = 'cancelled';
+            $booking->status = Booking::STATUS_CANCELLED;
             $booking->save();
 
-            // Xóa các bản ghi trong booking_seat để giải phóng ghế
-            BookingSeat::where('booking_id', $booking->id)->delete();
+            // // Xóa các bản ghi trong booking_seat để giải phóng ghế
+            // BookingSeat::where('booking_id', $booking->id)->delete();
 
             // Commit transaction
             DB::commit();
 
-            return redirect()->route('Bookings.index')
+            return redirect()->route('bookings.index')
                 ->with('messageSuccess', 'Booking has been cancelled successfully.');
         } catch (\Exception $e) {
             DB::rollback();
