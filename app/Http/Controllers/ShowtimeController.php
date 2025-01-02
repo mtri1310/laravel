@@ -82,10 +82,64 @@ class ShowtimeController extends Controller
     }
 
 
-    public function destroy(Showtime $showtime) : RedirectResponse
+    // public function destroy(Showtime $showtime) : RedirectResponse
+    // {
+    //     $showtime->delete();
+    //     return redirect()->route('showtimes.index')
+    //             ->withSuccess('Showtime is deleted successfully.');
+    // }
+    public function destroy(Request $request, Showtime $showtime): RedirectResponse
     {
+        // Kiểm tra xem có xác nhận xóa dữ liệu liên quan hay không
+        if ($request->input('confirm') === 'yes') {
+            // Xóa các dữ liệu liên quan
+            $showtime->bookings()->delete();
+            // Nếu có các bảng khác liên quan, thêm các lệnh xóa tương tự ở đây
+            // Ví dụ: Xóa các payment và invoice liên quan
+            foreach ($showtime->bookings as $booking) {
+                $booking->payments()->delete();
+                // Nếu invoice có mối quan hệ trực tiếp với payment, bạn cần xóa invoice trước
+                foreach ($booking->payments as $payment) {
+                    $payment->invoices()->delete();
+                }
+            }
+
+            // Cuối cùng, xóa Showtime
+            $showtime->delete();
+
+            return redirect()->route('showtimes.index')
+                ->with('messageSuccess', 'Showtime và các dữ liệu liên quan đã được xóa thành công.');
+        }
+
+        // Nếu không có xác nhận, kiểm tra xem có dữ liệu liên quan hay không
+        $hasDependencies = $showtime->bookings()->exists();
+        if ($hasDependencies) {
+            return redirect()->route('showtimes.index')
+                ->with('messageError', 'Showtime này có dữ liệu liên quan. Vui lòng xác nhận để xóa tất cả các dữ liệu liên quan.');
+        }
+
+        // Nếu không có dữ liệu liên quan, xóa Showtime
         $showtime->delete();
         return redirect()->route('showtimes.index')
-                ->withSuccess('Showtime is deleted successfully.');
+            ->with('messageSuccess', 'Showtime đã được xóa thành công.');
+    }
+
+    // Phương thức để kiểm tra dữ liệu liên quan (sử dụng AJAX)
+    public function checkDependencies(Showtime $showtime)
+    {
+        // Kiểm tra các bảng liên quan
+        $hasBookings = $showtime->bookings()->exists();
+        // Bạn có thể thêm các kiểm tra khác nếu cần, ví dụ: payments, invoices
+
+        $dependencies = [];
+        if ($hasBookings) {
+            $dependencies[] = 'Bookings';
+        }
+        // Thêm các bảng khác vào danh sách nếu cần
+
+        return response()->json([
+            'hasDependencies' => !empty($dependencies),
+            'dependencies' => $dependencies,
+        ]);
     }
 }
