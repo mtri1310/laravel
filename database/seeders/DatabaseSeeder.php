@@ -47,6 +47,8 @@ class DatabaseSeeder extends Seeder
             BookingSeatTableSeeder::class,
             PaymentsTableSeeder::class,
             InvoicesTableSeeder::class,
+            CollationSeeder::class
         ]);
+        
     }
 }

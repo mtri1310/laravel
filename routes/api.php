@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\ShowtimeController;
 use App\Http\Controllers\Api\MyTicketController;
 use App\Http\Controllers\api\StripeWebhookController;
 use App\Http\Controllers\Api\TicketHistoryController;
-
+use App\Http\Controllers\Api\FilmSearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImdbController;
@@ -37,6 +37,7 @@ Route::get('/listfilms', [ListFilmsController::class, 'listfilms']);
 // Route::post('auth/google/callback', 'handleGoogleCallback',  [LoginController::class, 'loginWithGoogle']);
 Route::get('/select_seat', [SelectSeatController::class, 'getSelectSeat']);
 Route::get('/movie_detail', [MovieDetailController::class, 'getMovieDetails']);
+Route::get('/films/search', [FilmSearchController::class, 'searchByName']);
 
 // Đăng ký
 Route::post('/register', [AuthController::class, 'register']);
