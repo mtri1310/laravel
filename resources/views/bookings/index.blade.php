@@ -43,7 +43,7 @@
                                     <div class="profile-order-filter-item d-flex flex-column mr-3">
                                         <label class="form-label" for="status">Status</label>
                                         <select class="custom-select profile-order-input" id="status" name="status">
-                                            <option value="0" {{ request('status') == 0 ? 'selected' : '' }}>Tất cả</option>
+                                            <option value="0" {{ request('status') == 0 ? 'selected' : '' }}>See All</option>
                                             @foreach($orderStatusList as $statusItem)
                                                 <option value="{{ $statusItem['id'] }}" {{ request('status') == $statusItem['id'] ? 'selected' : '' }}>
                                                     {{ $statusItem['name'] }}
@@ -54,7 +54,7 @@
 
                                     <!-- Nút Lọc -->
                                     <div class="profile-order-filter-item d-flex flex-column align-self-end">
-                                        <button class="profile-form-btn" style="text-transform: inherit; letter-spacing: inherit" type="submit">Lọc</button>
+                                        <button class="profile-form-btn" style="text-transform: inherit; letter-spacing: inherit" type="submit">Filter</button>
                                     </div>
                                 </div>
                             </form>

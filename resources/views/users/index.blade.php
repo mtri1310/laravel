@@ -23,11 +23,11 @@
                 @include('fragments.header')
                 <div class="content">
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                        <h1 class="title">Người dùng</h1>
+                        <h1 class="title">Users</h1>
                         <a href="{{ route('users.create') }}">
                             <button class="btn btn-primary d-flex align-items-center">
                                 <i class="fas fa-plus" style="margin-right: 0.5rem"></i>
-                                <span>Người dùng mới</span>
+                                <span>Add New User</span>
                             </button>
                         </a>
                     </div>

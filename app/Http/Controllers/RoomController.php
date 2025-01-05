@@ -93,21 +93,89 @@ class RoomController extends Controller
 
     }
 
+    // public function update(RoomRequest $request, Room $room) : RedirectResponse
+    // {
+    //     try {
+    //         $data = $request->validated();
+
+
+    //         $room->update($data);
+
+    //         return redirect()->route('rooms.index')
+    //             ->with('messageSuccess', 'Room has been updated successfully.');
+    //     } catch (\Exception $e) {
+    //         Log::error('Room Update Failed: ' . $e->getMessage());
+    //         return back()->with('messageError', 'An unexpected error occurred while updating the room.');
+    //     }
+    // }
     public function update(RoomRequest $request, Room $room) : RedirectResponse
     {
         try {
             $data = $request->validated();
 
-
+            // Lưu trữ dữ liệu phòng mới
             $room->update($data);
 
+            // Cập nhật ghế dựa trên capacity mới
+            $this->updateSeatsForRoom($room, $data['capacity']);
+
             return redirect()->route('rooms.index')
-                ->with('messageSuccess', 'Room has been updated successfully.');
+                ->with('messageSuccess', 'Room has been updated successfully with seats.');
         } catch (\Exception $e) {
             Log::error('Room Update Failed: ' . $e->getMessage());
             return back()->with('messageError', 'An unexpected error occurred while updating the room.');
         }
     }
+
+
+    /**
+     * Cập nhật ghế cho một phòng dựa trên capacity mới
+     */
+    private function updateSeatsForRoom(Room $room, int $newCapacity)
+    {
+        // Lấy tất cả ghế hiện tại và sắp xếp theo row và column
+        $currentSeats = $room->seats()->orderBy('seat_number')->get();
+        $currentCapacity = $currentSeats->count();
+
+        if ($newCapacity > $currentCapacity) {
+            // Thêm ghế mới
+            $seatsToAdd = $newCapacity - $currentCapacity;
+            $seats = [];
+
+            // Tính toán tổng số hàng hiện tại
+            $currentRows = ceil($currentCapacity / 10);
+            $newRows = ceil($newCapacity / 10);
+
+            // Nếu số hàng mới lớn hơn số hàng hiện tại, chúng ta cần thêm hàng mới
+            for ($i = $currentCapacity; $i < $newCapacity; $i++) {
+                $rowIndex = floor($i / 10);
+                $column = ($i % 10) + 1;
+                $rowLetter = chr(65 + $rowIndex); // 'A' = 65
+
+                $seatNumber = $rowLetter . $column;
+
+                $seats[] = [
+                    'room_id' => $room->id,
+                    'seat_number' => $seatNumber,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Thêm các ghế mới vào cơ sở dữ liệu
+            Seat::insert($seats);
+        } elseif ($newCapacity < $currentCapacity) {
+            // Loại bỏ ghế thừa
+            $seatsToRemove = $currentCapacity - $newCapacity;
+            $seats = $currentSeats->reverse()->take($seatsToRemove);
+            $seatIds = $seats->pluck('id');
+            Seat::whereIn('id', $seatIds)->delete();
+        }
+
+        // Nếu capacity không thay đổi, không làm gì cả
+    }
+
+
 
     /**
      * Remove the specified resource from storage.

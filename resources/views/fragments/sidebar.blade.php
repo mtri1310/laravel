@@ -222,12 +222,6 @@
                                 <span class="menu-text">See All</span>
                             </a>
                         </li>
-                         <li class="menu-link menu-item-sub align-items-center" 
-                            @class(['menu-active' => $subkey == 'booking_new'])>
-                            <a href="{{ route('bookings.create') }}">
-                                <span class="menu-text">Create new </span>
-                            </a>
-                        </li>
                     </ul>
 
                 </li>
