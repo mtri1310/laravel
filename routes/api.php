@@ -63,9 +63,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'payment']);
     Route::post('/purchase', [SelectSeatController::class, 'getSelectSeat']);
     Route::post('/purchase/cancel', [SelectSeatController::class, 'cancelPurchase']);
-    Route::post('/confirm_payment', [PaymentController::class, 'confirmPayment']);
-    Route::post('/cancel_payment', [PaymentController::class, 'cancelPayment']);
+    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
     Route::get('/ticket', [MyTicketController::class, 'getTicketDetails']);
     Route::get('/ticket_history', [TicketHistoryController::class, 'getTicketHistory']);
 });
-Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
+Route::post('/stripe/webhook', [PaymentController::class, 'webhook']);

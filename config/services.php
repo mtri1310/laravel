@@ -40,5 +40,9 @@ return [
         'redirect' => env('APP_URL').'auth/google/callback',
 
     ],
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
 
 ];
