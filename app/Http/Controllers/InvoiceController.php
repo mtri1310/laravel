@@ -69,7 +69,8 @@ class InvoiceController extends Controller
                     $q->where('payment_method', 'like', "%{$keyword}%")
                     ->orWhere('payment_status', 'like', "%{$keyword}%")
                     ->orWhere('transaction_id', 'like', "%{$keyword}%");
-                });
+                })
+                ->orWhere('invoice_number', 'like', "%{$keyword}%");
             });
         }
 
@@ -99,32 +100,6 @@ class InvoiceController extends Controller
                             'date_from' => $dateFrom,
                             'date_to' => $dateTo,
                         ]);
-        // // Lấy danh sách các hóa đơn (invoice) và thông tin liên quan
-        // $invoices = Invoice::with(['payment.booking.user', 'payment.booking.showtime.film', 'payment.booking.showtime.room', 'payment.booking.bookingSeats.seat']) // Eager load relationships
-        //     ->when($keyword, function($query, $keyword) {
-        //         return $query->whereHas('payment.booking.user', function($q) use ($keyword) {
-        //                 $q->where('username', 'like', "%{$keyword}%"); // Tìm theo Username
-        //             })
-        //             ->orWhereHas('payment.booking.showtime.film', function($q) use ($keyword) {
-        //                 $q->where('film_name', 'like', "%{$keyword}%"); // Tìm theo Film
-        //             })
-        //             ->orWhereHas('payment.booking.showtime.room', function($q) use ($keyword) {
-        //                 $q->where('room_name', 'like', "%{$keyword}%"); // Tìm theo Room
-        //             })
-        //             ->orWhereHas('payment.booking.bookingSeats.seat', function($q) use ($keyword) {
-        //                 $q->where('seat_number', 'like', "%{$keyword}%"); // Tìm theo Seats
-        //             })
-        //             ->orWhereHas('payment', function($q) use ($keyword) {
-        //                 $q->where('payment_method', 'like', "%{$keyword}%") // Tìm theo Payment Method trong bảng payments
-        //                   ->orWhere('payment_status', 'like', "%{$keyword}%") // Tìm theo Payment Status trong bảng payments
-        //                   ->orWhere('transaction_id', 'like', "%{$keyword}%"); // Tìm theo transaction_id  trong bảng payments
-        //             });
-        //     })
-        //     ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo giảm dần
-        //     ->paginate(10)
-        //     ->appends(['keyword' => $keyword]); // Giữ lại từ khóa tìm kiếm trong các liên kết phân trang
-
-        // return view('invoices.index', compact('invoices', 'keyword'));
         return view('invoices.index', compact('invoices', 'keyword', 'dateFrom', 'dateTo'));
     }
 

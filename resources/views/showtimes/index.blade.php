@@ -30,8 +30,61 @@
                         </a>
                     </div>
                     <section class="list-table">
-                        <div class="list-table-header d-flex align-items-center justify-content-between">
+
+                        {{-- <div class="list-table-header d-flex align-items-center justify-content-between">
                             @include('fragments.search', ['entityName' => 'showtimes'])
+                        </div> --}}
+                        <div class="mb-4" style="margin-top: 50px;"  >
+                            <div class="row g-3">
+                                <!-- Biểu mẫu Tìm Kiếm (Bên Trái) -->
+                                <div class="col-md-6" >
+                                    @include('fragments.search', ['entityName' => 'showtimes'])
+                                </div>
+                
+                                <!-- Biểu mẫu Lọc Theo Ngày và Giờ (Bên Phải) -->
+                                <div class="col-md-6">
+                                    <form method="GET" action="{{ route('showtimes.index') }}">
+                                        <!-- Hiển thị thông báo lỗi nếu có -->
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul class="mb-0">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+
+                                        <div class="row g-3 align-items-end justify-content-end">
+                                            <!-- Trường Ngày -->
+                                            <div class="col-md-4">
+                                                <label for="day" class="form-label">Day</label>
+                                                <input type="date" name="day" id="day" class="form-control @error('day') is-invalid @enderror" 
+                                                    value="{{ request('day') }}">
+                                                @error('day')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Trường Giờ Bắt Đầu -->
+                                            <div class="col-md-4">
+                                                <label for="start_time" class="form-label">Start Time</label>
+                                                <input type="time" name="start_time" id="start_time" class="form-control @error('start_time') is-invalid @enderror" 
+                                                    value="{{ request('start_time') }}">
+                                                @error('start_time')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Nút Lọc và Reset -->
+                                            <div class="col-md-4 d-flex">
+                                                <button type="submit" class="btn btn-primary me-2 w-100" style="margin-right: 10px">Filter</button>
+                                                <a href="{{ route('showtimes.index') }}" class="btn btn-secondary w-100" style="margin-right: 10px">Reset</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <div class="list-table-content">
                             <div class="table-responsive">

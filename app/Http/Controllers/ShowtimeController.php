@@ -6,6 +6,7 @@ use App\Http\Requests\ShowtimeRequest;
 use App\Models\Film;
 use App\Models\Room;
 use App\Models\Showtime;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -17,22 +18,65 @@ class ShowtimeController extends Controller
     public function index(Request $request): View
     {
         $keyword = $request->input('keyword');
-    
-        $showtimes = Showtime::with(['film', 'room']) // Eager load relationships
-                            ->when($keyword, function($query, $keyword) {
-                                return $query->whereHas('film', function($q) use ($keyword) {
-                                    $q->where('film_name', 'like', "%{$keyword}%");
-                                })->orWhereHas('room', function($q) use ($keyword) {
-                                    $q->where('room_name', 'like', "%{$keyword}%");
-                                });
-                            })
-                            ->orderBy('day', 'desc') // Sắp xếp theo ngày giảm dần
-                            ->orderBy('start_time', 'desc') // Sắp xếp theo giờ bắt đầu giảm dần
-                            ->orderBy('id', 'desc') // Sắp xếp theo ID giảm dần để đảm bảo duy nhất
-                            ->paginate(10)
-                            ->appends(['keyword' => $keyword]);
-    
-        return view('showtimes.index', compact('showtimes', 'keyword'));
+        $day = $request->input('day'); // Nhận tham số ngày
+        $startTime = $request->input('start_time'); // Nhận tham số giờ bắt đầu
+
+        // Xây dựng query cơ bản với các mối quan hệ cần thiết
+        $query = Showtime::with(['film', 'room']);
+
+        // Lọc theo từ khóa nếu có
+        if ($keyword) {
+            $query->where(function($q) use ($keyword) {
+                $q->whereHas('film', function($q) use ($keyword) {
+                    $q->where('film_name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('room', function($q) use ($keyword) {
+                    $q->where('room_name', 'like', "%{$keyword}%");
+                })
+                ->orWhere('start_time', 'like', "%{$keyword}%") // Tìm kiếm theo start_time
+                ->orWhereDate('day', '=', $keyword); // Tìm kiếm theo ngày
+            });
+        }
+
+        // Lọc theo ngày nếu có
+        if ($day) {
+            try {
+                $dayParsed = Carbon::parse($day)->startOfDay();
+                $query->whereDate('day', $dayParsed);
+            } catch (\Exception $e) {
+                // Xử lý lỗi nếu định dạng ngày không hợp lệ
+                Log::error('Invalid day format for showtime filtering', [
+                    'day' => $day,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Lọc theo giờ bắt đầu nếu có
+        if ($startTime) {
+            try {
+                $startTimeParsed = Carbon::createFromFormat('H:i', $startTime)->format('H:i:s');
+                $query->whereTime('start_time', $startTimeParsed);
+            } catch (\Exception $e) {
+                // Xử lý lỗi nếu định dạng giờ không hợp lệ
+                Log::error('Invalid start_time format for showtime filtering', [
+                    'start_time' => $startTime,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Sắp xếp và phân trang
+        $showtimes = $query->orderBy('day', 'desc') // Sắp xếp theo ngày giảm dần
+                          ->orderBy('start_time', 'desc') // Sắp xếp theo giờ bắt đầu giảm dần
+                          ->paginate(10)
+                          ->appends([
+                              'keyword' => $keyword,
+                              'day' => $day,
+                              'start_time' => $startTime,
+                          ]);
+
+        return view('showtimes.index', compact('showtimes', 'keyword', 'day', 'startTime'));
     }
     
     
