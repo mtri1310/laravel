@@ -62,7 +62,7 @@
                                                     <strong>{{ $user->username }}</strong>
                                                 </td>
                                                 <td class="d-none d-md-table-cell fs-sm">
-                                                    <img src="{{ $user->picture }}" alt="{{ $user->username }} Thumbnail" style="width: 200px;">
+                                                    <img src="{{ $user->picture ? $user->picture : asset('assets/images/default.png') }}" alt="{{ $user->username }} Thumbnail" style="width: 200px;">
                                                 </td>
                                                 <td class="d-none d-sm-table-cell text-center fs-sm">
                                                     <div>{{ $user->email }}</div>
