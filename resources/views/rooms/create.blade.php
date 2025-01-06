@@ -120,7 +120,6 @@
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 
         <script>
-
             // Initialize Summernote and handle SweetAlert messages
             $(document).ready(function() {
                 // Close Summernote dialogs with custom button
@@ -128,6 +127,46 @@
                     $('.note-modal').removeClass('open');
                     $('.note-modal-backdrop').hide();
                 });
+
+                // Hiển thị thông báo thành công từ session
+                @if(session('messageSuccess'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: "{{ session('messageSuccess') }}",
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                @endif
+
+                // Hiển thị thông báo lỗi từ session
+                @if(session('messageError'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: "{{ session('messageError') }}",
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                @endif
+
+                // Kiểm tra Capacity khi ở chế độ Edit
+                @if(isset($room->id))
+                    const currentCapacity = {{ $room->capacity }};
+
+                    $('#form-room').on('submit', function(e) {
+                        const newCapacity = parseInt($('#capacity').val(), 10);
+
+                        if (newCapacity <= currentCapacity) {
+                            e.preventDefault(); // Ngăn không cho form được submit
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: `Capacity phải lớn hơn capacity hiện tại (${currentCapacity}).`,
+                            });
+                        }
+                    });
+                @endif
             });
         </script>
     </body>
